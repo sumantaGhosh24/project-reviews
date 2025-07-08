@@ -4,6 +4,12 @@ import {useState} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {Menu, X} from "lucide-react";
+import {
+  LoginLink,
+  LogoutLink,
+  RegisterLink,
+  useKindeBrowserClient,
+} from "@kinde-oss/kinde-auth-nextjs";
 
 import {
   NavigationMenu,
@@ -21,7 +27,7 @@ import {ModeToggle} from "./mode-toggle";
 const Header = () => {
   const [open, setOpen] = useState(false);
 
-  const isAuthenticated = false;
+  const {isLoading, isAuthenticated} = useKindeBrowserClient();
 
   return (
     <nav className="w-full border-b bg-blue-700 shadow shadow-black dark:shadow-white">
@@ -52,7 +58,7 @@ const Header = () => {
         >
           <NavigationMenu className="mx-auto">
             <NavigationMenuList className="flex-col gap-2 md:flex-row">
-              {isAuthenticated ? (
+              {!isLoading && isAuthenticated ? (
                 <>
                   {[
                     {id: 1, name: "Home", url: "/"},
@@ -104,30 +110,27 @@ const Header = () => {
                     variant="secondary"
                     className={navigationMenuTriggerStyle()}
                     asChild
-                    onClick={() => console.log("logout")}
                   >
-                    Logout
+                    <LogoutLink>Logout</LogoutLink>
                   </Button>
                 </>
               ) : (
                 <>
                   <NavigationMenuItem>
-                    <Link href="/register" legacyBehavior passHref>
-                      <NavigationMenuLink
-                        className={navigationMenuTriggerStyle()}
-                      >
+                    <NavigationMenuLink
+                      className={navigationMenuTriggerStyle()}
+                    >
+                      <RegisterLink postLoginRedirectURL="/">
                         Register
-                      </NavigationMenuLink>
-                    </Link>
+                      </RegisterLink>
+                    </NavigationMenuLink>
                   </NavigationMenuItem>
                   <NavigationMenuItem>
-                    <Link href="/login" legacyBehavior passHref>
-                      <NavigationMenuLink
-                        className={navigationMenuTriggerStyle()}
-                      >
-                        Login
-                      </NavigationMenuLink>
-                    </Link>
+                    <NavigationMenuLink
+                      className={navigationMenuTriggerStyle()}
+                    >
+                      <LoginLink postLoginRedirectURL="/">Login</LoginLink>
+                    </NavigationMenuLink>
                   </NavigationMenuItem>
                 </>
               )}
