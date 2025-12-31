@@ -2,20 +2,19 @@
 
 import {Button} from "@/components/ui/button";
 
-export default function Error({
-  error,
-  reset,
-}: {
+interface ErrorProps {
   error: Error & {digest?: string};
   reset: () => void;
-}) {
+}
+
+export default function Error({error, reset}: ErrorProps) {
   return (
-    <div className="flex h-screen items-center justify-center">
-      <div className="shadow shadow-black dark:shadow-white w-[80%] h-[400px] rounded-md flex items-center justify-center flex-col gap-5">
-        <h2 className="text-2xl font-bold">Something went wrong!</h2>
-        <p className="text-lg">{error.message}</p>
-        {error.digest && <p className="text-sm">{error.digest}</p>}
-        <Button onClick={() => reset()}>Try again</Button>
+    <div className="h-screen w-full flex items-center justify-center">
+      <div className="bg-background w-[80%] h-[500px] rounded-md shadow-md flex flex-col items-center justify-center gap-5 dark:shadow-white/40">
+        <h2 className="text-2xl font-bold capitalize">
+          Error | {error.message}
+        </h2>
+        <Button onClick={() => reset()}>Try Again</Button>
       </div>
     </div>
   );
