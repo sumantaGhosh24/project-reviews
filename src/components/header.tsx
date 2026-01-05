@@ -39,7 +39,7 @@ const Header = () => {
         <div className="flex items-center justify-between py-3 md:block md:py-5">
           <Link href="/">
             <Image
-              src="https://placehold.co/600x400.png"
+              src="/logo.png"
               alt="logo"
               height={20}
               width={20}

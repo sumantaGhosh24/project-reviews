@@ -8,10 +8,10 @@ export const userLinks = [
   {id: 2, name: "Dashboard", url: "/dashboard"},
 ];
 
-export const premiumLinks = [{id: 1, name: "Projects", url: "/projects"}];
+export const premiumLinks = [{id: 1, name: "Projects", url: "/project"}];
 
 export const adminLinks = [
   {id: 1, name: "Categories", url: "/category"},
   {id: 2, name: "Users", url: "/users"},
-  {id: 3, name: "All Projects", url: "/manage"},
+  {id: 3, name: "All Projects", url: "/project/all"},
 ];

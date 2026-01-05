@@ -1,7 +1,15 @@
-import React from "react";
+import CreateProjectForm from "@/features/projects/components/create-project-form";
 
-const CreateProject = () => {
-  return <div>CreateProject</div>;
+export const metadata = {
+  title: "Create Project",
+};
+
+const CreateProject = async () => {
+  return (
+    <>
+      <CreateProjectForm />
+    </>
+  );
 };
 
 export default CreateProject;

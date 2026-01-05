@@ -2,11 +2,11 @@ import {projectsParamsLoader} from "@/features/projects/server/params-loader";
 import ManageProjects from "@/features/projects/components/manage-projects";
 
 export const metadata = {
-  title: "Manage Projects",
+  title: "Manage All Projects",
 };
 
 // TODO:
-const ProjectsPage = async ({searchParams}: PageProps<"/project">) => {
+const AllProjectsPage = async ({searchParams}: PageProps<"/project/all">) => {
   const params = await projectsParamsLoader(searchParams);
 
   return (
@@ -16,4 +16,4 @@ const ProjectsPage = async ({searchParams}: PageProps<"/project">) => {
   );
 };
 
-export default ProjectsPage;
+export default AllProjectsPage;
