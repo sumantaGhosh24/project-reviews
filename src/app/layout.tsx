@@ -48,7 +48,7 @@ export default function RootLayout({
               {children}
               <ImpersonationIndicator />
             </main>
-            <Toaster position="top-right" />
+            <Toaster closeButton={true} position="top-right" />
           </NuqsAdapter>
         </ThemeProvider>
       </body>
