@@ -7,6 +7,7 @@ import {ThemeProvider} from "@/components/theme-provider";
 import {Toaster} from "@/components/ui/sonner";
 import Header from "@/components/header";
 import {ImpersonationIndicator} from "@/features/auth/components/impersonation-indicator";
+import {TRPCReactProvider} from "@/trpc/client";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,14 +43,16 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NuqsAdapter>
-            <Header />
-            <main>
-              {children}
-              <ImpersonationIndicator />
-            </main>
-            <Toaster closeButton={true} position="top-right" />
-          </NuqsAdapter>
+          <TRPCReactProvider>
+            <NuqsAdapter>
+              <Header />
+              <main>
+                {children}
+                <ImpersonationIndicator />
+              </main>
+              <Toaster closeButton={true} position="top-right" />
+            </NuqsAdapter>
+          </TRPCReactProvider>
         </ThemeProvider>
       </body>
     </html>

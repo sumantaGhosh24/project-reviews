@@ -7,9 +7,11 @@ import {
   createAuthMiddleware,
 } from "better-auth/plugins";
 import {passkey} from "@better-auth/passkey";
+import {polar, checkout, portal, usage} from "@polar-sh/better-auth";
 
 import prisma from "../db";
 import {admin, user, ac} from "./permissions";
+import {polarClient} from "../polar";
 import {sendPasswordResetEmail} from "../email/password-reset-email";
 import {sendEmailVerificationEmail} from "../email/email-verification";
 import {sendDeleteAccountVerificationEmail} from "../email/delete-account-verification";
@@ -93,6 +95,24 @@ export const auth = betterAuth({
         admin,
         user,
       },
+    }),
+    polar({
+      client: polarClient,
+      createCustomerOnSignUp: true,
+      use: [
+        checkout({
+          products: [
+            {
+              productId: "80b07175-850d-48b5-9c56-99ebabd8e427",
+              slug: "pro",
+            },
+          ],
+          successUrl: process.env.POLAR_SUCCESS_URL,
+          authenticatedUsersOnly: true,
+        }),
+        portal(),
+        usage(),
+      ],
     }),
   ],
   hooks: {

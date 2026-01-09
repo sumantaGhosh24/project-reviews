@@ -5,9 +5,11 @@ import {useRouter} from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {toast} from "sonner";
-import {MenuIcon, XIcon} from "lucide-react";
+import {ChessKingIcon, MenuIcon, XIcon} from "lucide-react";
 
+import {adminLinks, guestLinks, premiumLinks, userLinks} from "@/constants";
 import {authClient} from "@/lib/auth/auth-client";
+import {useHasActiveSubscription} from "@/features/subscriptions/hooks/useSubscription";
 
 import {ModeToggle} from "./mode-toggle";
 import {
@@ -22,7 +24,6 @@ import {
 import {Button} from "./ui/button";
 import {Avatar, AvatarFallback, AvatarImage} from "./ui/avatar";
 import {Skeleton} from "./ui/skeleton";
-import {adminLinks, guestLinks, userLinks} from "@/constants";
 
 const Header = () => {
   const [open, setOpen] = useState(false);
@@ -53,7 +54,24 @@ const Header = () => {
     });
   };
 
-  if (loading) {
+  const {isLoading, hasActiveSubscription} = useHasActiveSubscription();
+
+  const handleSubscribe = async () => {
+    if (hasActiveSubscription) return;
+
+    await authClient.checkout({
+      products: ["e651f46d-ac20-4f26-b769-ad088b123df2"],
+      slug: "pro",
+    });
+  };
+
+  const handleSubscriptionPortal = async () => {
+    if (!hasActiveSubscription) return;
+
+    await authClient.customer.portal();
+  };
+
+  if (loading || isLoading) {
     return <Skeleton className="w-full h-20" />;
   }
 
@@ -116,6 +134,41 @@ const Header = () => {
                       </NavigationMenuLink>
                     </NavigationMenuItem>
                   ))}
+                  {hasActiveSubscription ? (
+                    <Button
+                      type="button"
+                      className={navigationMenuTriggerStyle({
+                        className: "text-black dark:text-white",
+                      })}
+                      onClick={handleSubscriptionPortal}
+                    >
+                      Manage Subscription
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        type="button"
+                        className={navigationMenuTriggerStyle({
+                          className: "text-black dark:text-white",
+                        })}
+                        onClick={handleSubscribe}
+                      >
+                        <span className="flex items-center gap-1.5">
+                          <ChessKingIcon /> Subscribe
+                        </span>
+                      </Button>
+                      {premiumLinks.map((item) => (
+                        <NavigationMenuItem key={item.id}>
+                          <NavigationMenuLink
+                            asChild
+                            className={navigationMenuTriggerStyle()}
+                          >
+                            <Link href={item.url}>{item.name}</Link>
+                          </NavigationMenuLink>
+                        </NavigationMenuItem>
+                      ))}
+                    </>
+                  )}
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       asChild
