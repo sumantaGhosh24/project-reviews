@@ -1,7 +1,8 @@
 import type {ReactNode} from "react";
-import {Loader2Icon} from "lucide-react";
 
 import {cn} from "@/lib/utils";
+
+import {Spinner} from "./ui/spinner";
 
 export function LoadingSwap({
   isLoading,
@@ -30,7 +31,7 @@ export function LoadingSwap({
           className
         )}
       >
-        <Loader2Icon className="animate-spin" />
+        <Spinner />
       </div>
     </div>
   );

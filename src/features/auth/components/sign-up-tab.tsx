@@ -3,7 +3,9 @@
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import z from "zod";
+import {toast} from "sonner";
 
+import {authClient} from "@/lib/auth/auth-client";
 import {LoadingSwap} from "@/components/loading-swap";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -41,9 +43,23 @@ export function SignUpTab({
 
   const {isSubmitting} = form.formState;
 
-  // TODO:
   async function handleSignUp(data: SignUpForm) {
-    console.log(data);
+    const res = await authClient.signUp.email(
+      {
+        ...data,
+        favoriteNumber: Number(data.favoriteNumber),
+        callbackURL: "/home",
+      },
+      {
+        onError: (error) => {
+          toast.error(error.error.message || "Failed to sign up");
+        },
+      }
+    );
+
+    if (res.error == null && !res.data.user.emailVerified) {
+      openEmailVerificationTab(data.email);
+    }
   }
 
   return (

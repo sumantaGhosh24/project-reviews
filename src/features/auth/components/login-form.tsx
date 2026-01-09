@@ -1,7 +1,9 @@
 "use client";
 
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
 
+import {authClient} from "@/lib/auth/auth-client";
 import {SocialAuthButtons} from "@/features/auth/components/social-auth-buttons";
 import {SignUpTab} from "@/features/auth/components/sign-up-tab";
 import {SignInTab} from "@/features/auth/components/sign-in-tab";
@@ -20,10 +22,16 @@ import {Separator} from "@/components/ui/separator";
 type Tab = "signin" | "signup" | "email-verification" | "forgot-password";
 
 export default function LoginForm() {
-  // TODO:
+  const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [selectedTab, setSelectedTab] = useState<Tab>("signin");
+
+  useEffect(() => {
+    authClient.getSession().then((session) => {
+      if (session.data != null) router.push("/");
+    });
+  }, [router]);
 
   function openEmailVerificationTab(email: string) {
     setEmail(email);

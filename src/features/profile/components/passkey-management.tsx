@@ -1,11 +1,15 @@
 "use client";
 
 import {useState} from "react";
+import {useRouter} from "next/navigation";
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import z from "zod";
+import {toast} from "sonner";
+import {Passkey} from "@better-auth/passkey";
 import {Trash2Icon} from "lucide-react";
 
+import {authClient} from "@/lib/auth/auth-client";
 import {AuthActionButton} from "@/features/auth/components/auth-action-button";
 import {LoadingSwap} from "@/components/loading-swap";
 import {Input} from "@/components/ui/input";
@@ -32,15 +36,10 @@ const passkeySchema = z.object({
 
 type PasskeyForm = z.infer<typeof passkeySchema>;
 
-// TODO:
-interface Passkey {
-  id: string;
-  name: string;
-  createdAt: Date;
-}
-
 export function PasskeyManagement({passkeys}: {passkeys: Passkey[]}) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const router = useRouter();
 
   const form = useForm<PasskeyForm>({
     resolver: zodResolver(passkeySchema),
@@ -51,15 +50,23 @@ export function PasskeyManagement({passkeys}: {passkeys: Passkey[]}) {
 
   const {isSubmitting} = form.formState;
 
-  // TODO:
   async function handleAddPasskey(data: PasskeyForm) {
-    console.log(data);
+    await authClient.passkey.addPasskey(data, {
+      onError: (error) => {
+        toast.error(error.error.message || "Failed to add passkey");
+      },
+      onSuccess: () => {
+        router.refresh();
+        setIsDialogOpen(false);
+      },
+    });
   }
 
-  // TODO:
   function handleDeletePasskey(passkeyId: string) {
-    console.log(passkeyId);
-    return Promise.resolve({error: {message: "Not implemented"}});
+    return authClient.passkey.deletePasskey(
+      {id: passkeyId},
+      {onSuccess: () => router.refresh()}
+    );
   }
 
   return (

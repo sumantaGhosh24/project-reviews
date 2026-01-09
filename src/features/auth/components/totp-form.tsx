@@ -1,9 +1,12 @@
 "use client";
 
+import {useRouter} from "next/navigation";
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import z from "zod";
+import {toast} from "sonner";
 
+import {authClient} from "@/lib/auth/auth-client";
 import {LoadingSwap} from "@/components/loading-swap";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -16,6 +19,8 @@ const totpSchema = z.object({
 type TotpForm = z.infer<typeof totpSchema>;
 
 export function TotpForm() {
+  const router = useRouter();
+
   const form = useForm<TotpForm>({
     resolver: zodResolver(totpSchema),
     defaultValues: {
@@ -25,9 +30,15 @@ export function TotpForm() {
 
   const {isSubmitting} = form.formState;
 
-  // TODO:
   async function handleTotpVerification(data: TotpForm) {
-    console.log(data);
+    await authClient.twoFactor.verifyTotp(data, {
+      onError: (error) => {
+        toast.error(error.error.message || "Failed to verify code");
+      },
+      onSuccess: () => {
+        router.push("/home");
+      },
+    });
   }
 
   return (

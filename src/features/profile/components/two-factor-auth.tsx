@@ -1,11 +1,14 @@
 "use client";
 
 import {useState} from "react";
+import {useRouter} from "next/navigation";
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import z from "zod";
 import QRCode from "react-qr-code";
+import {toast} from "sonner";
 
+import {authClient} from "@/lib/auth/auth-client";
 import {LoadingSwap} from "@/components/loading-swap";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -27,6 +30,8 @@ export function TwoFactorAuth({isEnabled}: {isEnabled: boolean}) {
     null
   );
 
+  const router = useRouter();
+
   const form = useForm<TwoFactorAuthForm>({
     resolver: zodResolver(twoFactorAuthSchema),
     defaultValues: {
@@ -36,14 +41,36 @@ export function TwoFactorAuth({isEnabled}: {isEnabled: boolean}) {
 
   const {isSubmitting} = form.formState;
 
-  // TODO:
   async function handleDisableTwoFactorAuth(data: TwoFactorAuthForm) {
-    console.log(data);
+    await authClient.twoFactor.disable(
+      {
+        password: data.password,
+      },
+      {
+        onError: (error) => {
+          toast.error(error.error.message || "Failed to disable 2FA");
+        },
+        onSuccess: () => {
+          form.reset();
+
+          router.refresh();
+        },
+      }
+    );
   }
 
-  // TODO:
   async function handleEnableTwoFactorAuth(data: TwoFactorAuthForm) {
-    console.log(data);
+    const result = await authClient.twoFactor.enable({
+      password: data.password,
+    });
+
+    if (result.error) {
+      toast.error(result.error.message || "Failed to enable 2FA");
+    }
+    {
+      setTwoFactorData(result.data);
+      form.reset();
+    }
   }
 
   if (twoFactorData != null) {
@@ -110,6 +137,8 @@ function QRCodeVerify({
 }: TwoFactorData & {onDone: () => void}) {
   const [successfullyEnabled, setSuccessfullyEnabled] = useState(false);
 
+  const router = useRouter();
+
   const form = useForm<QrForm>({
     resolver: zodResolver(qrSchema),
     defaultValues: {
@@ -119,9 +148,22 @@ function QRCodeVerify({
 
   const {isSubmitting} = form.formState;
 
-  // TODO:
   async function handleQrCode(data: QrForm) {
-    console.log(data);
+    await authClient.twoFactor.verifyTotp(
+      {
+        code: data.token,
+      },
+      {
+        onError: (error) => {
+          toast.error(error.error.message || "Failed to verify code");
+        },
+        onSuccess: () => {
+          setSuccessfullyEnabled(true);
+
+          router.refresh();
+        },
+      }
+    );
   }
 
   if (successfullyEnabled) {

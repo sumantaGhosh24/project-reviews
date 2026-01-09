@@ -1,6 +1,9 @@
-import Link from "next/link";
-import {ArrowLeftIcon, UsersIcon} from "lucide-react";
+import {headers} from "next/headers";
+import {redirect} from "next/navigation";
+import {UsersIcon} from "lucide-react";
 
+import {auth} from "@/lib/auth/auth";
+import {requireAdmin} from "@/features/auth/helpers/auth-utils";
 import {UserRow} from "@/features/users/components/user-row";
 import {
   Card,
@@ -17,37 +20,31 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const Users = () => {
-  const users = {
-    total: 100,
-    users: [
-      {
-        id: "u1",
-        name: "Alice Johnson",
-        email: "alice@example.com",
-        role: "admin",
-        banned: false,
-        emailVerified: true,
-        createdAt: "2023-01-01T00:00:00.000Z",
-      },
-      {
-        id: "u2",
-        name: "Bob Smith",
-        email: "bob@example.com",
-        role: "admin",
-        banned: false,
-        emailVerified: true,
-        createdAt: "2023-01-01T00:00:00.000Z",
-      },
-    ],
-  };
+export const metadata = {
+  title: "Manage Users",
+};
+
+const ManageUsers = async () => {
+  await requireAdmin();
+
+  const session = await auth.api.getSession({headers: await headers()});
+
+  if (session == null) return redirect("/login");
+
+  const hasAccess = await auth.api.userHasPermission({
+    headers: await headers(),
+    body: {permission: {user: ["list"]}},
+  });
+
+  if (!hasAccess.success) return redirect("/home");
+
+  const users = await auth.api.listUsers({
+    headers: await headers(),
+    query: {limit: 100, sortBy: "createdAt", sortDirection: "desc"},
+  });
 
   return (
     <div className="mx-auto container my-6 px-4">
-      <Link href="/" className="inline-flex items-center mb-6">
-        <ArrowLeftIcon className="size-4 mr-2" />
-        Back to Home
-      </Link>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -71,7 +68,7 @@ const Users = () => {
               </TableHeader>
               <TableBody>
                 {users.users.map((user) => (
-                  <UserRow key={user.id} user={user} selfId={user.id} />
+                  <UserRow key={user.id} user={user} selfId={session.user.id} />
                 ))}
               </TableBody>
             </Table>
@@ -82,4 +79,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default ManageUsers;

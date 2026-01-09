@@ -1,9 +1,12 @@
 "use client";
 
+import {useRouter} from "next/navigation";
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import z from "zod";
+import {toast} from "sonner";
 
+import {authClient} from "@/lib/auth/auth-client";
 import {LoadingSwap} from "@/components/loading-swap";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -32,6 +35,8 @@ export function ProfileUpdateForm({
     favoriteNumber: number;
   };
 }) {
+  const router = useRouter();
+
   const form = useForm<ProfileUpdateForm>({
     resolver: zodResolver(profileUpdateSchema),
     defaultValues: {
@@ -43,9 +48,40 @@ export function ProfileUpdateForm({
 
   const {isSubmitting} = form.formState;
 
-  // TODO:
   async function handleProfileUpdate(data: ProfileUpdateForm) {
-    console.log(data);
+    const promises = [
+      authClient.updateUser({
+        name: data.name,
+        favoriteNumber: Number(data.favoriteNumber),
+      }),
+    ];
+
+    if (data.email !== user.email) {
+      promises.push(
+        authClient.changeEmail({
+          newEmail: data.email,
+          callbackURL: "/profile/edit",
+        })
+      );
+    }
+
+    const res = await Promise.all(promises);
+
+    const updateUserResult = res[0];
+    const emailResult = res[1] ?? {error: false};
+
+    if (updateUserResult.error) {
+      toast.error(updateUserResult.error.message || "Failed to update profile");
+    } else if (emailResult.error) {
+      toast.error(emailResult.error.message || "Failed to change email");
+    } else {
+      if (data.email !== user.email) {
+        toast.success("Verify your new email address to complete the change.");
+      } else {
+        toast.success("Profile updated successfully");
+      }
+      router.refresh();
+    }
   }
 
   return (

@@ -1,9 +1,8 @@
 import {type ReactNode, Suspense} from "react";
+import {headers} from "next/headers";
+import {redirect} from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import {
-  ArrowLeftIcon,
-  ChessKingIcon,
   KeyIcon,
   LinkIcon,
   Loader2Icon,
@@ -12,6 +11,8 @@ import {
   UserIcon,
 } from "lucide-react";
 
+import {auth} from "@/lib/auth/auth";
+import {requireAuth} from "@/features/auth/helpers/auth-utils";
 import {ProfileUpdateForm} from "@/features/profile/components/profile-update-form";
 import {AccountDeletion} from "@/features/profile/components/account-deletion";
 import {AccountLinking} from "@/features/profile/components/account-linking";
@@ -29,31 +30,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import SubscriptionTab from "@/features/profile/components/subscription-tab";
 
-const EditProfile = () => {
-  // TODO:
-  const session = {
-    user: {
-      image: "https://placehold.co/600x400.png",
-      name: "Alice Johnson",
-      role: "admin",
-      email: "alice@example.com",
-      favoriteNumber: 123456,
-      twoFactorEnabled: true,
-    },
-    session: {
-      token: "something",
-    },
-  };
+export const metadata = {
+  title: "Update Profile",
+};
+
+export default async function ProfilePage() {
+  await requireAuth();
+
+  const session = await auth.api.getSession({headers: await headers()});
+
+  if (session == null) return redirect("/login");
 
   return (
     <div className="container mx-auto my-6 px-4">
       <div className="mb-8">
-        <Link href="/" className="inline-flex items-center mb-6">
-          <ArrowLeftIcon className="size-4 mr-2" />
-          Back to Home
-        </Link>
         <div className="flex items-center space-x-4">
           <div className="size-16 bg-muted rounded-full flex items-center justify-center overflow-hidden">
             {session.user.image ? (
@@ -73,24 +64,17 @@ const EditProfile = () => {
               <h1 className="text-3xl font-bold capitalize">
                 {session.user.name || "User Profile"}
               </h1>
-              <div className="flex items-center gap-2">
-                <Badge className="uppercase">{session.user.role}</Badge>
-                <Badge className="uppercase bg-orange-600">vip</Badge>
-              </div>
+              <Badge className="uppercase">{session.user.role}</Badge>
             </div>
             <p className="text-muted-foreground">{session.user.email}</p>
           </div>
         </div>
       </div>
       <Tabs className="space-y-2" defaultValue="profile">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="profile">
             <UserIcon />
             <span className="max-sm:hidden">Profile</span>
-          </TabsTrigger>
-          <TabsTrigger value="subscription">
-            <ChessKingIcon />
-            <span className="max-sm:hidden">Subscription</span>
           </TabsTrigger>
           <TabsTrigger value="security">
             <ShieldIcon />
@@ -113,16 +97,6 @@ const EditProfile = () => {
           <Card>
             <CardContent>
               <ProfileUpdateForm user={session.user} />
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="subscription">
-          <Card>
-            <CardHeader>
-              <CardTitle>Subscription</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <SubscriptionTab />
             </CardContent>
           </Card>
         </TabsContent>
@@ -157,15 +131,18 @@ const EditProfile = () => {
       </Tabs>
     </div>
   );
-};
+}
 
 async function LinkedAccountsTab() {
-  // TODO:
+  const accounts = await auth.api.listUserAccounts({headers: await headers()});
+  const nonCredentialAccounts = accounts.filter(
+    (a) => a.providerId !== "credential"
+  );
 
   return (
     <Card>
       <CardContent>
-        {/* <AccountLinking currentAccounts={nonCredentialAccounts} /> */}
+        <AccountLinking currentAccounts={nonCredentialAccounts} />
       </CardContent>
     </Card>
   );
@@ -176,15 +153,15 @@ async function SessionsTab({
 }: {
   currentSessionToken: string;
 }) {
-  // TODO:
+  const sessions = await auth.api.listSessions({headers: await headers()});
 
   return (
     <Card>
       <CardContent>
-        {/* <SessionManagement
+        <SessionManagement
           sessions={sessions}
           currentSessionToken={currentSessionToken}
-        /> */}
+        />
       </CardContent>
     </Card>
   );
@@ -197,11 +174,18 @@ async function SecurityTab({
   email: string;
   isTwoFactorEnabled: boolean;
 }) {
-  // TODO:
+  const [passkeys, accounts] = await Promise.all([
+    auth.api.listPasskeys({headers: await headers()}),
+    auth.api.listUserAccounts({headers: await headers()}),
+  ]);
+
+  const hasPasswordAccount = accounts.some(
+    (a) => a.providerId === "credential"
+  );
 
   return (
     <div className="space-y-6">
-      {/* {hasPasswordAccount ? (
+      {hasPasswordAccount ? (
         <Card>
           <CardHeader>
             <CardTitle>Change Password</CardTitle>
@@ -238,13 +222,13 @@ async function SecurityTab({
             <TwoFactorAuth isEnabled={isTwoFactorEnabled} />
           </CardContent>
         </Card>
-      )} */}
+      )}
       <Card>
         <CardHeader>
           <CardTitle>Passkeys</CardTitle>
         </CardHeader>
         <CardContent>
-          {/* <PasskeyManagement passkeys={passkeys} /> */}
+          <PasskeyManagement passkeys={passkeys} />
         </CardContent>
       </Card>
     </div>
@@ -258,5 +242,3 @@ function LoadingSuspense({children}: {children: ReactNode}) {
     </Suspense>
   );
 }
-
-export default EditProfile;

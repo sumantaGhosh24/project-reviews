@@ -1,7 +1,11 @@
 "use client";
 
+import {useRouter} from "next/navigation";
+import {toast} from "sonner";
+import {UserWithRole} from "better-auth/plugins/admin";
 import {MoreHorizontalIcon} from "lucide-react";
 
+import {authClient} from "@/lib/auth/auth-client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,40 +28,83 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {TableCell, TableRow} from "@/components/ui/table";
 
-interface UserRowProps {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    role: string;
-    banned: boolean;
-    emailVerified: boolean;
-    createdAt: string;
-  };
-  selfId: string;
-}
-
-export function UserRow({user, selfId}: UserRowProps) {
+export function UserRow({user, selfId}: {user: UserWithRole; selfId: string}) {
+  const {refetch} = authClient.useSession();
+  const router = useRouter();
   const isSelf = user.id === selfId;
 
   function handleImpersonateUser(userId: string) {
-    return Promise.resolve({error: {message: "Not implemented"}});
+    authClient.admin.impersonateUser(
+      {userId},
+      {
+        onError: (error) => {
+          toast.error(error.error.message || "Failed to impersonate");
+        },
+        onSuccess: () => {
+          refetch();
+          router.push("/home");
+        },
+      }
+    );
   }
 
   function handleBanUser(userId: string) {
-    return Promise.resolve({error: {message: "Not implemented"}});
+    authClient.admin.banUser(
+      {userId},
+      {
+        onError: (error) => {
+          toast.error(error.error.message || "Failed to ban user");
+        },
+        onSuccess: () => {
+          toast.success("User banned");
+          router.refresh();
+        },
+      }
+    );
   }
 
   function handleUnbanUser(userId: string) {
-    return Promise.resolve({error: {message: "Not implemented"}});
+    authClient.admin.unbanUser(
+      {userId},
+      {
+        onError: (error) => {
+          toast.error(error.error.message || "Failed to unban user");
+        },
+        onSuccess: () => {
+          toast.success("User unbanned");
+          router.refresh();
+        },
+      }
+    );
   }
 
   function handleRevokeSessions(userId: string) {
-    return Promise.resolve({error: {message: "Not implemented"}});
+    authClient.admin.revokeUserSessions(
+      {userId},
+      {
+        onError: (error) => {
+          toast.error(error.error.message || "Failed to revoke user sessions");
+        },
+        onSuccess: () => {
+          toast.success("User sessions revoked");
+        },
+      }
+    );
   }
 
   function handleRemoveUser(userId: string) {
-    return Promise.resolve({error: {message: "Not implemented"}});
+    authClient.admin.removeUser(
+      {userId},
+      {
+        onError: (error) => {
+          toast.error(error.error.message || "Failed to delete user");
+        },
+        onSuccess: () => {
+          toast.success("User deleted");
+          router.refresh();
+        },
+      }
+    );
   }
 
   return (

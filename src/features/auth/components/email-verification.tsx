@@ -2,6 +2,7 @@
 
 import {useEffect, useRef, useState} from "react";
 
+import {authClient} from "@/lib/auth/auth-client";
 import {AuthActionButton} from "@/features/auth/components/auth-action-button";
 
 export function EmailVerification({email}: {email: string}) {
@@ -43,8 +44,10 @@ export function EmailVerification({email}: {email: string}) {
         disabled={timeToNextResend > 0}
         action={() => {
           startEmailVerificationCountdown();
-          // TODO:
-          return Promise.resolve({error: {message: "Not implemented"}});
+          return authClient.sendVerificationEmail({
+            email,
+            callbackURL: "/home",
+          });
         }}
       >
         {timeToNextResend > 0

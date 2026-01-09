@@ -1,20 +1,14 @@
 "use client";
 
 import {useRouter} from "next/navigation";
+import {UAParser} from "ua-parser-js";
+import {Session} from "better-auth";
 import {MonitorIcon, SmartphoneIcon, Trash2Icon} from "lucide-react";
 
+import {authClient} from "@/lib/auth/auth-client";
 import {AuthActionButton} from "@/features/auth/components/auth-action-button";
 import {Badge} from "@/components/ui/badge";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-
-// TODO:
-interface Session {
-  id: string;
-  token: string;
-  userAgent: string;
-  expiresAt: Date;
-  createdAt: Date;
-}
 
 export function SessionManagement({
   sessions,
@@ -23,12 +17,17 @@ export function SessionManagement({
   sessions: Session[];
   currentSessionToken: string;
 }) {
+  const router = useRouter();
+
   const otherSessions = sessions.filter((s) => s.token !== currentSessionToken);
   const currentSession = sessions.find((s) => s.token === currentSessionToken);
 
-  // TODO:
   function revokeOtherSessions() {
-    return Promise.resolve({error: {message: "Not implemented"}});
+    return authClient.revokeOtherSessions(undefined, {
+      onSuccess: () => {
+        router.refresh();
+      },
+    });
   }
 
   return (
@@ -74,9 +73,19 @@ function SessionCard({
   session: Session;
   isCurrentSession?: boolean;
 }) {
-  // TODO:
+  const router = useRouter();
+  const userAgentInfo = session.userAgent ? UAParser(session.userAgent) : null;
+
   function getBrowserInformation() {
-    return `text, test`;
+    if (userAgentInfo == null) return "Unknown Device";
+    if (userAgentInfo.browser.name == null && userAgentInfo.os.name == null) {
+      return "Unknown Device";
+    }
+
+    if (userAgentInfo.browser.name == null) return userAgentInfo.os.name;
+    if (userAgentInfo.os.name == null) return userAgentInfo.browser.name;
+
+    return `${userAgentInfo.browser.name}, ${userAgentInfo.os.name}`;
   }
 
   function formatDate(date: Date) {
@@ -86,17 +95,18 @@ function SessionCard({
     }).format(new Date(date));
   }
 
-  // TODO:
   function revokeSession() {
-    return Promise.resolve({error: {message: "Not implemented"}});
+    return authClient.revokeSession(
+      {
+        token: session.token,
+      },
+      {
+        onSuccess: () => {
+          router.refresh();
+        },
+      }
+    );
   }
-
-  // TODO:
-  const userAgentInfo = {
-    device: {
-      type: "mobile",
-    },
-  };
 
   return (
     <Card>

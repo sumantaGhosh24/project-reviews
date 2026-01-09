@@ -1,11 +1,13 @@
 "use client";
 
-import {useState} from "react";
-import Link from "next/link";
+import {useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
+import {toast} from "sonner";
 import {MenuIcon, XIcon} from "lucide-react";
 
-import {adminLinks, guestLinks, premiumLinks, userLinks} from "@/constants";
+import {authClient} from "@/lib/auth/auth-client";
 
 import {ModeToggle} from "./mode-toggle";
 import {
@@ -17,21 +19,43 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "./ui/navigation-menu";
-import {Avatar, AvatarFallback, AvatarImage} from "./ui/avatar";
 import {Button} from "./ui/button";
+import {Avatar, AvatarFallback, AvatarImage} from "./ui/avatar";
+import {Skeleton} from "./ui/skeleton";
+import {adminLinks, guestLinks, userLinks} from "@/constants";
 
 const Header = () => {
   const [open, setOpen] = useState(false);
 
-  // TODO:
-  const isAuthenticated = true;
-  const isAdmin = true;
-  const isPremium = true;
-  const userId = "1";
+  const [hasAdminPermission, setHasAdminPermission] = useState(false);
 
-  const handleLogout = () => {
-    console.log("logout");
+  const router = useRouter();
+
+  const {data: session, isPending: loading} = authClient.useSession();
+
+  useEffect(() => {
+    authClient.admin
+      .hasPermission({permission: {category: ["create"]}})
+      .then(({data}) => {
+        setHasAdminPermission(data?.success ?? false);
+      });
+  }, []);
+
+  const handleSignOut = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          toast.success("You logged out successfully!");
+
+          router.push("/login");
+        },
+      },
+    });
   };
+
+  if (loading) {
+    return <Skeleton className="w-full h-20" />;
+  }
 
   return (
     <nav className="w-full border-b bg-primary">
@@ -62,9 +86,9 @@ const Header = () => {
         >
           <NavigationMenu className="mx-auto">
             <NavigationMenuList className="flex-col gap-2 md:flex-row">
-              {isAuthenticated ? (
+              {session !== null ? (
                 <>
-                  {isAdmin && (
+                  {hasAdminPermission && (
                     <>
                       <NavigationMenuItem>
                         <NavigationMenuTrigger>Manage</NavigationMenuTrigger>
@@ -92,23 +116,12 @@ const Header = () => {
                       </NavigationMenuLink>
                     </NavigationMenuItem>
                   ))}
-                  {isPremium &&
-                    premiumLinks.map((item) => (
-                      <NavigationMenuItem key={item.id}>
-                        <NavigationMenuLink
-                          asChild
-                          className={navigationMenuTriggerStyle()}
-                        >
-                          <Link href={item.url}>{item.name}</Link>
-                        </NavigationMenuLink>
-                      </NavigationMenuItem>
-                    ))}
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       asChild
                       className={navigationMenuTriggerStyle()}
                     >
-                      <Link href={`/profile/${userId}`}>
+                      <Link href={"/profile/edit"}>
                         <Avatar>
                           <AvatarImage src="https://placehold.co/600x400.png" />
                           <AvatarFallback>
@@ -121,7 +134,7 @@ const Header = () => {
                   <Button
                     variant="secondary"
                     className={navigationMenuTriggerStyle()}
-                    onClick={handleLogout}
+                    onClick={handleSignOut}
                   >
                     Logout
                   </Button>

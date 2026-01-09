@@ -3,7 +3,9 @@
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import z from "zod";
+import {toast} from "sonner";
 
+import {authClient} from "@/lib/auth/auth-client";
 import {LoadingSwap} from "@/components/loading-swap";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -25,9 +27,23 @@ export function ForgotPassword({openSignInTab}: {openSignInTab: () => void}) {
 
   const {isSubmitting} = form.formState;
 
-  // TODO:
   async function handleForgotPassword(data: ForgotPasswordForm) {
-    console.log(data);
+    await authClient.requestPasswordReset(
+      {
+        ...data,
+        redirectTo: "/reset-password",
+      },
+      {
+        onError: (error) => {
+          toast.error(
+            error.error.message || "Failed to send password reset email"
+          );
+        },
+        onSuccess: () => {
+          toast.success("Password reset email sent");
+        },
+      }
+    );
   }
 
   return (

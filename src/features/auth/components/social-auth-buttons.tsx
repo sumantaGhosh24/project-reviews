@@ -1,7 +1,30 @@
 "use client";
 
-export function SocialAuthButtons() {
-  // TODO:
+import {authClient} from "@/lib/auth/auth-client";
+import {
+  SUPPORTED_OAUTH_PROVIDER_DETAILS,
+  SUPPORTED_OAUTH_PROVIDERS,
+} from "@/lib/auth/o-auth-providers";
+import {AuthActionButton} from "@/features/auth/components/auth-action-button";
 
-  return <div>Auth Button</div>;
+export function SocialAuthButtons() {
+  return SUPPORTED_OAUTH_PROVIDERS.map((provider) => {
+    const Icon = SUPPORTED_OAUTH_PROVIDER_DETAILS[provider].Icon;
+
+    return (
+      <AuthActionButton
+        variant="outline"
+        key={provider}
+        action={() => {
+          return authClient.signIn.social({
+            provider,
+            callbackURL: "/home",
+          });
+        }}
+      >
+        <Icon />
+        {SUPPORTED_OAUTH_PROVIDER_DETAILS[provider].name}
+      </AuthActionButton>
+    );
+  });
 }

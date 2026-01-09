@@ -1,11 +1,13 @@
 "use client";
 
-import {useSearchParams} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import Link from "next/link";
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import z from "zod";
+import {toast} from "sonner";
 
+import {authClient} from "@/lib/auth/auth-client";
 import {LoadingSwap} from "@/components/loading-swap";
 import {Button} from "@/components/ui/button";
 import {
@@ -25,6 +27,8 @@ const resetPasswordSchema = z.object({
 type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
 
 export default function ResetPasswordForm() {
+  const router = useRouter();
+
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const error = searchParams.get("error");
@@ -38,11 +42,28 @@ export default function ResetPasswordForm() {
 
   const {isSubmitting} = form.formState;
 
-  // TODO:
   async function handleResetPassword(data: ResetPasswordForm) {
     if (token == null) return;
 
-    console.log(data);
+    await authClient.resetPassword(
+      {
+        newPassword: data.password,
+        token,
+      },
+      {
+        onError: (error) => {
+          toast.error(error.error.message || "Failed to reset password");
+        },
+        onSuccess: () => {
+          toast.success("Password reset successful", {
+            description: "Redirection to login...",
+          });
+          setTimeout(() => {
+            router.push("/login");
+          }, 1000);
+        },
+      }
+    );
   }
 
   if (token == null || error != null) {

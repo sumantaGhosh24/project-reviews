@@ -1,9 +1,12 @@
 "use client";
 
+import {useRouter} from "next/navigation";
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import z from "zod";
+import {toast} from "sonner";
 
+import {authClient} from "@/lib/auth/auth-client";
 import {LoadingSwap} from "@/components/loading-swap";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -16,6 +19,7 @@ const backupCodeSchema = z.object({
 type BackupCodeForm = z.infer<typeof backupCodeSchema>;
 
 export function BackupCodeTab() {
+  const router = useRouter();
   const form = useForm<BackupCodeForm>({
     resolver: zodResolver(backupCodeSchema),
     defaultValues: {
@@ -25,9 +29,15 @@ export function BackupCodeTab() {
 
   const {isSubmitting} = form.formState;
 
-  // TODO:
   async function handleBackupCodeVerification(data: BackupCodeForm) {
-    console.log(data);
+    await authClient.twoFactor.verifyBackupCode(data, {
+      onError: (error) => {
+        toast.error(error.error.message || "Failed to verify code");
+      },
+      onSuccess: () => {
+        router.push("/home");
+      },
+    });
   }
 
   return (

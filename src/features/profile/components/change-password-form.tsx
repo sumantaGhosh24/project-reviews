@@ -3,7 +3,9 @@
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import z from "zod";
+import {toast} from "sonner";
 
+import {authClient} from "@/lib/auth/auth-client";
 import {LoadingSwap} from "@/components/loading-swap";
 import {Button} from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -30,9 +32,16 @@ export function ChangePasswordForm() {
 
   const {isSubmitting} = form.formState;
 
-  // TODO:
   async function handlePasswordChange(data: ChangePasswordForm) {
-    console.log(data);
+    await authClient.changePassword(data, {
+      onError: (error) => {
+        toast.error(error.error.message || "Failed to change password");
+      },
+      onSuccess: () => {
+        toast.success("Password changed successfully");
+        form.reset();
+      },
+    });
   }
 
   return (

@@ -1,9 +1,12 @@
 "use client";
 
+import {useRouter} from "next/navigation";
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import z from "zod";
+import {toast} from "sonner";
 
+import {authClient} from "@/lib/auth/auth-client";
 import {LoadingSwap} from "@/components/loading-swap";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -25,6 +28,8 @@ export function SignInTab({
   openEmailVerificationTab: (email: string) => void;
   openForgotPassword: () => void;
 }) {
+  const router = useRouter();
+
   const form = useForm<SignInForm>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -35,9 +40,21 @@ export function SignInTab({
 
   const {isSubmitting} = form.formState;
 
-  // TODO:
   async function handleSignIn(data: SignInForm) {
-    console.log(data);
+    await authClient.signIn.email(
+      {...data, callbackURL: "/home"},
+      {
+        onError: (error) => {
+          if (error.error.code === "EMAIL_NOT_VERIFIED") {
+            openEmailVerificationTab(data.email);
+          }
+          toast.error(error.error.message || "Failed to sign in");
+        },
+        onSuccess: () => {
+          router.push("/home");
+        },
+      }
+    );
   }
 
   return (
