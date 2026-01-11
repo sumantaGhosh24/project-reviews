@@ -2,23 +2,23 @@ import {Suspense} from "react";
 import {ErrorBoundary} from "@sentry/nextjs";
 
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
-import {prefetchUser} from "@/features/profile/server/prefetch";
+import {prefetchFollowings} from "@/features/profile/server/prefetch";
+import {profileParamsLoader} from "@/features/profile/server/params-loader";
 import {HydrateClient} from "@/trpc/server";
-import ProfileDetails from "@/features/profile/components/profile-details";
+import ProfileFollowings from "@/features/profile/components/profile-followings";
 import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
 
-export const metadata = {
-  title: "Profile Details",
-};
-
-export default async function ProfilePage({
+export default async function ProfileFollowingsPage({
   params,
+  searchParams,
 }: PageProps<"/profile/[id]/details">) {
   const {id} = await params;
 
   await requireAuth();
 
-  prefetchUser(id);
+  const profileParams = await profileParamsLoader(searchParams);
+
+  prefetchFollowings({id, ...profileParams});
 
   return (
     <HydrateClient>
@@ -33,7 +33,7 @@ export default async function ProfilePage({
         }
       >
         <Suspense fallback={<LoadingComponent />}>
-          <ProfileDetails id={id} />
+          <ProfileFollowings id={id} />
         </Suspense>
       </ErrorBoundary>
     </HydrateClient>

@@ -2,6 +2,7 @@ import {type ReactNode, Suspense} from "react";
 import {headers} from "next/headers";
 import {redirect} from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import {
   KeyIcon,
   LinkIcon,
@@ -12,6 +13,7 @@ import {
 } from "lucide-react";
 
 import {auth} from "@/lib/auth/auth";
+import {polarClient} from "@/lib/polar";
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
 import {ProfileUpdateForm} from "@/features/profile/components/profile-update-form";
 import {AccountDeletion} from "@/features/profile/components/account-deletion";
@@ -30,6 +32,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {Button} from "@/components/ui/button";
 
 export const metadata = {
   title: "Update Profile",
@@ -41,6 +44,13 @@ export default async function ProfilePage() {
   const session = await auth.api.getSession({headers: await headers()});
 
   if (session == null) return redirect("/login");
+
+  const customer = await polarClient.customers.getStateExternal({
+    externalId: session.user.id,
+  });
+
+  const hasActiveSubscription =
+    customer.activeSubscriptions && customer.activeSubscriptions.length > 0;
 
   return (
     <div className="container mx-auto my-6 px-4">
@@ -59,14 +69,24 @@ export default async function ProfilePage() {
               <UserIcon className="size-8 text-muted-foreground" />
             )}
           </div>
-          <div className="flex-1">
-            <div className="flex gap-1 justify-between items-center">
+          <div className="flex flex-1 items-center justify-between">
+            <div className="">
               <h1 className="text-3xl font-bold capitalize">
                 {session.user.name || "User Profile"}
               </h1>
+              <p className="text-muted-foreground">{session.user.email}</p>
               <Badge className="uppercase">{session.user.role}</Badge>
+              {hasActiveSubscription && (
+                <Badge className="uppercase ml-2" variant="destructive">
+                  vip user
+                </Badge>
+              )}
             </div>
-            <p className="text-muted-foreground">{session.user.email}</p>
+            <Button asChild>
+              <Link href={`/profile/${session.user.id}/details`}>
+                View Profile
+              </Link>
+            </Button>
           </div>
         </div>
       </div>

@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -22,6 +21,7 @@ model User {
   banReason        String?
   banExpires       DateTime?
   favoriteNumber   Int
+  followingIds     String[]
   sessions         Session[]
   accounts         Account[]
   twofactors       TwoFactor[]

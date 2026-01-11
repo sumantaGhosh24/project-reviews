@@ -176,9 +176,14 @@ const Header = () => {
                     >
                       <Link href={"/profile/edit"}>
                         <Avatar>
-                          <AvatarImage src="https://placehold.co/600x400.png" />
+                          <AvatarImage
+                            src={
+                              session.user?.image ??
+                              "https://placehold.co/600x400.png"
+                            }
+                          />
                           <AvatarFallback>
-                            {"User".substring(0, 2)}
+                            {session.user?.name?.substring(0, 2)}
                           </AvatarFallback>
                         </Avatar>
                       </Link>

@@ -5,79 +5,71 @@ import {useRouter} from "next/navigation";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Button} from "@/components/ui/button";
 
-type User = {
+import {useHandleFollow, useSuspenseUser} from "../hooks/use-profile";
+
+interface ProfileDetailsProps {
   id: string;
-  name: string;
-  avatarUrl: string;
-  bio: string;
-  postsCount: number;
-  followersCount: number;
-  followingCount: number;
-};
+}
 
-const ProfileDetails = () => {
-  const user: User = {
-    id: "u1",
-    name: "Alice Johnson",
-    avatarUrl: "https://placehold.co/600x400.png",
-    bio: "Frontend Engineer • Building delightful interfaces and accessible experiences.",
-    postsCount: 12,
-    followersCount: 248,
-    followingCount: 180,
-  };
-
-  const activeUser = true;
-  const isFollowing = false;
+const ProfileDetails = ({id}: ProfileDetailsProps) => {
+  const {data, isFetching} = useSuspenseUser(id);
 
   const router = useRouter();
+
+  const handleFollow = useHandleFollow();
 
   const handleUpdate = () => {
     router.push("/profile/edit");
   };
 
-  // TODO:
-  const toggleFollow = () => {};
+  const toggleFollow = () => {
+    if (isFetching) return null;
+
+    handleFollow.mutate({
+      userId: id,
+    });
+  };
 
   return (
     <div className="flex items-center gap-4 flex-wrap">
       <Avatar className="size-32">
-        <AvatarImage src={user.avatarUrl} />
-        <AvatarFallback>{user.name.substring(0, 2)}</AvatarFallback>
+        <AvatarImage src={data?.image ?? "https://placehold.co/600x400.png"} />
+        <AvatarFallback>{data?.name?.substring(0, 2)}</AvatarFallback>
       </Avatar>
       <div className="min-w-0 flex-1">
         <h1 className="truncate text-2xl font-semibold tracking-tight">
-          {user.name}
+          {data?.name}
         </h1>
         <p className="mt-1 text-sm leading-relaxed text-zinc-600 dark:text-white">
-          {user.bio}
+          {data?.email}
         </p>
         <div className="mt-4 flex gap-6 text-sm">
           <div className="flex items-center gap-2">
             <span className="font-medium text-zinc-900 dark:text-white">
-              {user.postsCount}
+              {0}
             </span>
             <span className="text-zinc-600 dark:text-white">Posts</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="font-medium text-zinc-900 dark:text-white">
-              {user.followersCount}
+              {data?.followersCount}
             </span>
             <span className="text-zinc-600 dark:text-white">Followers</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="font-medium text-zinc-900 dark:text-white">
-              {user.followingCount}
+              {data?.followingIds?.length}
             </span>
             <span className="text-zinc-600 dark:text-white">Following</span>
           </div>
         </div>
       </div>
       <div className="ml-auto">
-        {activeUser ? (
+        {data?.isActiveUser ? (
           <Button variant="success" onClick={handleUpdate}>
             Edit profile
           </Button>
-        ) : isFollowing ? (
+        ) : data?.isFollowing ? (
           <Button variant="destructive" onClick={toggleFollow}>
             Unfollow
           </Button>
