@@ -1,7 +1,6 @@
 "use client";
 
 import {useRouter} from "next/navigation";
-import Image from "next/image";
 import {formatDistanceToNowStrict} from "date-fns";
 import {PenIcon} from "lucide-react";
 
@@ -18,65 +17,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 
+import {useSuspenseCategories} from "../hooks/use-categories";
 import {useCategoriesParams} from "../hooks/use-categories-params";
 import DeleteCategory from "./delete-category";
 
 const CategoriesTable = () => {
   const router = useRouter();
 
-  // TODO:
-  const categories = {
-    items: [
-      {
-        id: "1",
-        name: "Category 1",
-        imageUrl: "https://placehold.co/600x400.png",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: "2",
-        name: "Category 2",
-        imageUrl: "https://placehold.co/600x400.png",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: "3",
-        name: "Category 3",
-        imageUrl: "https://placehold.co/600x400.png",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: "4",
-        name: "Category 4",
-        imageUrl: "https://placehold.co/600x400.png",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: "5",
-        name: "Category 5",
-        imageUrl: "https://placehold.co/600x400.png",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ],
-    totalPages: 1,
-    page: 1,
-  };
-  const isFetching = false;
+  const {data: categories, isFetching} = useSuspenseCategories();
 
   const [params, setParams] = useCategoriesParams();
 
@@ -90,7 +40,6 @@ const CategoriesTable = () => {
               <TableRow>
                 <TableHead className="w-[100px]">Id</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Image</TableHead>
                 <TableHead>Created At</TableHead>
                 <TableHead>Updated At</TableHead>
                 <TableHead>Actions</TableHead>
@@ -101,36 +50,6 @@ const CategoriesTable = () => {
                 <TableRow key={cat.id}>
                   <TableCell className="font-medium">{cat.id}</TableCell>
                   <TableCell>{cat.name}</TableCell>
-                  <TableCell>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Image
-                          src={cat.imageUrl as string}
-                          alt="category image"
-                          height={50}
-                          width={50}
-                          className="h-12 animate-pulse cursor-pointer"
-                        />
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-md">
-                        <DialogHeader>
-                          <DialogTitle>Category Image</DialogTitle>
-                          <DialogDescription>
-                            View the image of this category.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="flex items-center space-x-2">
-                          <Image
-                            src={cat.imageUrl as string}
-                            alt="category image"
-                            height={250}
-                            width={300}
-                            className="h-[300px] w-full rounded"
-                          />
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </TableCell>
                   <TableCell>
                     {formatDistanceToNowStrict(cat.createdAt, {
                       addSuffix: true,

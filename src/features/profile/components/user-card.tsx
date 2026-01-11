@@ -14,14 +14,14 @@ import {User} from "@/generated/prisma/client";
 
 import {useHandleFollow} from "../hooks/use-profile";
 
-interface UserCard {
+interface UserCardProps {
   user: User & {
     isFollowing: boolean;
     isActiveUser: boolean;
   };
 }
 
-const UserCard = ({user}: UserCard) => {
+const UserCard = ({user}: UserCardProps) => {
   const router = useRouter();
 
   const handleFollow = useHandleFollow();
