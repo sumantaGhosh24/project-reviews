@@ -46,9 +46,9 @@ const ProfileDetails = ({id}: ProfileDetailsProps) => {
         <div className="mt-4 flex gap-6 text-sm">
           <div className="flex items-center gap-2">
             <span className="font-medium text-zinc-900 dark:text-white">
-              {0}
+              {data?.projectsCount}
             </span>
-            <span className="text-zinc-600 dark:text-white">Posts</span>
+            <span className="text-zinc-600 dark:text-white">Projects</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="font-medium text-zinc-900 dark:text-white">
@@ -58,7 +58,7 @@ const ProfileDetails = ({id}: ProfileDetailsProps) => {
           </div>
           <div className="flex items-center gap-2">
             <span className="font-medium text-zinc-900 dark:text-white">
-              {data?.followingIds?.length}
+              {data?.followingsCount}
             </span>
             <span className="text-zinc-600 dark:text-white">Following</span>
           </div>

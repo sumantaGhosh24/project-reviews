@@ -1,4 +1,3 @@
-import SearchUser from "./search-user";
 import ProfileFollowingsTable from "./profile-followings-table";
 
 interface ProfileFollowingsProps {
@@ -11,9 +10,6 @@ const ProfileFollowings = ({id}: ProfileFollowingsProps) => {
       <div className="mb-8 text-left">
         <h1 className="mb-4 text-3xl font-bold">Followers</h1>
         <p className="text-gray-600">User followers</p>
-      </div>
-      <div className="mb-8">
-        <SearchUser />
       </div>
       <ProfileFollowingsTable id={id} />
     </div>

@@ -42,6 +42,7 @@ enum NotificationType {
 }
 
 enum NotificationTarget {
+  USER
   PROJECT
   RELEASE
   COMMENT

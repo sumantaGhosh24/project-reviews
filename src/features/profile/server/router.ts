@@ -9,30 +9,48 @@ export const profileRouter = createTRPCRouter({
   getUser: protectedProcedure
     .input(z.object({id: z.string()}))
     .query(async ({input, ctx}) => {
-      const currentUserFollowings = await prisma.user.findUnique({
-        where: {id: ctx?.auth?.user?.id},
-        select: {followingIds: true},
-      });
-
-      const followersCount = await prisma.user.count({
-        where: {
-          followingIds: {
-            has: input.id,
-          },
-        },
-      });
-
-      const existingUser = await prisma.user.findUnique({
+      const user = await prisma.user.findUnique({
         where: {id: input.id},
       });
 
-      const isFollowing = currentUserFollowings?.followingIds?.includes(
-        input.id
-      );
+      const following = await prisma.follow.findUnique({
+        where: {
+          followerId_followingId: {
+            followerId: ctx?.auth?.user?.id,
+            followingId: input.id,
+          },
+        },
+      });
+      const isFollowing = Boolean(following);
 
-      const isActiveUser = ctx?.auth?.user?.id === existingUser?.id;
+      const isActiveUser = ctx?.auth?.user?.id === user?.id;
 
-      return {...existingUser, followersCount, isFollowing, isActiveUser};
+      const followersCount = await prisma.follow.count({
+        where: {
+          followingId: input.id,
+        },
+      });
+
+      const followingsCount = await prisma.follow.count({
+        where: {
+          followerId: input.id,
+        },
+      });
+
+      const projectsCount = await prisma.project.count({
+        where: {
+          ownerId: input.id,
+        },
+      });
+
+      return {
+        ...user,
+        isFollowing,
+        isActiveUser,
+        followersCount,
+        followingsCount,
+        projectsCount,
+      };
     }),
   handleFollow: protectedProcedure
     .input(
@@ -47,6 +65,7 @@ export const profileRouter = createTRPCRouter({
           message: "Invalid user id.",
         });
       }
+
       const user = await prisma.user.findUnique({
         where: {
           id: input.userId,
@@ -59,42 +78,54 @@ export const profileRouter = createTRPCRouter({
         });
       }
 
-      const currentUser = await prisma.user.findUnique({
-        where: {
-          id: ctx.auth.user.id,
-        },
-      });
-      if (!currentUser) {
+      if (ctx?.auth?.user?.id === input.userId) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "User not exists.",
+          code: "BAD_REQUEST",
+          message: "You can't follow yourself.",
         });
       }
 
-      let updatedFollowingIds = [...(currentUser.followingIds || [])];
-
-      const method = updatedFollowingIds.includes(input.userId)
-        ? "DELETE"
-        : "POST";
-
-      if (method === "POST") {
-        updatedFollowingIds.push(input.userId);
-      }
-      if (method === "DELETE") {
-        updatedFollowingIds = updatedFollowingIds.filter(
-          (followingId) => followingId !== input.userId
-        );
-      }
-      await prisma.user.update({
+      const exists = await prisma.follow.findUnique({
         where: {
-          id: ctx.auth.user.id,
-        },
-        data: {
-          followingIds: updatedFollowingIds,
+          followerId_followingId: {
+            followerId: ctx?.auth?.user?.id,
+            followingId: input.userId,
+          },
         },
       });
 
-      return {user, currentUser};
+      if (exists) {
+        await prisma.follow.delete({
+          where: {
+            followerId_followingId: {
+              followerId: ctx?.auth?.user?.id,
+              followingId: input.userId,
+            },
+          },
+        });
+      } else {
+        await prisma.follow.create({
+          data: {
+            followerId: ctx?.auth?.user?.id,
+            followingId: input.userId,
+          },
+        });
+
+        await prisma.notification.create({
+          data: {
+            type: "FOLLOW",
+            recipientId: input.userId,
+            actorId: ctx?.auth?.user?.id,
+            target: "USER",
+            targetId: ctx?.auth?.user?.id,
+            title: "New follower",
+            body: `You have been followed by ${ctx?.auth?.user?.name}`,
+            url: `${process.env.BETTER_AUTH_URL}/profile/${ctx?.auth?.user?.id}/details`,
+          },
+        });
+      }
+
+      return {user, currentUser: {id: ctx.auth.user.id}};
     }),
   getFollowers: protectedProcedure
     .input(
@@ -106,62 +137,57 @@ export const profileRouter = createTRPCRouter({
           .min(PAGINATION.MIN_PAGE_SIZE)
           .max(PAGINATION.MAX_PAGE_SIZE)
           .default(PAGINATION.DEFAULT_PAGE_SIZE),
-        search: z.string().default(""),
       })
     )
     .query(async ({input, ctx}) => {
-      const {id, page, pageSize, search} = input;
-
-      const currentUserFollowings = await prisma.user.findUnique({
-        where: {id: ctx.auth.user.id},
-        select: {followingIds: true},
-      });
+      const {id, page, pageSize} = input;
 
       const [items, totalCount] = await Promise.all([
-        prisma.user.findMany({
+        prisma.follow.findMany({
           where: {
-            AND: [
-              {
-                followingIds: {
-                  has: id,
-                },
-              },
-              {
-                name: {
-                  contains: search,
-                  mode: "insensitive",
-                },
-              },
-            ],
+            followingId: id,
           },
           skip: pageSize * (page - 1),
           take: pageSize,
           orderBy: {createdAt: "desc"},
+          select: {
+            follower: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
         }),
-        prisma.user.count({
+        prisma.follow.count({
           where: {
-            AND: [
-              {
-                followingIds: {
-                  has: id,
-                },
-              },
-              {
-                name: {
-                  contains: search,
-                  mode: "insensitive",
-                },
-              },
-            ],
+            followingId: id,
           },
         }),
       ]);
 
-      const itemsWithIsFollowing = items.map((item) => ({
-        ...item,
-        isFollowing: currentUserFollowings?.followingIds?.includes(item.id),
-        isActiveUser: ctx.auth.user.id === item.id,
-      }));
+      const itemsWithIsFollowing = await Promise.all(
+        items
+          .map((f) => f.follower)
+          .map(async (item) => {
+            const following = await prisma.follow.findUnique({
+              where: {
+                followerId_followingId: {
+                  followerId: ctx.auth.user.id,
+                  followingId: item.id,
+                },
+              },
+            });
+
+            return {
+              ...item,
+              isFollowing: Boolean(following),
+              isActiveUser: ctx.auth.user.id === item.id,
+            };
+          })
+      );
 
       const totalPages = Math.ceil(totalCount / pageSize);
       const hasNextPage = page < totalPages;
@@ -187,81 +213,57 @@ export const profileRouter = createTRPCRouter({
           .min(PAGINATION.MIN_PAGE_SIZE)
           .max(PAGINATION.MAX_PAGE_SIZE)
           .default(PAGINATION.DEFAULT_PAGE_SIZE),
-        search: z.string().default(""),
       })
     )
     .query(async ({input, ctx}) => {
-      const {id, page, pageSize, search} = input;
-
-      const currentUserFollowings = await prisma.user.findUnique({
-        where: {id: ctx.auth.user.id},
-        select: {followingIds: true},
-      });
-
-      const user = await prisma.user.findUnique({
-        where: {
-          id: id,
-        },
-      });
-      if (!user) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "User not exists.",
-        });
-      }
-
-      if (!user.followingIds) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "User not exists.",
-        });
-      }
+      const {id, page, pageSize} = input;
 
       const [items, totalCount] = await Promise.all([
-        prisma.user.findMany({
+        prisma.follow.findMany({
           where: {
-            AND: [
-              {
-                id: {
-                  in: user.followingIds,
-                },
-              },
-              {
-                name: {
-                  contains: search,
-                  mode: "insensitive",
-                },
-              },
-            ],
+            followerId: id,
           },
           skip: pageSize * (page - 1),
           take: pageSize,
           orderBy: {createdAt: "desc"},
+          select: {
+            following: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
         }),
-        prisma.user.count({
+        prisma.follow.count({
           where: {
-            AND: [
-              {
-                id: {
-                  in: user.followingIds,
-                },
-              },
-              {
-                name: {
-                  contains: search,
-                  mode: "insensitive",
-                },
-              },
-            ],
+            followerId: id,
           },
         }),
       ]);
 
-      const itemsWithIsFollowing = items.map((item) => ({
-        ...item,
-        isFollowing: currentUserFollowings?.followingIds?.includes(item.id),
-        isActiveUser: ctx.auth.user.id === item.id,
-      }));
+      const itemsWithIsFollowing = await Promise.all(
+        items
+          .map((f) => f.following)
+          .map(async (item) => {
+            const following = await prisma.follow.findUnique({
+              where: {
+                followerId_followingId: {
+                  followerId: ctx.auth.user.id,
+                  followingId: item.id,
+                },
+              },
+            });
+
+            return {
+              ...item,
+              isFollowing: Boolean(following),
+              isActiveUser: ctx.auth.user.id === item.id,
+            };
+          })
+      );
 
       const totalPages = Math.ceil(totalCount / pageSize);
       const hasNextPage = page < totalPages;

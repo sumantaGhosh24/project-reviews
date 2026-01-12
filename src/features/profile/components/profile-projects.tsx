@@ -1,6 +1,6 @@
 import ProjectCard from "@/features/projects/components/project-card";
 
-const ProfilePosts = () => {
+const ProfileProjects = () => {
   const PROJECT_DATA = [
     {
       id: 1,
@@ -43,4 +43,4 @@ const ProfilePosts = () => {
   );
 };
 
-export default ProfilePosts;
+export default ProfileProjects;
