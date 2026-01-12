@@ -57,11 +57,6 @@ export const auth = betterAuth({
         type: "number",
         required: true,
       },
-      followingIds: {
-        type: "string[]",
-        required: false,
-        defaultValue: [],
-      },
     },
   },
   socialProviders: {

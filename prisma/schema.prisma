@@ -7,41 +7,99 @@ datasource db {
   provider = "postgresql"
 }
 
+enum ProjectStatus {
+  DRAFT
+  DEVELOPMENT
+  PRODUCTION
+  DEPRECATED
+}
+
+enum Visibility {
+  PRIVATE
+  PUBLIC
+  UNLISTED
+}
+
+enum VoteType {
+  UP
+  DOWN
+}
+
+enum VoteTarget {
+  PROJECT
+  RELEASE
+  COMMENT
+}
+
+enum NotificationType {
+  COMMENT
+  REPLY
+  REVIEW
+  VOTE
+  RELEASE_PUBLISHED
+  FOLLOW
+  MODERATION
+}
+
+enum NotificationTarget {
+  PROJECT
+  RELEASE
+  COMMENT
+  REVIEW
+}
+
 model User {
-  id               String      @id
+  id               String   @id
   name             String
   email            String
-  emailVerified    Boolean     @default(false)
   image            String?
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
-  twoFactorEnabled Boolean?    @default(false)
-  role             String?
-  banned           Boolean?    @default(false)
-  banReason        String?
-  banExpires       DateTime?
+  emailVerified    Boolean  @default(false)
+  twoFactorEnabled Boolean? @default(false)
   favoriteNumber   Int
-  followingIds     String[]
-  sessions         Session[]
-  accounts         Account[]
-  twofactors       TwoFactor[]
-  passkeys         Passkey[]
+
+  role       String?
+  banned     Boolean?  @default(false)
+  banReason  String?
+  banExpires DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions   Session[]
+  accounts   Account[]
+  twofactors TwoFactor[]
+  passkeys   Passkey[]
+
+  projects Project[]
+  comments Comment[]
+  reviews  Review[]
+  votes    Vote[]
+
+  notificationsCalled Notification[] @relation("NotificationCaller")
+  notifications       Notification[]
+
+  followers Follow[] @relation("followers")
+  following Follow[] @relation("following")
 
   @@unique([email])
   @@map("user")
 }
 
 model Session {
-  id             String   @id
-  expiresAt      DateTime
-  token          String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  ipAddress      String?
-  userAgent      String?
-  userId         String
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id
+  token     String
+  expiresAt DateTime
+
+  ipAddress String?
+  userAgent String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   impersonatedBy String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([token])
   @@index([userId])
@@ -49,11 +107,13 @@ model Session {
 }
 
 model Account {
-  id                    String    @id
-  accountId             String
-  providerId            String
-  userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String @id
+  accountId  String
+  providerId String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   accessToken           String?
   refreshToken          String?
   idToken               String?
@@ -61,8 +121,9 @@ model Account {
   refreshTokenExpiresAt DateTime?
   scope                 String?
   password              String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@map("account")
@@ -73,8 +134,9 @@ model Verification {
   identifier String
   value      String
   expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([identifier])
   @@map("verification")
@@ -84,8 +146,9 @@ model TwoFactor {
   id          String @id
   secret      String
   backupCodes String
-  userId      String
-  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([secret])
   @@index([userId])
@@ -93,35 +156,210 @@ model TwoFactor {
 }
 
 model Passkey {
-  id           String    @id
-  name         String?
+  id           String @id
   publicKey    String
-  userId       String
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   credentialID String
   counter      Int
-  deviceType   String
-  backedUp     Boolean
-  transports   String?
-  createdAt    DateTime?
-  aaguid       String?
+
+  name       String?
+  deviceType String
+  backedUp   Boolean
+  transports String?
+  aaguid     String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime?
 
   @@index([userId])
   @@index([credentialID])
   @@map("passkey")
 }
 
+model Follow {
+  follower   User   @relation("following", fields: [followerId], references: [id])
+  followerId String
+
+  following   User   @relation("followers", fields: [followingId], references: [id])
+  followingId String
+
+  createdAt DateTime @default(now())
+
+  @@id([followerId, followingId])
+}
+
 model Category {
-  id        String    @id @default(uuid())
-  name      String    @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  projects  Project[]
+  id   String @id @default(uuid())
+  name String @unique
+
+  projects Project[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Project {
-  id         String    @id @default(uuid())
-  title      String
+  id          String @id @default(uuid())
+  title       String
+  description String
+  content     String
+
+  status     ProjectStatus @default(DRAFT)
+  visibility Visibility    @default(PRIVATE)
+
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String
+
   category   Category? @relation(fields: [categoryId], references: [id])
   categoryId String?
+
+  tags String[]
+
+  githubUrl  String?
+  websiteUrl String?
+
+  releases         Release[]
+  projectAnalytics ProjectAnalytics?
+
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([title, categoryId])
+}
+
+model Release {
+  id          String @id @default(uuid())
+  title       String
+  description String
+  content     String
+
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+
+  comments         Comment[]
+  reviews          Review[]
+  releaseAnalytics ReleaseAnalytics?
+
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Comment {
+  id   String @id @default(uuid())
+  body String
+
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+
+  release   Release @relation(fields: [releaseId], references: [id])
+  releaseId String
+
+  parent   Comment? @relation("Thread", fields: [parentId], references: [id])
+  parentId String?
+
+  replies Comment[] @relation("Thread")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Review {
+  id       String  @id @default(uuid())
+  rating   Int     @default(0)
+  feedback String?
+
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+
+  release   Release @relation(fields: [releaseId], references: [id])
+  releaseId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([authorId, releaseId])
+}
+
+model Vote {
+  id       String     @id @default(uuid())
+  type     VoteType
+  target   VoteTarget
+  targetId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, target, targetId])
+  @@index([target, targetId])
+}
+
+model View {
+  id       String     @id @default(uuid())
+  target   VoteTarget
+  targetId String
+
+  viewerId String?
+  ipHash   String?
+
+  createdAt DateTime @default(now())
+
+  @@index([target, targetId])
+}
+
+model ProjectAnalytics {
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId String  @id
+
+  views         Int @default(0)
+  uniqueViews   Int @default(0)
+  commentsCount Int @default(0)
+  votesScore    Int @default(0)
+
+  lastViewedAt DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model ReleaseAnalytics {
+  release   Release @relation(fields: [releaseId], references: [id])
+  releaseId String  @id
+
+  views         Int   @default(0)
+  uniqueViews   Int   @default(0)
+  commentsCount Int   @default(0)
+  votesScore    Int   @default(0)
+  averageRating Float @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id   String           @id @default(uuid())
+  type NotificationType
+
+  recipient   User   @relation(fields: [recipientId], references: [id])
+  recipientId String
+
+  actor   User?   @relation("NotificationCaller", fields: [actorId], references: [id])
+  actorId String?
+
+  target   NotificationTarget
+  targetId String
+
+  title String
+  body  String
+  url   String?
+
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([recipientId, readAt, createdAt])
+  @@index([recipientId, createdAt])
+  @@index([target, targetId])
 }
