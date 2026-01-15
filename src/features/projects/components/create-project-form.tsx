@@ -1,18 +1,24 @@
 "use client";
 
-import {type ChangeEvent, useState} from "react";
-import Image from "next/image";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+
+import dynamic from "next/dynamic";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {useTheme} from "next-themes";
 import {z} from "zod";
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
+import rehypeSanitize from "rehype-sanitize";
 import {toast} from "sonner";
-import {XIcon} from "lucide-react";
 
+import {useSuspenseAllCategories} from "@/features/categories/hooks/use-categories";
 import {LoadingSwap} from "@/components/loading-swap";
+import {TagsInput} from "@/components/tags-input";
 import {Input} from "@/components/ui/input";
 import {Field, FieldError, FieldGroup, FieldLabel} from "@/components/ui/field";
 import {Button} from "@/components/ui/button";
-import {Card, CardContent} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -22,68 +28,70 @@ import {
 } from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 
+import {useCreateProject} from "../hooks/use-projects";
+
+const MDEditor = dynamic(
+  () => import("@uiw/react-md-editor").then((mod) => mod.default),
+  {ssr: false}
+);
+
 const createProjectSchema = z.object({
-  title: z.string().trim().toLowerCase().min(1).max(25),
-  description: z.string().trim().toLowerCase().min(1).max(100),
-  content: z.string().trim().toLowerCase().min(1).max(250),
+  title: z.string().trim().toLowerCase().min(1).max(100),
+  description: z.string().trim().toLowerCase().min(1).max(250),
   category: z.string().min(1),
-  imageUrl: z.array(z.string()),
+  githubUrl: z.string().min(1),
+  websiteUrl: z.string().min(1),
 });
 
 const CreateProjectForm = () => {
-  const [files, setFiles] = useState<File[]>([]);
-  const MAX_IMAGE_COUNT = 5;
+  const [content, setContent] = useState<string | undefined>(undefined);
+  const [tags, setTags] = useState<string[]>([]);
 
   const form = useForm<z.infer<typeof createProjectSchema>>({
     resolver: zodResolver(createProjectSchema),
     defaultValues: {
       title: "",
       description: "",
-      content: "",
       category: "",
-      imageUrl: [],
+      githubUrl: "",
+      websiteUrl: "",
     },
   });
 
-  // TODO:
-  const categories = [
-    {id: "1", name: "Category 1", imageUrl: "https://placehold.co/600x400.png"},
-    {id: "2", name: "Category 2", imageUrl: "https://placehold.co/600x400.png"},
-    {id: "3", name: "Category 3", imageUrl: "https://placehold.co/600x400.png"},
-  ];
+  const {theme} = useTheme();
+
+  const router = useRouter();
+
+  const {data: categories} = useSuspenseAllCategories();
+
+  const createProject = useCreateProject();
 
   const onSubmit = async (values: z.infer<typeof createProjectSchema>) => {
-    if (!files.length) return toast.error("Please add an image.");
+    if (content === undefined)
+      return toast.error("Please add some data in content.");
 
-    // TODO:
-    console.log(values);
+    if (tags.length === 0) return toast.error("Please add minimum one tags.");
 
-    setFiles([]);
-    form.reset();
-  };
+    createProject.mutate(
+      {
+        title: values.title,
+        description: values.description,
+        content: content,
+        categoryId: values.category,
+        tags: tags,
+        githubUrl: values.githubUrl,
+        websiteUrl: values.websiteUrl,
+      },
+      {
+        onSuccess: (data) => {
+          router.push(`/project/details/${data.id}`);
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const selected = e.target.files ? Array.from(e.target.files) : [];
-    if (!selected.length) return;
-    const imageFiles = selected.filter((f) => f.type.includes("image"));
-    if (!imageFiles.length) {
-      toast.error("Please select image files.");
-      return;
-    }
-    setFiles((prev) => {
-      const remainingSlots = Math.max(0, MAX_IMAGE_COUNT - prev.length);
-      const toAdd = imageFiles.slice(0, remainingSlots);
-      if (imageFiles.length > remainingSlots) {
-        toast.error(`You can upload up to ${MAX_IMAGE_COUNT} images.`);
+          form.reset();
+          setTags([]);
+          setContent(undefined);
+        },
       }
-      return [...prev, ...toAdd];
-    });
-    e.target.value = "";
-  };
-
-  const handleRemovedFile = (id: number) => {
-    setFiles((files) => files.filter((_, i) => i !== id));
+    );
   };
 
   return (
@@ -92,44 +100,8 @@ const CreateProjectForm = () => {
         className="flex flex-col justify-start gap-10"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <h1 className="mb-5 text-2xl font-bold">Create Project</h1>
-        <div className="mb-5 flex flex-wrap items-start gap-3">
-          {files.map((file, i) => (
-            <Card className="relative mx-auto mb-5 !max-h-fit" key={i}>
-              <CardContent className="p-0">
-                <Image
-                  src={URL.createObjectURL(file)}
-                  alt="file"
-                  width={200}
-                  height={200}
-                  className="h-[100px] w-[100px] rounded object-cover"
-                />
-                <XIcon
-                  className="absolute right-1 top-1 grid h-6 w-6 cursor-pointer place-items-center rounded-full bg-gray-200 p-1 text-red-700 transition-all hover:bg-red-700 hover:text-gray-200"
-                  onClick={() => handleRemovedFile(i)}
-                />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <h1 className="text-2xl font-bold">Create Project</h1>
         <FieldGroup>
-          <Field>
-            <FieldLabel htmlFor="projectImages">
-              Select Project Images
-            </FieldLabel>
-            <div className="flex-1 text-base font-semibold text-gray-200 mt-3">
-              <Input
-                type="file"
-                accept="image/*"
-                placeholder="Add project images"
-                className="cursor-pointer border-none bg-transparent outline-none file:text-blue-500"
-                onChange={handleImageChange}
-                id="projectImages"
-                multiple
-                // disabled={isUploading || createProject.isPending}
-              />
-            </div>
-          </Field>
           <div className="flex flex-col gap-5 md:flex-row">
             <Controller
               control={form.control}
@@ -167,13 +139,6 @@ const CreateProjectForm = () => {
                     <SelectContent>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id}>
-                          <Image
-                            src={category.imageUrl}
-                            alt="Category Image"
-                            height={50}
-                            width={50}
-                            className="mr-4 inline-block h-5 w-5"
-                          />
                           {category.name}
                         </SelectItem>
                       ))}
@@ -186,17 +151,59 @@ const CreateProjectForm = () => {
               )}
             />
           </div>
+          <Controller
+            control={form.control}
+            name="description"
+            render={({field, fieldState}) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>
+                  Project Description
+                </FieldLabel>
+                <Textarea
+                  placeholder="Enter your project description"
+                  id={field.name}
+                  aria-invalid={fieldState.invalid}
+                  {...field}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
           <div className="flex flex-col gap-5 md:flex-row">
             <Controller
               control={form.control}
-              name="description"
+              name="githubUrl"
               render={({field, fieldState}) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={field.name}>
-                    Project Description
+                    Project Github URL
                   </FieldLabel>
-                  <Textarea
-                    placeholder="Enter your project description"
+                  <Input
+                    type="url"
+                    placeholder="Enter project github url"
+                    id={field.name}
+                    aria-invalid={fieldState.invalid}
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="websiteUrl"
+              render={({field, fieldState}) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>
+                    Project Website URL
+                  </FieldLabel>
+                  <Input
+                    type="url"
+                    placeholder="Enter project website url"
                     id={field.name}
                     aria-invalid={fieldState.invalid}
                     {...field}
@@ -208,33 +215,25 @@ const CreateProjectForm = () => {
               )}
             />
           </div>
-          <Controller
-            control={form.control}
-            name="content"
-            render={({field, fieldState}) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor={field.name}>Project Content</FieldLabel>
-                <Textarea
-                  placeholder="Enter your project content"
-                  id={field.name}
-                  aria-invalid={fieldState.invalid}
-                  {...field}
-                />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
+          <TagsInput
+            value={tags}
+            onChange={setTags}
+            placeholder="Add project tags"
           />
+          <div data-color-mode={theme}>
+            <MDEditor
+              value={content}
+              onChange={setContent}
+              previewOptions={{rehypePlugins: [[rehypeSanitize]]}}
+              height={500}
+            />
+          </div>
           <Button
             type="submit"
-            // disabled={isUploading || createProject.isPending}
+            disabled={createProject.isPending}
             className="w-full"
           >
-            <LoadingSwap
-              isLoading={false}
-              // isLoading={isUploading || createProject.isPending}
-            >
+            <LoadingSwap isLoading={createProject.isPending}>
               Create Project
             </LoadingSwap>
           </Button>

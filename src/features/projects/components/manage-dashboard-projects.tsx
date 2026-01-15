@@ -1,0 +1,71 @@
+"use client";
+
+import Link from "next/link";
+import {ChessKingIcon, Terminal} from "lucide-react";
+
+import {authClient} from "@/lib/auth/auth-client";
+import {useHasActiveSubscription} from "@/features/subscriptions/hooks/useSubscription";
+import {ComponentWrapper} from "@/components/entity-components";
+import {Button, buttonVariants} from "@/components/ui/button";
+import {Skeleton} from "@/components/ui/skeleton";
+import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
+
+import SearchProject from "./search-project";
+import FilterCategory from "./filter-category";
+import DashboardProjectsTable from "./dashboard-projects-table";
+
+const ManageDashboardProjects = () => {
+  const {isLoading, hasActiveSubscription} = useHasActiveSubscription();
+
+  const handleSubscribe = async () => {
+    if (hasActiveSubscription) return;
+
+    await authClient.checkout({
+      products: ["e651f46d-ac20-4f26-b769-ad088b123df2"],
+      slug: "pro",
+    });
+  };
+
+  if (isLoading) {
+    return <Skeleton className="w-full h-48" />;
+  }
+
+  return (
+    <ComponentWrapper
+      title="Manage My Projects"
+      description="Manage my projects."
+      button={
+        hasActiveSubscription ? (
+          <Link href="/project/create" className={buttonVariants()}>
+            Create Project
+          </Link>
+        ) : (
+          <Button onClick={handleSubscribe}>
+            <span className="flex items-center gap-1.5">
+              <ChessKingIcon /> Subscribe
+            </span>
+          </Button>
+        )
+      }
+      search={<SearchProject />}
+      filter={<FilterCategory />}
+      table={
+        <>
+          {!hasActiveSubscription && (
+            <Alert variant="default">
+              <Terminal />
+              <AlertTitle>Heads up!</AlertTitle>
+              <AlertDescription>
+                You have to subscribe to create your own projects.
+              </AlertDescription>
+            </Alert>
+          )}
+          <DashboardProjectsTable />
+        </>
+      }
+      className="my-0 shadow-none p-0"
+    />
+  );
+};
+
+export default ManageDashboardProjects;

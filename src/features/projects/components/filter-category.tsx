@@ -1,6 +1,7 @@
 "use client";
 
 import {useEntityFilter} from "@/hooks/use-entity-filter";
+import {useSuspenseAllCategories} from "@/features/categories/hooks/use-categories";
 import {FilterComponent} from "@/components/entity-components";
 
 import {useProjectsParams} from "../hooks/use-projects-params";
@@ -13,12 +14,7 @@ const FilterCategory = () => {
     setParams,
   });
 
-  // TODO:
-  const categories = [
-    {id: "1", name: "Category 1", imageUrl: "https://placehold.co/600x400.png"},
-    {id: "2", name: "Category 2", imageUrl: "https://placehold.co/600x400.png"},
-    {id: "3", name: "Category 3", imageUrl: "https://placehold.co/600x400.png"},
-  ];
+  const {data: categories} = useSuspenseAllCategories();
 
   return (
     <FilterComponent

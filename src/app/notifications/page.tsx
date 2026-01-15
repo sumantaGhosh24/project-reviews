@@ -1,7 +1,7 @@
 import {Suspense} from "react";
 import {ErrorBoundary} from "@sentry/nextjs";
 
-import {requireAdmin} from "@/features/auth/helpers/auth-utils";
+import {requireAuth} from "@/features/auth/helpers/auth-utils";
 import {notificationsParamsLoader} from "@/features/notifications/server/params-loader";
 import {prefetchNotifications} from "@/features/notifications/server/prefetch";
 import {HydrateClient} from "@/trpc/server";
@@ -15,7 +15,7 @@ export const metadata = {
 const NotificationsPage = async ({
   searchParams,
 }: PageProps<"/notifications">) => {
-  await requireAdmin();
+  await requireAuth();
 
   const params = await notificationsParamsLoader(searchParams);
 

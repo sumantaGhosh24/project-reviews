@@ -2,13 +2,15 @@
 
 import {type ReactNode} from "react";
 import {useRouter} from "next/navigation";
-import Image from "next/image";
 import {
   AlertCircleIcon,
   FolderCodeIcon,
   LoaderIcon,
   SearchIcon,
 } from "lucide-react";
+
+import {cn} from "@/lib/utils";
+import {Category} from "@/generated/prisma/client";
 
 import {
   Pagination,
@@ -42,6 +44,7 @@ interface ComponentWrapperProps {
   search?: ReactNode;
   filter?: ReactNode;
   table?: ReactNode;
+  className?: string;
 }
 
 export const ComponentWrapper = ({
@@ -51,11 +54,17 @@ export const ComponentWrapper = ({
   search,
   filter,
   table,
+  className,
 }: ComponentWrapperProps) => {
   return (
-    <div className="mx-auto my-20 w-[95%] rounded-md shadow-md p-5 bg-background dark:shadow-white/40">
-      <div className="flex items-center justify-between">
-        <div className="mb-8 text-left">
+    <div
+      className={cn(
+        "mx-auto my-20 w-[95%] rounded-md shadow-md p-5 bg-background dark:shadow-white/40",
+        className
+      )}
+    >
+      <div className="flex items-center justify-between mb-8">
+        <div className="text-left">
           <h2 className="mb-4 text-3xl font-bold">{title}</h2>
           <p className="text-gray-600">{description}</p>
         </div>
@@ -203,7 +212,7 @@ export const LoadingComponent = () => {
       <Empty className="shadow-md container mx-auto h-[450px] dark:shadow-gray-200">
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <LoaderIcon />
+            <LoaderIcon className="animate-spin" />
           </EmptyMedia>
           <EmptyTitle>Loading...</EmptyTitle>
           <EmptyDescription>Please wait</EmptyDescription>
@@ -237,13 +246,6 @@ export const SearchBar = ({
   );
 };
 
-// TODO:
-interface Category {
-  id: string;
-  name: string;
-  imageUrl: string;
-}
-
 interface FilterComponentProps {
   filterValue: string;
   onFilterChange: (value: string) => void;
@@ -267,13 +269,6 @@ export const FilterComponent = ({
         <SelectItem value="all">All Categories</SelectItem>
         {categories.map((category) => (
           <SelectItem value={category.name} key={category.id}>
-            <Image
-              src={category.imageUrl as string}
-              alt="Category"
-              height={50}
-              width={50}
-              className="mr-4 inline-block h-5 w-5"
-            />
             {category.name}
           </SelectItem>
         ))}

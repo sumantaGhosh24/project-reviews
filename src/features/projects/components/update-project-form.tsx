@@ -1,11 +1,21 @@
 "use client";
 
-import Image from "next/image";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+
+import dynamic from "next/dynamic";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {useTheme} from "next-themes";
 import {z} from "zod";
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
+import rehypeSanitize from "rehype-sanitize";
+import {toast} from "sonner";
 
+import {useSuspenseAllCategories} from "@/features/categories/hooks/use-categories";
 import {LoadingSwap} from "@/components/loading-swap";
+import {TagsInput} from "@/components/tags-input";
 import {Input} from "@/components/ui/input";
 import {Field, FieldError, FieldGroup, FieldLabel} from "@/components/ui/field";
 import {Button} from "@/components/ui/button";
@@ -18,51 +28,72 @@ import {
 } from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 
+import {useSuspenseProject, useUpdateProject} from "../hooks/use-projects";
+
 interface UpdateProjectForm {
   id: string;
 }
 
+const MDEditor = dynamic(
+  () => import("@uiw/react-md-editor").then((mod) => mod.default),
+  {ssr: false}
+);
+
 const updateProjectSchema = z.object({
-  title: z.string().trim().toLowerCase().min(1).max(25),
-  description: z.string().trim().toLowerCase().min(1).max(100),
-  content: z.string().trim().toLowerCase().min(1).max(250),
+  title: z.string().trim().toLowerCase().min(1).max(100),
+  description: z.string().trim().toLowerCase().min(1).max(250),
   category: z.string().min(1),
+  githubUrl: z.string().min(1),
+  websiteUrl: z.string().min(1),
+  status: z.enum(["DRAFT", "DEVELOPMENT", "PRODUCTION", "DEPRECATED"]),
+  visibility: z.enum(["PRIVATE", "PUBLIC", "UNLISTED"]),
 });
 
 const UpdateProjectForm = ({id}: UpdateProjectForm) => {
-  // TODO:
-  const project = {
-    id: "1",
-    title: "EcoTrack: AI Personal Carbon Footprint",
-    category: "SaaS / AI",
-    description:
-      "A mobile app that uses computer vision to scan grocery receipts and calculate the carbon footprint of your shopping cart automatically.",
-    author: "Sarah Drasner",
-    content: "content",
-    reviews: 24,
-    upvotes: 142,
-  };
+  const {data: project} = useSuspenseProject(id);
+
+  const [content, setContent] = useState<string | undefined>(project?.content);
+  const [tags, setTags] = useState<string[]>(project?.tags || []);
 
   const form = useForm<z.infer<typeof updateProjectSchema>>({
     resolver: zodResolver(updateProjectSchema),
     defaultValues: {
-      title: project.title,
-      description: project.description,
-      content: project.content,
-      category: project.category,
+      title: project?.title,
+      description: project?.description,
+      category: project?.categoryId ?? "",
+      githubUrl: project?.githubUrl ?? "",
+      websiteUrl: project?.websiteUrl ?? "",
+      status: project?.status ?? "DRAFT",
+      visibility: project?.visibility ?? "PRIVATE",
     },
   });
 
-  // TODO:
-  const categories = [
-    {id: "1", name: "Category 1", imageUrl: "https://placehold.co/600x400.png"},
-    {id: "2", name: "Category 2", imageUrl: "https://placehold.co/600x400.png"},
-    {id: "3", name: "Category 3", imageUrl: "https://placehold.co/600x400.png"},
-  ];
+  const {theme} = useTheme();
+
+  const router = useRouter();
+
+  const {data: categories} = useSuspenseAllCategories();
+
+  const updateProject = useUpdateProject();
 
   const onSubmit = async (values: z.infer<typeof updateProjectSchema>) => {
-    // TODO:
-    console.log(values);
+    if (content === undefined)
+      return toast.error("Please add some data in content.");
+
+    if (tags.length === 0) return toast.error("Please add minimum one tags.");
+
+    updateProject.mutate({
+      id: project?.id as string,
+      title: values.title,
+      description: values.description,
+      content: content,
+      categoryId: values.category,
+      tags: tags,
+      githubUrl: values.githubUrl,
+      websiteUrl: values.websiteUrl,
+      status: values.status,
+      visibility: values.visibility,
+    });
   };
 
   return (
@@ -71,7 +102,15 @@ const UpdateProjectForm = ({id}: UpdateProjectForm) => {
         className="flex flex-col justify-start gap-10"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <h1 className="mb-5 text-2xl font-bold">Update Project</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="mb-5 text-2xl font-bold">Update Project</h1>
+          <Button
+            onClick={() => router.push(`/project/details/${project?.id}`)}
+            variant="success"
+          >
+            View Project
+          </Button>
+        </div>
         <FieldGroup>
           <div className="flex flex-col gap-5 md:flex-row">
             <Controller
@@ -110,13 +149,6 @@ const UpdateProjectForm = ({id}: UpdateProjectForm) => {
                     <SelectContent>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id}>
-                          <Image
-                            src={category.imageUrl}
-                            alt="Category Image"
-                            height={50}
-                            width={50}
-                            className="mb-2 mr-4 inline-block h-5 w-5"
-                          />
                           {category.name}
                         </SelectItem>
                       ))}
@@ -129,17 +161,59 @@ const UpdateProjectForm = ({id}: UpdateProjectForm) => {
               )}
             />
           </div>
+          <Controller
+            control={form.control}
+            name="description"
+            render={({field, fieldState}) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>
+                  Project Description
+                </FieldLabel>
+                <Textarea
+                  placeholder="Enter your project description"
+                  id={field.name}
+                  aria-invalid={fieldState.invalid}
+                  {...field}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
           <div className="flex flex-col gap-5 md:flex-row">
             <Controller
               control={form.control}
-              name="description"
+              name="githubUrl"
               render={({field, fieldState}) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={field.name}>
-                    Project Description
+                    Project Github URL
                   </FieldLabel>
-                  <Textarea
-                    placeholder="Enter your project description"
+                  <Input
+                    type="url"
+                    placeholder="Enter project github url"
+                    id={field.name}
+                    aria-invalid={fieldState.invalid}
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="websiteUrl"
+              render={({field, fieldState}) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>
+                    Project Website URL
+                  </FieldLabel>
+                  <Input
+                    type="url"
+                    placeholder="Enter project website url"
                     id={field.name}
                     aria-invalid={fieldState.invalid}
                     {...field}
@@ -151,33 +225,87 @@ const UpdateProjectForm = ({id}: UpdateProjectForm) => {
               )}
             />
           </div>
-          <Controller
-            control={form.control}
-            name="content"
-            render={({field, fieldState}) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor={field.name}>Project Content</FieldLabel>
-                <Textarea
-                  placeholder="Enter your project content"
-                  id={field.name}
-                  aria-invalid={fieldState.invalid}
-                  {...field}
-                />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
+          <div className="flex flex-col gap-5 md:flex-row">
+            <Controller
+              control={form.control}
+              name="status"
+              render={({field, fieldState}) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>Project Status</FieldLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    aria-invalid={fieldState.invalid}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select project status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {["DRAFT", "DEVELOPMENT", "PRODUCTION", "DEPRECATED"].map(
+                        (s, ind) => (
+                          <SelectItem key={`${s}-${ind}`} value={s}>
+                            {s}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="visibility"
+              render={({field, fieldState}) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>
+                    Project Visibility
+                  </FieldLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    aria-invalid={fieldState.invalid}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select project visibility" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {["PRIVATE", "PUBLIC"].map((s, ind) => (
+                        <SelectItem key={`${s}-${ind}`} value={s}>
+                          {s}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </div>
+          <TagsInput
+            value={tags}
+            onChange={setTags}
+            placeholder="Add project tags"
           />
+          <div data-color-mode={theme}>
+            <MDEditor
+              value={content}
+              onChange={setContent}
+              previewOptions={{rehypePlugins: [[rehypeSanitize]]}}
+              height={500}
+            />
+          </div>
           <Button
             type="submit"
-            // disabled={updateProject.isPending}
+            disabled={updateProject.isPending}
             className="w-full"
           >
-            <LoadingSwap
-              isLoading={false}
-              // isLoading={updateProject.isPending}
-            >
+            <LoadingSwap isLoading={updateProject.isPending}>
               Update Project
             </LoadingSwap>
           </Button>

@@ -2,23 +2,21 @@ import {Suspense} from "react";
 import {ErrorBoundary} from "@sentry/nextjs";
 
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
-import {prefetchViewProject} from "@/features/projects/server/prefetch";
+import {prefetchAllCategory} from "@/features/categories/server/prefetch";
+import {prefetchMyProjects} from "@/features/projects/server/prefetch";
+import {projectsParamsLoader} from "@/features/projects/server/params-loader";
 import {HydrateClient} from "@/trpc/server";
-import ProjectDetails from "@/features/projects/components/project-details";
+import ManageDashboardProjects from "@/features/projects/components/manage-dashboard-projects";
 import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
 
-export const metadata = {
-  title: "Project Details",
-};
-
-const ProjectDetailsPage = async ({
-  params,
-}: PageProps<"/project/details/[id]">) => {
+const DashboardPage = async ({searchParams}: PageProps<"/dashboard">) => {
   await requireAuth();
 
-  const {id} = await params;
+  const params = await projectsParamsLoader(searchParams);
 
-  prefetchViewProject(id);
+  prefetchMyProjects(params);
+
+  prefetchAllCategory();
 
   return (
     <HydrateClient>
@@ -33,11 +31,11 @@ const ProjectDetailsPage = async ({
         }
       >
         <Suspense fallback={<LoadingComponent />}>
-          <ProjectDetails id={id} />
+          <ManageDashboardProjects />
         </Suspense>
       </ErrorBoundary>
     </HydrateClient>
   );
 };
 
-export default ProjectDetailsPage;
+export default DashboardPage;

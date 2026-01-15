@@ -51,7 +51,7 @@ const NotificationsTable = () => {
             <Card
               key={notification.id}
               className={cn(
-                "flex flex-row items-center flex-1 py-2",
+                "flex flex-row items-center flex-1 mb-2",
                 notification.readAt === null && "bg-primary/20"
               )}
             >

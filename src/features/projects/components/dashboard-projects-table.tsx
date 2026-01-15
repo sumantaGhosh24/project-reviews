@@ -3,7 +3,7 @@
 import {useRouter} from "next/navigation";
 import Link from "next/link";
 import {formatDistanceToNowStrict} from "date-fns";
-import {ExternalLinkIcon, EyeIcon} from "lucide-react";
+import {ExternalLinkIcon, EyeIcon, PenIcon} from "lucide-react";
 
 import {checkStatus, checkVisibility} from "@/lib/utils";
 import {
@@ -22,13 +22,14 @@ import {
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
 
-import {useSuspenseAllProjects} from "../hooks/use-projects";
+import {useSuspenseMyProjects} from "../hooks/use-projects";
 import {useProjectsParams} from "../hooks/use-projects-params";
+import DeleteProject from "./delete-project";
 
-const ProjectsTable = () => {
+const DashboardProjectsTable = () => {
   const router = useRouter();
 
-  const {data: projects, isFetching} = useSuspenseAllProjects();
+  const {data: projects, isFetching} = useSuspenseMyProjects();
 
   const [params, setParams] = useProjectsParams();
 
@@ -116,7 +117,7 @@ const ProjectsTable = () => {
                       addSuffix: true,
                     })}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="">
                     <Button
                       variant="default"
                       onClick={() =>
@@ -126,6 +127,17 @@ const ProjectsTable = () => {
                       <EyeIcon size={24} />
                       View
                     </Button>
+                    <Button
+                      variant="success"
+                      onClick={() =>
+                        router.push(`/project/update/${project.id}`)
+                      }
+                      className="mx-2"
+                    >
+                      <PenIcon size={24} />
+                      Update
+                    </Button>
+                    <DeleteProject id={project.id} />
                   </TableCell>
                 </TableRow>
               ))}
@@ -144,12 +156,12 @@ const ProjectsTable = () => {
         <EmptyComponent
           title="No Project Found"
           description="Try again later"
-          buttonText="Go Home"
-          redirectUrl="/home"
+          buttonText="Create Project"
+          redirectUrl="/project/create"
         />
       )}
     </>
   );
 };
 
-export default ProjectsTable;
+export default DashboardProjectsTable;

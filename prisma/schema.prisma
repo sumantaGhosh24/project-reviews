@@ -212,13 +212,13 @@ model Project {
   owner   User   @relation(fields: [ownerId], references: [id])
   ownerId String
 
-  category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId String?
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
 
   tags String[]
 
-  githubUrl  String?
-  websiteUrl String?
+  githubUrl  String
+  websiteUrl String
 
   releases         Release[]
   projectAnalytics ProjectAnalytics?
@@ -236,7 +236,7 @@ model Release {
   description String
   content     String
 
-  project   Project @relation(fields: [projectId], references: [id])
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String
 
   comments         Comment[]
@@ -313,7 +313,7 @@ model View {
 }
 
 model ProjectAnalytics {
-  project   Project @relation(fields: [projectId], references: [id])
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String  @id
 
   views         Int @default(0)

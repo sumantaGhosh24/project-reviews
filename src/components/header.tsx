@@ -7,7 +7,7 @@ import Link from "next/link";
 import {toast} from "sonner";
 import {ChessKingIcon, MenuIcon, XIcon} from "lucide-react";
 
-import {adminLinks, guestLinks, premiumLinks, userLinks} from "@/constants";
+import {adminLinks, guestLinks, userLinks} from "@/constants";
 import {authClient} from "@/lib/auth/auth-client";
 import {useHasActiveSubscription} from "@/features/subscriptions/hooks/useSubscription";
 
@@ -145,29 +145,17 @@ const Header = () => {
                       Manage Subscription
                     </Button>
                   ) : (
-                    <>
-                      <Button
-                        type="button"
-                        className={navigationMenuTriggerStyle({
-                          className: "text-black dark:text-white",
-                        })}
-                        onClick={handleSubscribe}
-                      >
-                        <span className="flex items-center gap-1.5">
-                          <ChessKingIcon /> Subscribe
-                        </span>
-                      </Button>
-                      {premiumLinks.map((item) => (
-                        <NavigationMenuItem key={item.id}>
-                          <NavigationMenuLink
-                            asChild
-                            className={navigationMenuTriggerStyle()}
-                          >
-                            <Link href={item.url}>{item.name}</Link>
-                          </NavigationMenuLink>
-                        </NavigationMenuItem>
-                      ))}
-                    </>
+                    <Button
+                      type="button"
+                      className={navigationMenuTriggerStyle({
+                        className: "text-black dark:text-white",
+                      })}
+                      onClick={handleSubscribe}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <ChessKingIcon /> Subscribe
+                      </span>
+                    </Button>
                   )}
                   <NavigationMenuItem>
                     <NavigationMenuLink
