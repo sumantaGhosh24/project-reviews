@@ -52,7 +52,7 @@ const ManageHomeProjects = () => {
       table={
         <>
           {!hasActiveSubscription && (
-            <Alert variant="default">
+            <Alert variant="default" className="mb-5">
               <Terminal />
               <AlertTitle>Heads up!</AlertTitle>
               <AlertDescription>

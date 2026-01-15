@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 
 import {checkStatus, checkVisibility} from "@/lib/utils";
+import ManageReleases from "@/features/releases/components/manage-release";
 import {Badge} from "@/components/ui/badge";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Button} from "@/components/ui/button";
@@ -144,6 +145,7 @@ const ProjectDetails = ({id}: ProjectDetailsProps) => {
             />
           </div>
         </div>
+        <ManageReleases isOwner={project.isOwner} projectId={project.id} />
       </div>
     </div>
   );

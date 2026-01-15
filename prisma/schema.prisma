@@ -236,6 +236,9 @@ model Release {
   description String
   content     String
 
+  status     ProjectStatus @default(DRAFT)
+  visibility Visibility    @default(PRIVATE)
+
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String
 
@@ -255,7 +258,7 @@ model Comment {
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
 
-  release   Release @relation(fields: [releaseId], references: [id])
+  release   Release @relation(fields: [releaseId], references: [id], onDelete: Cascade)
   releaseId String
 
   parent   Comment? @relation("Thread", fields: [parentId], references: [id])
@@ -275,7 +278,7 @@ model Review {
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
 
-  release   Release @relation(fields: [releaseId], references: [id])
+  release   Release @relation(fields: [releaseId], references: [id], onDelete: Cascade)
   releaseId String
 
   createdAt DateTime @default(now())
@@ -327,7 +330,7 @@ model ProjectAnalytics {
 }
 
 model ReleaseAnalytics {
-  release   Release @relation(fields: [releaseId], references: [id])
+  release   Release @relation(fields: [releaseId], references: [id], onDelete: Cascade)
   releaseId String  @id
 
   views         Int   @default(0)

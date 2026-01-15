@@ -2,26 +2,23 @@ import {Suspense} from "react";
 import {ErrorBoundary} from "@sentry/nextjs";
 
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
-import {prefetchViewProject} from "@/features/projects/server/prefetch";
-import {prefetchReleases} from "@/features/releases/server/prefetch";
+import {prefetchRelease} from "@/features/releases/server/prefetch";
 import {HydrateClient} from "@/trpc/server";
-import ProjectDetails from "@/features/projects/components/project-details";
+import ReleaseDetails from "@/features/releases/components/release-details";
 import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
 
 export const metadata = {
-  title: "Project Details",
+  title: "Release Details",
 };
 
-const ProjectDetailsPage = async ({
+const ReleaseDetailsPage = async ({
   params,
-}: PageProps<"/project/details/[id]">) => {
+}: PageProps<"/project/details/[id]/release/[releaseId]">) => {
   await requireAuth();
 
-  const {id} = await params;
+  const {releaseId} = await params;
 
-  prefetchViewProject(id);
-
-  prefetchReleases({projectId: id});
+  prefetchRelease(releaseId);
 
   return (
     <HydrateClient>
@@ -36,11 +33,11 @@ const ProjectDetailsPage = async ({
         }
       >
         <Suspense fallback={<LoadingComponent />}>
-          <ProjectDetails id={id} />
+          <ReleaseDetails id={releaseId} />
         </Suspense>
       </ErrorBoundary>
     </HydrateClient>
   );
 };
 
-export default ProjectDetailsPage;
+export default ReleaseDetailsPage;

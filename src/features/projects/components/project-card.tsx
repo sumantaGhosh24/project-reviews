@@ -70,7 +70,7 @@ const ProjectCard = ({
       </Link>
     </CardHeader>
     <CardContent className="p-0 flex items-center gap-2 flex-wrap">
-      {tags.map((tag, ind) => (
+      {tags?.map((tag, ind) => (
         <Badge key={`${tag}-${ind}`} className="uppercase">
           {tag}
         </Badge>
@@ -91,17 +91,17 @@ const ProjectCard = ({
     <CardFooter className="flex items-center justify-between p-0">
       <div>
         <Link
-          href={`/profile/${owner.id}/details`}
+          href={`/profile/${owner?.id}/details`}
           className="flex items-center gap-2"
         >
           <Avatar>
-            <AvatarFallback>{owner.name.substring(0, 2)}</AvatarFallback>
+            <AvatarFallback>{owner?.name?.substring(0, 2)}</AvatarFallback>
             <AvatarImage
               src={owner?.image ?? "https://placehold.co/600x400.png"}
             />
           </Avatar>
           <span className="text-md font-bold text-foreground/60 capitalize">
-            {owner.name}
+            {owner?.name}
           </span>
         </Link>
       </div>
@@ -112,7 +112,7 @@ const ProjectCard = ({
         </div>
         <div className="flex items-center gap-1.5 text-foreground/50">
           <TimerResetIcon className="w-4 h-4" />
-          <span className="text-xs font-bold">{_count.releases}</span>
+          <span className="text-xs font-bold">{_count?.releases}</span>
         </div>
       </div>
     </CardFooter>
