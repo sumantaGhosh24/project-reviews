@@ -21,7 +21,7 @@ const ReleasesTable = ({projectId}: ReleasesTableProps) => {
   return (
     <>
       {releases.items.length > 0 ? (
-        <div className="">
+        <div>
           {releases.items.map((release) => (
             <ReleaseCard key={release.id} {...release} />
           ))}

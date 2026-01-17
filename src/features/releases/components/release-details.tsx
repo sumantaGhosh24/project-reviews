@@ -14,8 +14,10 @@ import {
 } from "lucide-react";
 
 import {checkStatus, checkVisibility} from "@/lib/utils";
+import ManageComments from "@/features/comments/components/manage-comments";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 
 import {useSuspenseRelease} from "../hooks/use-releases";
 import UpdateReleaseForm from "./update-release-form";
@@ -99,6 +101,20 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
             />
           </div>
         </div>
+        <Tabs defaultValue="comments" className="w-full">
+          <TabsList>
+            <TabsTrigger value="comments">Comments</TabsTrigger>
+            {release.isOwner && (
+              <TabsTrigger value="reviews">Reviews</TabsTrigger>
+            )}
+          </TabsList>
+          <TabsContent value="comments">
+            <ManageComments releaseId={release.id} />
+          </TabsContent>
+          {release.isOwner && (
+            <TabsContent value="reviews">reviews</TabsContent>
+          )}
+        </Tabs>
       </div>
     </div>
   );

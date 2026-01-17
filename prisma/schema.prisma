@@ -266,8 +266,13 @@ model Comment {
 
   replies Comment[] @relation("Thread")
 
+  deletedAt DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([releaseId, parentId])
+  @@index([authorId])
 }
 
 model Review {

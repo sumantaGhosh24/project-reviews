@@ -9,7 +9,9 @@ import {HydrateClient} from "@/trpc/server";
 import ManageDashboardProjects from "@/features/projects/components/manage-dashboard-projects";
 import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
 
-const DashboardPage = async ({searchParams}: PageProps<"/dashboard">) => {
+const DashboardProjectsPage = async ({
+  searchParams,
+}: PageProps<"/dashboard">) => {
   await requireAuth();
 
   const params = await projectsParamsLoader(searchParams);
@@ -38,4 +40,4 @@ const DashboardPage = async ({searchParams}: PageProps<"/dashboard">) => {
   );
 };
 
-export default DashboardPage;
+export default DashboardProjectsPage;

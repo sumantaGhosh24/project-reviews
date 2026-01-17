@@ -3,6 +3,7 @@ import {notificationsRouter} from "@/features/notifications/server/router";
 import {categoriesRouter} from "@/features/categories/server/router";
 import {projectsRouter} from "@/features/projects/server/router";
 import {releasesRouter} from "@/features/releases/server/router";
+import {commentsRouter} from "@/features/comments/server/router";
 
 import {createTRPCRouter} from "../init";
 
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   category: categoriesRouter,
   project: projectsRouter,
   release: releasesRouter,
+  comment: commentsRouter,
 });
 
 export type AppRouter = typeof appRouter;

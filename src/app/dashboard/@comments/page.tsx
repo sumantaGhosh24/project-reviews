@@ -2,30 +2,20 @@ import {Suspense} from "react";
 import {ErrorBoundary} from "@sentry/nextjs";
 
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
-import {prefetchRelease} from "@/features/releases/server/prefetch";
-import {prefetchComments} from "@/features/comments/server/prefetch";
+import {prefetchMyComments} from "@/features/comments/server/prefetch";
 import {commentsParamsLoader} from "@/features/comments/server/params-loader";
 import {HydrateClient} from "@/trpc/server";
-import ReleaseDetails from "@/features/releases/components/release-details";
+import ManageDashboardComments from "@/features/comments/components/manage-dashboard-comments";
 import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
 
-export const metadata = {
-  title: "Release Details",
-};
-
-const ReleaseDetailsPage = async ({
-  params,
+const DashboardCommentsPage = async ({
   searchParams,
-}: PageProps<"/project/details/[id]/release/[releaseId]">) => {
+}: PageProps<"/dashboard">) => {
   await requireAuth();
 
-  const {releaseId} = await params;
+  const params = await commentsParamsLoader(searchParams);
 
-  const commentParams = await commentsParamsLoader(searchParams);
-
-  prefetchRelease(releaseId);
-
-  prefetchComments({...commentParams, releaseId});
+  prefetchMyComments(params);
 
   return (
     <HydrateClient>
@@ -40,11 +30,11 @@ const ReleaseDetailsPage = async ({
         }
       >
         <Suspense fallback={<LoadingComponent />}>
-          <ReleaseDetails id={releaseId} />
+          <ManageDashboardComments />
         </Suspense>
       </ErrorBoundary>
     </HydrateClient>
   );
 };
 
-export default ReleaseDetailsPage;
+export default DashboardCommentsPage;
