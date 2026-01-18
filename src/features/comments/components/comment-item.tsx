@@ -42,7 +42,7 @@ export function CommentItem({comment}: CommentItemProps) {
   const [showReply, setShowReply] = useState(false);
 
   return (
-    <Card className="mb-3 py-2">
+    <Card className={`mb-3 py-2 ${comment.isOwner ? "border-primary" : ""}`}>
       <CardContent>
         <div className="flex items-center gap-2 mb-2">
           <Avatar>

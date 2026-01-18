@@ -5,16 +5,17 @@ import {createTRPCRouter, protectedProcedure} from "@/trpc/init";
 import prisma from "@/lib/db";
 import {PAGINATION} from "@/constants/pagination";
 
-export const commentsRouter = createTRPCRouter({
+export const reviewsRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
         releaseId: z.string(),
-        body: z.string(),
+        rating: z.number().min(1).max(5),
+        feedback: z.string(),
       })
     )
     .mutation(async ({input, ctx}) => {
-      const {releaseId, body} = input;
+      const {releaseId, rating, feedback} = input;
 
       const release = await prisma.release.findFirst({
         where: {id: releaseId},
@@ -27,129 +28,61 @@ export const commentsRouter = createTRPCRouter({
         });
       }
 
-      const comment = await prisma.comment.create({
-        data: {
-          body,
-          authorId: ctx.auth.user.id,
-          releaseId,
-        },
-      });
-
-      await prisma.notification.create({
-        data: {
-          type: "COMMENT",
-          recipientId: release.project.ownerId,
-          actorId: ctx.auth.user.id,
-          target: "COMMENT",
-          targetId: comment.id,
-          title: "New comment",
-          body: `${ctx.auth.user.name} commented on your release`,
-          url: `/project/details/${release.project.id}/release/${release.id}`,
-        },
-      });
-
-      return comment;
-    }),
-  reply: protectedProcedure
-    .input(
-      z.object({
-        releaseId: z.string(),
-        commentId: z.string(),
-        body: z.string(),
-      })
-    )
-    .mutation(async ({input, ctx}) => {
-      const {releaseId, commentId, body} = input;
-
-      const release = await prisma.release.findFirst({
-        where: {id: releaseId},
-        include: {project: {select: {id: true, ownerId: true}}},
-      });
-      if (!release) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "This release does not exists.",
-        });
-      }
-
-      const parent = await prisma.comment.findFirst({
+      const exists = await prisma.review.findFirst({
         where: {
-          id: commentId,
           releaseId,
-          release: {
-            project: {
-              OR: [{ownerId: ctx.auth.user.id}, {visibility: "PUBLIC"}],
-            },
-          },
+          authorId: ctx.auth.user.id,
         },
-        include: {author: {select: {id: true}}},
       });
-      if (!parent) {
+      if (exists) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "This comment does not exists.",
+          message: "You already have a review on this release.",
         });
       }
 
-      const comment = await prisma.comment.create({
+      const review = await prisma.review.create({
         data: {
-          body,
+          rating,
+          feedback,
           authorId: ctx.auth.user.id,
           releaseId,
-          parentId: commentId,
         },
       });
 
       await prisma.notification.create({
         data: {
-          type: "COMMENT",
+          type: "REVIEW",
           recipientId: release.project.ownerId,
           actorId: ctx.auth.user.id,
-          target: "COMMENT",
-          targetId: comment.id,
-          title: "New comment",
-          body: `${ctx.auth.user.name} commented on your release`,
+          target: "REVIEW",
+          targetId: review.id,
+          title: "New review",
+          body: `${ctx.auth.user.name} post a review on your release`,
           url: `/project/details/${release.project.id}/release/${release.id}`,
         },
       });
 
-      await prisma.notification.create({
-        data: {
-          type: "REPLY",
-          recipientId: parent.author.id,
-          actorId: ctx.auth.user.id,
-          target: "COMMENT",
-          targetId: comment.id,
-          title: "New reply",
-          body: `${ctx.auth.user.name} replied to your comment`,
-          url: `/project/details/${release.project.id}/release/${release.id}`,
-        },
-      });
-
-      return comment;
+      return review;
     }),
   remove: protectedProcedure
     .input(z.object({id: z.string()}))
     .mutation(async ({input, ctx}) => {
-      const comment = await prisma.comment.update({
+      const review = await prisma.review.delete({
         where: {
           id: input.id,
           authorId: ctx.auth.user.id,
         },
-        data: {
-          body: "[deleted]",
-          deletedAt: new Date(),
-        },
       });
 
-      if (!comment) {
+      if (!review) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "This comment does not exists.",
+          message: "This review does not exists.",
         });
       }
 
-      return comment;
+      return review;
     }),
   getAll: protectedProcedure
     .input(
@@ -179,10 +112,9 @@ export const commentsRouter = createTRPCRouter({
       }
 
       const [items, totalCount] = await Promise.all([
-        prisma.comment.findMany({
+        prisma.review.findMany({
           where: {
             releaseId,
-            parentId: null,
             release: {
               project: {
                 OR: [{ownerId: ctx.auth.user.id}, {visibility: "PUBLIC"}],
@@ -200,24 +132,11 @@ export const commentsRouter = createTRPCRouter({
                 image: true,
               },
             },
-            replies: {
-              orderBy: {createdAt: "desc"},
-              include: {
-                author: {
-                  select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                  },
-                },
-              },
-            },
           },
         }),
-        prisma.comment.count({
+        prisma.review.count({
           where: {
             releaseId,
-            parentId: null,
             release: {
               project: {
                 OR: [{ownerId: ctx.auth.user.id}, {visibility: "PUBLIC"}],
@@ -262,7 +181,7 @@ export const commentsRouter = createTRPCRouter({
       const {page, pageSize} = input;
 
       const [items, totalCount] = await Promise.all([
-        prisma.comment.findMany({
+        prisma.review.findMany({
           where: {
             authorId: ctx.auth.user.id,
           },
@@ -287,13 +206,9 @@ export const commentsRouter = createTRPCRouter({
                 },
               },
             },
-            replies: {
-              orderBy: {createdAt: "desc"},
-              select: {id: true},
-            },
           },
         }),
-        prisma.comment.count({
+        prisma.review.count({
           where: {
             authorId: ctx.auth.user.id,
           },

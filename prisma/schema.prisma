@@ -276,9 +276,9 @@ model Comment {
 }
 
 model Review {
-  id       String  @id @default(uuid())
-  rating   Int     @default(0)
-  feedback String?
+  id       String @id @default(uuid())
+  rating   Int    @default(0)
+  feedback String
 
   author   User   @relation(fields: [authorId], references: [id])
   authorId String

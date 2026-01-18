@@ -1,7 +1,5 @@
 "use client";
 
-import {useEffect} from "react";
-
 import {
   EmptyComponent,
   PaginationComponent,
@@ -19,10 +17,6 @@ export function CommentList({releaseId}: CommentListProps) {
   const {data: comments, isFetching} = useSuspenseComments(releaseId);
 
   const [params, setParams] = useCommentsParams();
-
-  useEffect(() => {
-    setParams({page: comments?.totalPages ?? 1});
-  }, [comments?.totalPages, setParams]);
 
   return (
     <>

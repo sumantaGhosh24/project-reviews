@@ -14,18 +14,12 @@ import {
 } from "lucide-react";
 
 import {checkStatus, checkVisibility} from "@/lib/utils";
-import ManageComments from "@/features/comments/components/manage-comments";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 
 import {useSuspenseRelease} from "../hooks/use-releases";
 import UpdateReleaseForm from "./update-release-form";
 import DeleteRelease from "./delete-release";
-
-interface ReleaseDetailsProps {
-  id: string;
-}
 
 const EditerMarkdown = dynamic(
   () =>
@@ -35,88 +29,74 @@ const EditerMarkdown = dynamic(
   {ssr: false}
 );
 
+interface ReleaseDetailsProps {
+  id: string;
+}
+
 const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
   const {data: release} = useSuspenseRelease(id);
 
   const {theme} = useTheme();
 
   return (
-    <div className="mx-auto my-5 w-[95%] rounded-md shadow-md p-5 bg-background dark:shadow-white/40">
-      <div className="space-y-5">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <h2 className="text-3xl font-bold capitalize">{release.title}</h2>
-            <p className="text-muted-foreground mt-2 capitalize">
-              {release.description}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Badge variant={checkStatus(release.status)}>
-              {release.status}
-            </Badge>
-            <Badge variant={checkVisibility(release.visibility)}>
-              {release.visibility === "PUBLIC" ? (
-                <EyeIcon className="h-3 w-3 mr-1" />
-              ) : (
-                <LockIcon className="h-3 w-3 mr-1" />
-              )}
-              {release.visibility}
-            </Badge>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-4 text-sm">
-          <div className="flex items-center gap-1">
-            <CalendarIcon className="h-4 w-4" />
-            <span>
-              Published{" "}
-              {release?.publishedAt ? (
-                formatDistanceToNowStrict(release?.publishedAt, {
-                  addSuffix: true,
-                })
-              ) : (
-                <Badge variant="destructive" className="uppercase">
-                  not published
-                </Badge>
-              )}
-            </span>
-          </div>
-        </div>
-        <div className="flex items-center flex-wrap gap-4">
-          {release.isOwner && (
-            <>
-              <UpdateReleaseForm id={release.id} />
-              <DeleteRelease id={release.id} />
-              <Button>
-                <LayoutDashboardIcon className="h-4 w-4 mr-2" /> View Analytics
-              </Button>
-            </>
-          )}
-        </div>
+    <>
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <div data-color-mode={theme}>
-            <EditerMarkdown
-              source={release.content}
-              style={{whiteSpace: "pre-wrap"}}
-              className="mb-5 border p-5"
-            />
-          </div>
+          <h2 className="text-3xl font-bold capitalize">{release.title}</h2>
+          <p className="text-muted-foreground mt-2 capitalize">
+            {release.description}
+          </p>
         </div>
-        <Tabs defaultValue="comments" className="w-full">
-          <TabsList>
-            <TabsTrigger value="comments">Comments</TabsTrigger>
-            {release.isOwner && (
-              <TabsTrigger value="reviews">Reviews</TabsTrigger>
+        <div className="flex gap-2">
+          <Badge variant={checkStatus(release.status)}>{release.status}</Badge>
+          <Badge variant={checkVisibility(release.visibility)}>
+            {release.visibility === "PUBLIC" ? (
+              <EyeIcon className="h-3 w-3 mr-1" />
+            ) : (
+              <LockIcon className="h-3 w-3 mr-1" />
             )}
-          </TabsList>
-          <TabsContent value="comments">
-            <ManageComments releaseId={release.id} />
-          </TabsContent>
-          {release.isOwner && (
-            <TabsContent value="reviews">reviews</TabsContent>
-          )}
-        </Tabs>
+            {release.visibility}
+          </Badge>
+        </div>
       </div>
-    </div>
+      <div className="flex flex-wrap items-center gap-4 text-sm">
+        <div className="flex items-center gap-1">
+          <CalendarIcon className="h-4 w-4" />
+          <span>
+            Published{" "}
+            {release?.publishedAt ? (
+              formatDistanceToNowStrict(release?.publishedAt, {
+                addSuffix: true,
+              })
+            ) : (
+              <Badge variant="destructive" className="uppercase">
+                not published
+              </Badge>
+            )}
+          </span>
+        </div>
+      </div>
+      <div className="flex items-center flex-wrap gap-4">
+        {release.isOwner && (
+          <>
+            <UpdateReleaseForm id={release.id} />
+            <DeleteRelease id={release.id} />
+            <Button>
+              <LayoutDashboardIcon className="h-4 w-4 mr-2" /> View Analytics
+            </Button>
+          </>
+        )}
+      </div>
+      <div>
+        <div data-color-mode={theme}>
+          <EditerMarkdown
+            source={release.content}
+            style={{whiteSpace: "pre-wrap"}}
+            className="mb-5 border p-5"
+          />
+        </div>
+      </div>
+    </>
   );
 };
 

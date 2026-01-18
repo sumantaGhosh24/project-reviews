@@ -2,23 +2,20 @@ import {Suspense} from "react";
 import {ErrorBoundary} from "@sentry/nextjs";
 
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
-import {prefetchRelease} from "@/features/releases/server/prefetch";
+import {prefetchMyReviews} from "@/features/reviews/server/prefetch";
+import {reviewsParamsLoader} from "@/features/reviews/server/params-loader";
 import {HydrateClient} from "@/trpc/server";
-import ReleaseDetails from "@/features/releases/components/release-details";
+import ManageDashboardReviews from "@/features/reviews/components/manage-dashboard-reviews";
 import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
 
-export const metadata = {
-  title: "Release Details",
-};
-
-const ReleaseDetailsPage = async ({
-  params,
-}: PageProps<"/project/details/[id]/release/[releaseId]">) => {
+const DashboardReviewsPage = async ({
+  searchParams,
+}: PageProps<"/dashboard">) => {
   await requireAuth();
 
-  const {releaseId} = await params;
+  const params = await reviewsParamsLoader(searchParams);
 
-  prefetchRelease(releaseId);
+  prefetchMyReviews(params);
 
   return (
     <HydrateClient>
@@ -33,11 +30,11 @@ const ReleaseDetailsPage = async ({
         }
       >
         <Suspense fallback={<LoadingComponent />}>
-          <ReleaseDetails id={releaseId} />
+          <ManageDashboardReviews />
         </Suspense>
       </ErrorBoundary>
     </HydrateClient>
   );
 };
 
-export default ReleaseDetailsPage;
+export default DashboardReviewsPage;

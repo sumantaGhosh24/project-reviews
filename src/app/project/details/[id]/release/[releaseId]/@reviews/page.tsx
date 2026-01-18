@@ -1,24 +1,24 @@
 import {Suspense} from "react";
 import {ErrorBoundary} from "@sentry/nextjs";
 
-import {requireAuth} from "@/features/auth/helpers/auth-utils";
 import {prefetchRelease} from "@/features/releases/server/prefetch";
+import {prefetchReviews} from "@/features/reviews/server/prefetch";
+import {reviewsParamsLoader} from "@/features/reviews/server/params-loader";
 import {HydrateClient} from "@/trpc/server";
-import ReleaseDetails from "@/features/releases/components/release-details";
+import ManageReviews from "@/features/reviews/components/manage-reviews";
 import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
 
-export const metadata = {
-  title: "Release Details",
-};
-
-const ReleaseDetailsPage = async ({
+const ReleaseReviewsPage = async ({
   params,
+  searchParams,
 }: PageProps<"/project/details/[id]/release/[releaseId]">) => {
-  await requireAuth();
-
   const {releaseId} = await params;
 
+  const reviewParams = await reviewsParamsLoader(searchParams);
+
   prefetchRelease(releaseId);
+
+  prefetchReviews({...reviewParams, releaseId});
 
   return (
     <HydrateClient>
@@ -33,11 +33,11 @@ const ReleaseDetailsPage = async ({
         }
       >
         <Suspense fallback={<LoadingComponent />}>
-          <ReleaseDetails id={releaseId} />
+          <ManageReviews releaseId={releaseId} />
         </Suspense>
       </ErrorBoundary>
     </HydrateClient>
   );
 };
 
-export default ReleaseDetailsPage;
+export default ReleaseReviewsPage;

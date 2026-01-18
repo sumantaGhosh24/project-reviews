@@ -1,0 +1,70 @@
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
+import {toast} from "sonner";
+
+import {useTRPC} from "@/trpc/client";
+
+import {useReviewsParams} from "./use-reviews-params";
+
+export const useSuspenseReviews = (releaseId: string) => {
+  const trpc = useTRPC();
+
+  const [params] = useReviewsParams();
+
+  return useSuspenseQuery(
+    trpc.review.getAll.queryOptions({...params, releaseId})
+  );
+};
+
+export const useSuspenseMyReviews = () => {
+  const trpc = useTRPC();
+
+  const [params] = useReviewsParams();
+
+  return useSuspenseQuery(trpc.review.getMyAll.queryOptions(params));
+};
+
+export const useCreateReview = () => {
+  const queryClient = useQueryClient();
+
+  const trpc = useTRPC();
+
+  return useMutation(
+    trpc.review.create.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Review created successfully");
+
+        queryClient.invalidateQueries(
+          trpc.review.getAll.queryOptions({releaseId: data.releaseId})
+        );
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    })
+  );
+};
+
+export const useRemoveReview = () => {
+  const queryClient = useQueryClient();
+
+  const trpc = useTRPC();
+
+  return useMutation(
+    trpc.review.remove.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Review removed successfully");
+
+        queryClient.invalidateQueries(
+          trpc.review.getAll.queryOptions({releaseId: data.releaseId})
+        );
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    })
+  );
+};
