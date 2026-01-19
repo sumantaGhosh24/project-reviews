@@ -29,6 +29,7 @@ enum VoteTarget {
   PROJECT
   RELEASE
   COMMENT
+  REVIEW
 }
 
 enum NotificationType {
@@ -220,8 +221,7 @@ model Project {
   githubUrl  String
   websiteUrl String
 
-  releases         Release[]
-  projectAnalytics ProjectAnalytics?
+  releases Release[]
 
   publishedAt DateTime?
   createdAt   DateTime  @default(now())
@@ -242,9 +242,8 @@ model Release {
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String
 
-  comments         Comment[]
-  reviews          Review[]
-  releaseAnalytics ReleaseAnalytics?
+  comments Comment[]
+  reviews  Review[]
 
   publishedAt DateTime?
   createdAt   DateTime  @default(now())
@@ -313,39 +312,10 @@ model View {
   targetId String
 
   viewerId String?
-  ipHash   String?
 
   createdAt DateTime @default(now())
 
   @@index([target, targetId])
-}
-
-model ProjectAnalytics {
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId String  @id
-
-  views         Int @default(0)
-  uniqueViews   Int @default(0)
-  commentsCount Int @default(0)
-  votesScore    Int @default(0)
-
-  lastViewedAt DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-}
-
-model ReleaseAnalytics {
-  release   Release @relation(fields: [releaseId], references: [id], onDelete: Cascade)
-  releaseId String  @id
-
-  views         Int   @default(0)
-  uniqueViews   Int   @default(0)
-  commentsCount Int   @default(0)
-  votesScore    Int   @default(0)
-  averageRating Float @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Notification {

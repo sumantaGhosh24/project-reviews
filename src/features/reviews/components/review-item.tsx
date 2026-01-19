@@ -18,6 +18,13 @@ interface ReviewItemProps {
       image: string | null;
     };
     isOwner: boolean;
+    votes: {
+      type: string;
+      _count: number;
+    }[];
+    myVote: {
+      type: string;
+    } | null;
   };
 }
 
@@ -57,7 +64,13 @@ export function ReviewItem({review}: ReviewItemProps) {
             ))}
           </div>
           <p>{review.feedback}</p>
-          {review.isOwner && <ReviewActions reviewId={review.id} />}
+          <ReviewActions
+            reviewId={review.id}
+            releaseId={review.releaseId}
+            isOwner={review.isOwner}
+            votes={review.votes}
+            myVote={review.myVote}
+          />
         </div>
       </CardContent>
     </Card>

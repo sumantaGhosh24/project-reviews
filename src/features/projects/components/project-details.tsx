@@ -16,9 +16,14 @@ import {
   LockIcon,
   PencilIcon,
   TagIcon,
+  TimerResetIcon,
+  TrendingDownIcon,
+  TrendingUpIcon,
+  ViewIcon,
 } from "lucide-react";
 
 import {checkStatus, checkVisibility} from "@/lib/utils";
+import {useVote} from "@/features/votes/hooks/use-votes";
 import ManageReleases from "@/features/releases/components/manage-release";
 import {Badge} from "@/components/ui/badge";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
@@ -43,6 +48,19 @@ const ProjectDetails = ({id}: ProjectDetailsProps) => {
 
   const {theme} = useTheme();
 
+  const upVote = project.votes.find((v) => v.type === "UP")?._count ?? 0;
+  const downVote = project.votes.find((v) => v.type === "DOWN")?._count ?? 0;
+
+  const voteProject = useVote();
+
+  const handleVote = async (type: "UP" | "DOWN") => {
+    voteProject.mutate({
+      target: "PROJECT",
+      targetId: id,
+      type,
+    });
+  };
+
   return (
     <div className="mx-auto my-5 w-[95%] rounded-md shadow-md p-5 bg-background dark:shadow-white/40">
       <div className="space-y-5">
@@ -53,17 +71,33 @@ const ProjectDetails = ({id}: ProjectDetailsProps) => {
               {project.description}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <Badge variant={checkStatus(project.status)}>
               {project.status}
             </Badge>
             <Badge variant={checkVisibility(project.visibility)}>
               {project.visibility === "PUBLIC" ? (
-                <EyeIcon className="h-3 w-3 mr-1" />
+                <EyeIcon className="h-4 w-4 mr-1" />
               ) : (
-                <LockIcon className="h-3 w-3 mr-1" />
+                <LockIcon className="h-4 w-4 mr-1" />
               )}
               {project.visibility}
+            </Badge>
+            <Badge variant="success">
+              <TrendingUpIcon className="w-4 h-4 mr-1" />
+              {upVote}
+            </Badge>
+            <Badge variant="destructive">
+              <TrendingDownIcon className="w-4 h-4 mr-1" />
+              {downVote}
+            </Badge>
+            <Badge variant="default">
+              <ViewIcon className="w-4 h-4 mr-1" />
+              {project.views}
+            </Badge>
+            <Badge variant="warning">
+              <TimerResetIcon className="w-4 h-4 mr-1" />
+              {project._count?.releases}
             </Badge>
           </div>
         </div>
@@ -113,6 +147,20 @@ const ProjectDetails = ({id}: ProjectDetailsProps) => {
           </div>
         </div>
         <div className="flex items-center flex-wrap gap-4">
+          <Button
+            onClick={() => handleVote("UP")}
+            variant={project.myVote?.type === "UP" ? "success" : "secondary"}
+          >
+            <TrendingUpIcon className="h-4 w-4 mr-2" /> Up Vote
+          </Button>
+          <Button
+            onClick={() => handleVote("DOWN")}
+            variant={
+              project.myVote?.type === "DOWN" ? "destructive" : "secondary"
+            }
+          >
+            <TrendingDownIcon className="h-4 w-4 mr-2" /> Down Vote
+          </Button>
           <Button asChild>
             <Link href={project.websiteUrl} target="_blank">
               <GlobeIcon className="h-4 w-4 mr-2" /> Visit Website

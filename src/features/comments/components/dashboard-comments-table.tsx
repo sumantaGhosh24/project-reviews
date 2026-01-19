@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import {formatDistanceToNowStrict} from "date-fns";
-import {LinkIcon} from "lucide-react";
+import {LinkIcon, TrendingDownIcon, TrendingUpIcon} from "lucide-react";
 
 import {
   EmptyComponent,
@@ -38,6 +38,8 @@ const DashboardCommentsTable = () => {
               <TableRow>
                 <TableHead className="w-[100px]">Id</TableHead>
                 <TableHead>Body</TableHead>
+                <TableHead>Up Votes</TableHead>
+                <TableHead>Down Votes</TableHead>
                 <TableHead>Author</TableHead>
                 <TableHead>Release</TableHead>
                 <TableHead>Parent</TableHead>
@@ -48,63 +50,82 @@ const DashboardCommentsTable = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {comments.items.map((comment) => (
-                <TableRow key={comment.id}>
-                  <TableCell className="font-medium">{comment.id}</TableCell>
-                  <TableCell>
-                    {comment.body.length > 50
-                      ? comment.body.substring(0, 50) + "..."
-                      : comment.body}
-                  </TableCell>
-                  <TableCell>
-                    <Button asChild>
-                      <Link href={`/profile/details/${comment.author.id}`}>
-                        <LinkIcon size={24} /> Visit Author
-                      </Link>
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <Button asChild>
-                      <Link
-                        href={`/project/details/${comment.release.project.id}/release/${comment.release.id}`}
-                      >
-                        <LinkIcon size={24} /> Visit Release
-                      </Link>
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    {comment.parentId !== null ? (
-                      comment.parentId
-                    ) : (
-                      <Badge variant="success" className="uppercase">
-                        No Parent
-                      </Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>{comment.replies.length}</TableCell>
-                  <TableCell>
-                    {comment?.deletedAt ? (
-                      formatDistanceToNowStrict(comment?.deletedAt, {
+              {comments.items.map((comment) => {
+                const upVote =
+                  comment.votes.find((v) => v.type === "UP")?._count ?? 0;
+                const downVote =
+                  comment.votes.find((v) => v.type === "DOWN")?._count ?? 0;
+
+                return (
+                  <TableRow key={comment.id}>
+                    <TableCell className="font-medium">{comment.id}</TableCell>
+                    <TableCell>
+                      {comment.body.length > 50
+                        ? comment.body.substring(0, 50) + "..."
+                        : comment.body}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2 text-green-500">
+                        <TrendingUpIcon size={24} />
+                        {upVote}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2 text-red-500">
+                        <TrendingDownIcon size={24} />
+                        {downVote}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Button asChild>
+                        <Link href={`/profile/details/${comment.author.id}`}>
+                          <LinkIcon size={24} /> Visit Author
+                        </Link>
+                      </Button>
+                    </TableCell>
+                    <TableCell>
+                      <Button asChild>
+                        <Link
+                          href={`/project/details/${comment.release.project.id}/release/${comment.release.id}`}
+                        >
+                          <LinkIcon size={24} /> Visit Release
+                        </Link>
+                      </Button>
+                    </TableCell>
+                    <TableCell>
+                      {comment.parentId !== null ? (
+                        comment.parentId
+                      ) : (
+                        <Badge variant="success" className="uppercase">
+                          No Parent
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>{comment.replies.length}</TableCell>
+                    <TableCell>
+                      {comment?.deletedAt ? (
+                        formatDistanceToNowStrict(comment?.deletedAt, {
+                          addSuffix: true,
+                        })
+                      ) : (
+                        <Badge variant="success" className="uppercase">
+                          Not Deleted
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {formatDistanceToNowStrict(comment.createdAt, {
                         addSuffix: true,
-                      })
-                    ) : (
-                      <Badge variant="success" className="uppercase">
-                        Not Deleted
-                      </Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {formatDistanceToNowStrict(comment.createdAt, {
-                      addSuffix: true,
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    {formatDistanceToNowStrict(comment.updatedAt, {
-                      addSuffix: true,
-                    })}
-                  </TableCell>
-                </TableRow>
-              ))}
+                      })}
+                    </TableCell>
+                    <TableCell>
+                      {formatDistanceToNowStrict(comment.updatedAt, {
+                        addSuffix: true,
+                      })}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
           {comments.totalPages > 1 && (

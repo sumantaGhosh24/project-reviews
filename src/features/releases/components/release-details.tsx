@@ -11,9 +11,15 @@ import {
   EyeIcon,
   LayoutDashboardIcon,
   LockIcon,
+  MessageSquareIcon,
+  StarIcon,
+  TrendingDownIcon,
+  TrendingUpIcon,
+  ViewIcon,
 } from "lucide-react";
 
 import {checkStatus, checkVisibility} from "@/lib/utils";
+import {useVote} from "@/features/votes/hooks/use-votes";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 
@@ -38,6 +44,19 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
 
   const {theme} = useTheme();
 
+  const upVote = release.votes.find((v) => v.type === "UP")?._count ?? 0;
+  const downVote = release.votes.find((v) => v.type === "DOWN")?._count ?? 0;
+
+  const voteRelease = useVote();
+
+  const handleVote = async (type: "UP" | "DOWN") => {
+    voteRelease.mutate({
+      target: "RELEASE",
+      targetId: id,
+      type,
+    });
+  };
+
   return (
     <>
       <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -47,15 +66,35 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
             {release.description}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Badge variant={checkStatus(release.status)}>{release.status}</Badge>
           <Badge variant={checkVisibility(release.visibility)}>
             {release.visibility === "PUBLIC" ? (
-              <EyeIcon className="h-3 w-3 mr-1" />
+              <EyeIcon className="h-4 w-4 mr-1" />
             ) : (
-              <LockIcon className="h-3 w-3 mr-1" />
+              <LockIcon className="h-4 w-4 mr-1" />
             )}
             {release.visibility}
+          </Badge>
+          <Badge variant="success">
+            <TrendingUpIcon className="w-4 h-4 mr-1" />
+            {upVote}
+          </Badge>
+          <Badge variant="destructive">
+            <TrendingDownIcon className="w-4 h-4 mr-1" />
+            {downVote}
+          </Badge>
+          <Badge variant="default">
+            <ViewIcon className="w-4 h-4 mr-1" />
+            {release.views}
+          </Badge>
+          <Badge variant="warning">
+            <StarIcon className="w-4 h-4 mr-1" />
+            {release._count.reviews}
+          </Badge>
+          <Badge variant="warning">
+            <MessageSquareIcon className="w-4 h-4 mr-1" />
+            {release._count.comments}
           </Badge>
         </div>
       </div>
@@ -77,6 +116,20 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
         </div>
       </div>
       <div className="flex items-center flex-wrap gap-4">
+        <Button
+          onClick={() => handleVote("UP")}
+          variant={release.myVote?.type === "UP" ? "success" : "secondary"}
+        >
+          <TrendingUpIcon className="h-4 w-4 mr-2" /> Up Vote
+        </Button>
+        <Button
+          onClick={() => handleVote("DOWN")}
+          variant={
+            release.myVote?.type === "DOWN" ? "destructive" : "secondary"
+          }
+        >
+          <TrendingDownIcon className="h-4 w-4 mr-2" /> Down Vote
+        </Button>
         {release.isOwner && (
           <>
             <UpdateReleaseForm id={release.id} />

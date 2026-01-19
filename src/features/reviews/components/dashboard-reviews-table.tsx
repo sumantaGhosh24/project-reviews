@@ -2,7 +2,12 @@
 
 import Link from "next/link";
 import {formatDistanceToNowStrict} from "date-fns";
-import {LinkIcon, StarIcon} from "lucide-react";
+import {
+  LinkIcon,
+  StarIcon,
+  TrendingDownIcon,
+  TrendingUpIcon,
+} from "lucide-react";
 
 import {
   EmptyComponent,
@@ -38,6 +43,8 @@ const DashboardReviewsTable = () => {
                 <TableHead className="w-[100px]">Id</TableHead>
                 <TableHead>Rating</TableHead>
                 <TableHead>Feedback</TableHead>
+                <TableHead>Up Votes</TableHead>
+                <TableHead>Down Votes</TableHead>
                 <TableHead>Author</TableHead>
                 <TableHead>Release</TableHead>
                 <TableHead>Created At</TableHead>
@@ -45,55 +52,79 @@ const DashboardReviewsTable = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {reviews.items.map((review) => (
-                <TableRow key={review.id}>
-                  <TableCell className="font-medium">{review.id}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {Array.from({length: review.rating}).map((_, ind) => (
-                        <StarIcon
-                          key={ind}
-                          className="text-orange-500 fill-orange-500"
-                        />
-                      ))}
-                      {Array.from({length: 5 - review.rating}).map((_, ind) => (
-                        <StarIcon key={ind} className="text-muted-foreground" />
-                      ))}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {review.feedback.length > 50
-                      ? review.feedback.substring(0, 50) + "..."
-                      : review.feedback}
-                  </TableCell>
-                  <TableCell>
-                    <Button asChild>
-                      <Link href={`/profile/details/${review.author.id}`}>
-                        <LinkIcon size={24} /> Visit Author
-                      </Link>
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <Button asChild>
-                      <Link
-                        href={`/project/details/${review.release.project.id}/release/${review.release.id}`}
-                      >
-                        <LinkIcon size={24} /> Visit Release
-                      </Link>
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    {formatDistanceToNowStrict(review.createdAt, {
-                      addSuffix: true,
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    {formatDistanceToNowStrict(review.updatedAt, {
-                      addSuffix: true,
-                    })}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {reviews.items.map((review) => {
+                const upVote =
+                  review.votes.find((v) => v.type === "UP")?._count ?? 0;
+                const downVote =
+                  review.votes.find((v) => v.type === "DOWN")?._count ?? 0;
+
+                return (
+                  <TableRow key={review.id}>
+                    <TableCell className="font-medium">{review.id}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {Array.from({length: review.rating}).map((_, ind) => (
+                          <StarIcon
+                            key={ind}
+                            className="text-orange-500 fill-orange-500"
+                          />
+                        ))}
+                        {Array.from({length: 5 - review.rating}).map(
+                          (_, ind) => (
+                            <StarIcon
+                              key={ind}
+                              className="text-muted-foreground"
+                            />
+                          )
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {review.feedback.length > 50
+                        ? review.feedback.substring(0, 50) + "..."
+                        : review.feedback}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2 text-green-500">
+                        <TrendingUpIcon size={24} />
+                        {upVote}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2 text-red-500">
+                        <TrendingDownIcon size={24} />
+                        {downVote}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Button asChild>
+                        <Link href={`/profile/details/${review.author.id}`}>
+                          <LinkIcon size={24} /> Visit Author
+                        </Link>
+                      </Button>
+                    </TableCell>
+                    <TableCell>
+                      <Button asChild>
+                        <Link
+                          href={`/project/details/${review.release.project.id}/release/${review.release.id}`}
+                        >
+                          <LinkIcon size={24} /> Visit Release
+                        </Link>
+                      </Button>
+                    </TableCell>
+                    <TableCell>
+                      {formatDistanceToNowStrict(review.createdAt, {
+                        addSuffix: true,
+                      })}
+                    </TableCell>
+                    <TableCell>
+                      {formatDistanceToNowStrict(review.updatedAt, {
+                        addSuffix: true,
+                      })}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
           {reviews.totalPages > 1 && (

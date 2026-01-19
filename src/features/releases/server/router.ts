@@ -175,6 +175,14 @@ export const releasesRouter = createTRPCRouter({
       if (release.project.ownerId !== ctx.auth.user.id) {
         const release = await prisma.release.findFirst({
           where: {id: input.id, visibility: "PUBLIC"},
+          include: {
+            _count: {
+              select: {
+                comments: true,
+                reviews: true,
+              },
+            },
+          },
         });
 
         if (!release) {
@@ -184,10 +192,60 @@ export const releasesRouter = createTRPCRouter({
           });
         }
 
-        return {...release, isOwner};
+        const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+        const isUniqueView = await prisma.view.findFirst({
+          where: {
+            target: "RELEASE",
+            targetId: input.id,
+            createdAt: {gte: since},
+            viewerId: ctx.auth.user.id,
+          },
+          select: {id: true},
+        });
+
+        if (!isUniqueView) {
+          await prisma.view.create({
+            data: {
+              target: "RELEASE",
+              targetId: input.id,
+              viewerId: ctx.auth.user.id,
+            },
+          });
+        }
+
+        const votes = await prisma.vote.groupBy({
+          by: ["type"],
+          where: {target: "RELEASE", targetId: input.id},
+          _count: true,
+        });
+
+        const myVote = await prisma.vote.findUnique({
+          where: {
+            userId_target_targetId: {
+              userId: ctx.auth.user.id,
+              target: "RELEASE",
+              targetId: input.id,
+            },
+          },
+        });
+
+        const views = await prisma.view.count({
+          where: {target: "RELEASE", targetId: input.id},
+        });
+
+        return {...release, isOwner, votes, myVote, views};
       } else {
         const release = await prisma.release.findFirst({
           where: {id: input.id},
+          include: {
+            _count: {
+              select: {
+                comments: true,
+                reviews: true,
+              },
+            },
+          },
         });
 
         if (!release) {
@@ -197,7 +255,49 @@ export const releasesRouter = createTRPCRouter({
           });
         }
 
-        return {...release, isOwner};
+        const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+        const isUniqueView = await prisma.view.findFirst({
+          where: {
+            target: "RELEASE",
+            targetId: input.id,
+            createdAt: {gte: since},
+            viewerId: ctx.auth.user.id,
+          },
+          select: {id: true},
+        });
+
+        if (!isUniqueView) {
+          await prisma.view.create({
+            data: {
+              target: "RELEASE",
+              targetId: input.id,
+              viewerId: ctx.auth.user.id,
+            },
+          });
+        }
+
+        const votes = await prisma.vote.groupBy({
+          by: ["type"],
+          where: {target: "RELEASE", targetId: input.id},
+          _count: true,
+        });
+
+        const myVote = await prisma.vote.findUnique({
+          where: {
+            userId_target_targetId: {
+              userId: ctx.auth.user.id,
+              target: "RELEASE",
+              targetId: input.id,
+            },
+          },
+        });
+
+        const views = await prisma.view.count({
+          where: {target: "RELEASE", targetId: input.id},
+        });
+
+        return {...release, isOwner, votes, myVote, views};
       }
     }),
   getAll: protectedProcedure
@@ -275,10 +375,24 @@ export const releasesRouter = createTRPCRouter({
       const hasNextPage = page < totalPages;
       const hasPreviousPage = page > 1;
 
-      const itemsWithOwner = items.map((item) => ({...item, isOwner}));
+      const itemsWithVote = await Promise.all(
+        items.map(async (item) => {
+          const votes = await prisma.vote.groupBy({
+            by: ["type"],
+            where: {target: "RELEASE", targetId: item.id},
+            _count: true,
+          });
+
+          const views = await prisma.view.count({
+            where: {target: "RELEASE", targetId: item.id},
+          });
+
+          return {...item, isOwner, votes, views};
+        })
+      );
 
       return {
-        items: itemsWithOwner,
+        items: itemsWithVote,
         totalCount,
         page,
         pageSize,

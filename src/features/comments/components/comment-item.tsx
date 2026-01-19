@@ -20,6 +20,13 @@ interface CommentItemProps {
       image: string | null;
     };
     isOwner: boolean;
+    votes: {
+      type: string;
+      _count: number;
+    }[];
+    myVote: {
+      type: string;
+    } | null;
     replies: {
       id: string;
       body: string;
@@ -77,7 +84,10 @@ export function CommentItem({comment}: CommentItemProps) {
           {!comment.deletedAt && (
             <CommentActions
               commentId={comment.id}
+              releaseId={comment.releaseId}
               isOwner={comment.isOwner}
+              votes={comment.votes}
+              myVote={comment.myVote}
               onReply={() => setShowReply(!showReply)}
               replyCount={comment.replies.length}
             />

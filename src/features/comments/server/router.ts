@@ -151,6 +151,39 @@ export const commentsRouter = createTRPCRouter({
 
       return comment;
     }),
+  getOne: protectedProcedure
+    .input(z.object({id: z.string()}))
+    .query(async ({input, ctx}) => {
+      const comment = await prisma.comment.findFirst({
+        where: {id: input.id},
+        select: {id: true},
+      });
+
+      if (!comment) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "This comment does not exists.",
+        });
+      }
+
+      const votes = await prisma.vote.groupBy({
+        by: ["type"],
+        where: {target: "COMMENT", targetId: input.id},
+        _count: true,
+      });
+
+      const myVote = await prisma.vote.findUnique({
+        where: {
+          userId_target_targetId: {
+            userId: ctx.auth.user.id,
+            target: "COMMENT",
+            targetId: input.id,
+          },
+        },
+      });
+
+      return {...comment, votes, myVote};
+    }),
   getAll: protectedProcedure
     .input(
       z.object({
@@ -231,14 +264,32 @@ export const commentsRouter = createTRPCRouter({
       const hasNextPage = page < totalPages;
       const hasPreviousPage = page > 1;
 
-      const itemsWithOwner = items.map((item) => {
-        const isOwner = item.authorId === ctx.auth.user.id;
+      const itemsWithVote = await Promise.all(
+        items.map(async (item) => {
+          const votes = await prisma.vote.groupBy({
+            by: ["type"],
+            where: {target: "COMMENT", targetId: item.id},
+            _count: true,
+          });
 
-        return {...item, isOwner};
-      });
+          const myVote = await prisma.vote.findUnique({
+            where: {
+              userId_target_targetId: {
+                userId: ctx.auth.user.id,
+                target: "COMMENT",
+                targetId: item.id,
+              },
+            },
+          });
+
+          const isOwner = item.authorId === ctx.auth.user.id;
+
+          return {...item, isOwner, votes, myVote};
+        })
+      );
 
       return {
-        items: itemsWithOwner,
+        items: itemsWithVote,
         totalCount,
         page,
         pageSize,
@@ -304,8 +355,20 @@ export const commentsRouter = createTRPCRouter({
       const hasNextPage = page < totalPages;
       const hasPreviousPage = page > 1;
 
+      const itemsWithVote = await Promise.all(
+        items.map(async (item) => {
+          const votes = await prisma.vote.groupBy({
+            by: ["type"],
+            where: {target: "COMMENT", targetId: item.id},
+            _count: true,
+          });
+
+          return {...item, votes};
+        })
+      );
+
       return {
-        items,
+        items: itemsWithVote,
         totalCount,
         page,
         pageSize,

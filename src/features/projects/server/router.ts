@@ -176,19 +176,6 @@ export const projectsRouter = createTRPCRouter({
         return project;
       });
     }),
-  getOne: premiumProcedure
-    .input(z.object({id: z.string()}))
-    .query(async ({input, ctx}) => {
-      return prisma.project.findUnique({
-        where: {
-          id: input.id,
-          ownerId: ctx.auth.user.id,
-        },
-        include: {
-          category: true,
-        },
-      });
-    }),
   remove: premiumProcedure
     .input(z.object({id: z.string()}))
     .mutation(async ({input, ctx}) => {
@@ -207,6 +194,19 @@ export const projectsRouter = createTRPCRouter({
       }
 
       return project;
+    }),
+  getOne: premiumProcedure
+    .input(z.object({id: z.string()}))
+    .query(async ({input, ctx}) => {
+      return prisma.project.findUnique({
+        where: {
+          id: input.id,
+          ownerId: ctx.auth.user.id,
+        },
+        include: {
+          category: true,
+        },
+      });
     }),
   getAll: adminProcedure
     .input(
@@ -280,12 +280,28 @@ export const projectsRouter = createTRPCRouter({
         }),
       ]);
 
+      const itemsWithVote = await Promise.all(
+        items.map(async (item) => {
+          const votes = await prisma.vote.groupBy({
+            by: ["type"],
+            where: {target: "PROJECT", targetId: item.id},
+            _count: true,
+          });
+
+          const views = await prisma.view.count({
+            where: {target: "PROJECT", targetId: item.id},
+          });
+
+          return {...item, votes, views};
+        })
+      );
+
       const totalPages = Math.ceil(totalCount / pageSize);
       const hasNextPage = page < totalPages;
       const hasPreviousPage = page > 1;
 
       return {
-        items,
+        items: itemsWithVote,
         totalCount,
         page,
         pageSize,
@@ -369,12 +385,28 @@ export const projectsRouter = createTRPCRouter({
         }),
       ]);
 
+      const itemsWithVote = await Promise.all(
+        items.map(async (item) => {
+          const votes = await prisma.vote.groupBy({
+            by: ["type"],
+            where: {target: "PROJECT", targetId: item.id},
+            _count: true,
+          });
+
+          const views = await prisma.view.count({
+            where: {target: "PROJECT", targetId: item.id},
+          });
+
+          return {...item, votes, views};
+        })
+      );
+
       const totalPages = Math.ceil(totalCount / pageSize);
       const hasNextPage = page < totalPages;
       const hasPreviousPage = page > 1;
 
       return {
-        items,
+        items: itemsWithVote,
         totalCount,
         page,
         pageSize,
@@ -457,12 +489,28 @@ export const projectsRouter = createTRPCRouter({
         }),
       ]);
 
+      const itemsWithVote = await Promise.all(
+        items.map(async (item) => {
+          const votes = await prisma.vote.groupBy({
+            by: ["type"],
+            where: {target: "PROJECT", targetId: item.id},
+            _count: true,
+          });
+
+          const views = await prisma.view.count({
+            where: {target: "PROJECT", targetId: item.id},
+          });
+
+          return {...item, votes, views};
+        })
+      );
+
       const totalPages = Math.ceil(totalCount / pageSize);
       const hasNextPage = page < totalPages;
       const hasPreviousPage = page > 1;
 
       return {
-        items,
+        items: itemsWithVote,
         totalCount,
         page,
         pageSize,
@@ -547,12 +595,28 @@ export const projectsRouter = createTRPCRouter({
         }),
       ]);
 
+      const itemsWithVote = await Promise.all(
+        items.map(async (item) => {
+          const votes = await prisma.vote.groupBy({
+            by: ["type"],
+            where: {target: "PROJECT", targetId: item.id},
+            _count: true,
+          });
+
+          const views = await prisma.view.count({
+            where: {target: "PROJECT", targetId: item.id},
+          });
+
+          return {...item, votes, views};
+        })
+      );
+
       const totalPages = Math.ceil(totalCount / pageSize);
       const hasNextPage = page < totalPages;
       const hasPreviousPage = page > 1;
 
       return {
-        items,
+        items: itemsWithVote,
         totalCount,
         page,
         pageSize,
@@ -579,6 +643,11 @@ export const projectsRouter = createTRPCRouter({
               image: true,
             },
           },
+          _count: {
+            select: {
+              releases: true,
+            },
+          },
         },
       });
 
@@ -589,8 +658,50 @@ export const projectsRouter = createTRPCRouter({
         });
       }
 
+      const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+      const isUniqueView = await prisma.view.findFirst({
+        where: {
+          target: "PROJECT",
+          targetId: input.id,
+          createdAt: {gte: since},
+          viewerId: ctx.auth.user.id,
+        },
+        select: {id: true},
+      });
+
+      if (!isUniqueView) {
+        await prisma.view.create({
+          data: {
+            target: "PROJECT",
+            targetId: input.id,
+            viewerId: ctx.auth.user.id,
+          },
+        });
+      }
+
+      const votes = await prisma.vote.groupBy({
+        by: ["type"],
+        where: {target: "PROJECT", targetId: input.id},
+        _count: true,
+      });
+
+      const myVote = await prisma.vote.findUnique({
+        where: {
+          userId_target_targetId: {
+            userId: ctx.auth.user.id,
+            target: "PROJECT",
+            targetId: input.id,
+          },
+        },
+      });
+
+      const views = await prisma.view.count({
+        where: {target: "PROJECT", targetId: input.id},
+      });
+
       const isOwner = project.ownerId === ctx.auth.user.id;
 
-      return {...project, isOwner};
+      return {...project, isOwner, votes, myVote, views};
     }),
 });
