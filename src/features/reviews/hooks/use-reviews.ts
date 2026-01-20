@@ -40,6 +40,9 @@ export const useCreateReview = () => {
         queryClient.invalidateQueries(
           trpc.review.getAll.queryOptions({releaseId: data.releaseId})
         );
+        queryClient.invalidateQueries(
+          trpc.release.getOne.queryOptions({id: data.releaseId})
+        );
       },
       onError: (error) => {
         toast.error(error.message);

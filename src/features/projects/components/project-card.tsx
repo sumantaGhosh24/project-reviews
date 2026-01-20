@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   ExternalLinkIcon,
+  StarIcon,
   TimerResetIcon,
   TrendingDownIcon,
   TrendingUpIcon,
@@ -40,6 +41,14 @@ interface ProjectCardProps extends Project {
     _count: number;
   }[];
   views: number;
+  reviewStats: {
+    _count: {
+      id: number;
+    };
+    _avg: {
+      rating: number;
+    };
+  };
 }
 
 const ProjectCard = ({
@@ -56,6 +65,7 @@ const ProjectCard = ({
   _count,
   votes,
   views,
+  reviewStats,
 }: ProjectCardProps) => {
   const upVote = votes.find((v) => v.type === "UP")?._count ?? 0;
   const downVote = votes.find((v) => v.type === "DOWN")?._count ?? 0;
@@ -82,6 +92,12 @@ const ProjectCard = ({
           <div className="flex items-center gap-1 text-orange-500">
             <TimerResetIcon className="w-4 h-4" />
             <span className="text-xs font-medium">{_count?.releases}</span>
+          </div>
+          <div className="flex items-center gap-1 text-orange-500">
+            <StarIcon className="w-4 h-4" />
+            <span className="text-xs font-medium">
+              {reviewStats._avg.rating}({reviewStats._count.id})
+            </span>
           </div>
         </div>
       </div>

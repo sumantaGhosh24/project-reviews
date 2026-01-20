@@ -29,6 +29,14 @@ interface ReleaseCardProps extends Release {
     _count: number;
   }[];
   views: number;
+  reviewStats: {
+    _count: {
+      id: number;
+    };
+    _avg: {
+      rating: number;
+    };
+  };
 }
 
 const ReleaseCard = ({
@@ -41,6 +49,7 @@ const ReleaseCard = ({
   _count,
   votes,
   views,
+  reviewStats,
 }: ReleaseCardProps) => {
   const upVote = votes.find((v) => v.type === "UP")?._count ?? 0;
   const downVote = votes.find((v) => v.type === "DOWN")?._count ?? 0;
@@ -77,7 +86,9 @@ const ReleaseCard = ({
           </div>
           <div className="flex items-center gap-1 text-orange-500">
             <StarIcon className="w-4 h-4" />
-            <span className="text-xs font-bold">{_count.reviews}</span>
+            <span className="text-xs font-bold">
+              {reviewStats._avg.rating}({reviewStats._count.id})
+            </span>
           </div>
           <div className="flex items-center gap-1 text-orange-500">
             <MessageSquareIcon className="w-4 h-4" />

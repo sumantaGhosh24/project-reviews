@@ -12,9 +12,9 @@ import {
   EyeIcon,
   GithubIcon,
   GlobeIcon,
-  LayoutDashboardIcon,
   LockIcon,
   PencilIcon,
+  StarIcon,
   TagIcon,
   TimerResetIcon,
   TrendingDownIcon,
@@ -30,6 +30,7 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Button} from "@/components/ui/button";
 
 import {useSuspenseViewProject} from "../hooks/use-projects";
+import ProjectAnalytics from "./project-analytics";
 
 interface ProjectDetailsProps {
   id: string;
@@ -98,6 +99,10 @@ const ProjectDetails = ({id}: ProjectDetailsProps) => {
             <Badge variant="warning">
               <TimerResetIcon className="w-4 h-4 mr-1" />
               {project._count?.releases}
+            </Badge>
+            <Badge variant="warning">
+              <StarIcon className="w-4 h-4 mr-1" />
+              {project.reviewStats._avg.rating}({project.reviewStats._count.id})
             </Badge>
           </div>
         </div>
@@ -178,9 +183,7 @@ const ProjectDetails = ({id}: ProjectDetailsProps) => {
                   <PencilIcon className="h-4 w-4 mr-2" /> Update
                 </Link>
               </Button>
-              <Button>
-                <LayoutDashboardIcon className="h-4 w-4 mr-2" /> View Analytics
-              </Button>
+              <ProjectAnalytics projectId={project.id} />
             </>
           )}
         </div>

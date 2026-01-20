@@ -4,12 +4,13 @@ import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import {useTheme} from "next-themes";
 import {formatDistanceToNowStrict} from "date-fns";
 import {
+  ArrowLeftIcon,
   CalendarIcon,
   EyeIcon,
-  LayoutDashboardIcon,
   LockIcon,
   MessageSquareIcon,
   StarIcon,
@@ -26,6 +27,7 @@ import {Button} from "@/components/ui/button";
 import {useSuspenseRelease} from "../hooks/use-releases";
 import UpdateReleaseForm from "./update-release-form";
 import DeleteRelease from "./delete-release";
+import ReleaseAnalytics from "./release-analytics";
 
 const EditerMarkdown = dynamic(
   () =>
@@ -90,7 +92,7 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
           </Badge>
           <Badge variant="warning">
             <StarIcon className="w-4 h-4 mr-1" />
-            {release._count.reviews}
+            {release.reviewStats._avg.rating}({release.reviewStats._count.id})
           </Badge>
           <Badge variant="warning">
             <MessageSquareIcon className="w-4 h-4 mr-1" />
@@ -99,6 +101,11 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-4 text-sm">
+        <Button asChild>
+          <Link href={`/project/details/${release.projectId}`}>
+            <ArrowLeftIcon className="h-4 w-4 mr-2" /> Back to Project
+          </Link>
+        </Button>
         <div className="flex items-center gap-1">
           <CalendarIcon className="h-4 w-4" />
           <span>
@@ -134,9 +141,7 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
           <>
             <UpdateReleaseForm id={release.id} />
             <DeleteRelease id={release.id} />
-            <Button>
-              <LayoutDashboardIcon className="h-4 w-4 mr-2" /> View Analytics
-            </Button>
+            <ReleaseAnalytics releaseId={release.id} />
           </>
         )}
       </div>

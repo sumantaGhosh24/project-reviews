@@ -4,6 +4,7 @@ import {ErrorBoundary} from "@sentry/nextjs";
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
 import {prefetchViewProject} from "@/features/projects/server/prefetch";
 import {prefetchReleases} from "@/features/releases/server/prefetch";
+import {prefetchProjectDashboard} from "@/features/dashboard/server/prefetch";
 import {HydrateClient} from "@/trpc/server";
 import ProjectDetails from "@/features/projects/components/project-details";
 import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
@@ -22,6 +23,8 @@ const ProjectDetailsPage = async ({
   prefetchViewProject(id);
 
   prefetchReleases({projectId: id});
+
+  prefetchProjectDashboard(id);
 
   return (
     <HydrateClient>

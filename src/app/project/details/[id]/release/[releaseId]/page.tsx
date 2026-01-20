@@ -3,6 +3,7 @@ import {ErrorBoundary} from "@sentry/nextjs";
 
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
 import {prefetchRelease} from "@/features/releases/server/prefetch";
+import {prefetchReleaseDashboard} from "@/features/dashboard/server/prefetch";
 import {HydrateClient} from "@/trpc/server";
 import ReleaseDetails from "@/features/releases/components/release-details";
 import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
@@ -19,6 +20,8 @@ const ReleaseDetailsPage = async ({
   const {releaseId} = await params;
 
   prefetchRelease(releaseId);
+
+  prefetchReleaseDashboard(releaseId);
 
   return (
     <HydrateClient>

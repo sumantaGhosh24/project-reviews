@@ -7,6 +7,7 @@ import {
   ExternalLinkIcon,
   EyeIcon,
   PenIcon,
+  StarIcon,
   TimerResetIcon,
   TrendingDownIcon,
   TrendingUpIcon,
@@ -55,6 +56,7 @@ const DashboardProjectsTable = () => {
                 <TableHead>Down Votes</TableHead>
                 <TableHead>Unique Views</TableHead>
                 <TableHead>Releases</TableHead>
+                <TableHead>Rating</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Tags</TableHead>
                 <TableHead>Github URL</TableHead>
@@ -104,6 +106,13 @@ const DashboardProjectsTable = () => {
                       <div className="flex items-center gap-2 text-orange-500">
                         <TimerResetIcon size={24} />
                         {project._count.releases}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2 text-orange-500">
+                        <StarIcon size={24} />
+                        {project.reviewStats._avg.rating}(
+                        {project.reviewStats._count.id})
                       </div>
                     </TableCell>
                     <TableCell>

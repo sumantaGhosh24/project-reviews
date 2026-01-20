@@ -13,3 +13,19 @@ export const useSuspenseAdminDashboard = () => {
 
   return useSuspenseQuery(trpc.dashboard.getAdminDashboard.queryOptions());
 };
+
+export const useSuspenseProjectDashboard = (projectId: string) => {
+  const trpc = useTRPC();
+
+  return useSuspenseQuery(
+    trpc.dashboard.getProjectDashboard.queryOptions({projectId})
+  );
+};
+
+export const useSuspenseReleaseDashboard = (releaseId: string) => {
+  const trpc = useTRPC();
+
+  return useSuspenseQuery(
+    trpc.dashboard.getReleaseDashboard.queryOptions({releaseId})
+  );
+};

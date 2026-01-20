@@ -234,7 +234,15 @@ export const releasesRouter = createTRPCRouter({
           where: {target: "RELEASE", targetId: input.id},
         });
 
-        return {...release, isOwner, votes, myVote, views};
+        const reviewStats = await prisma.review.aggregate({
+          where: {
+            releaseId: input.id,
+          },
+          _count: {id: true},
+          _avg: {rating: true},
+        });
+
+        return {...release, isOwner, votes, myVote, views, reviewStats};
       } else {
         const release = await prisma.release.findFirst({
           where: {id: input.id},
@@ -297,7 +305,15 @@ export const releasesRouter = createTRPCRouter({
           where: {target: "RELEASE", targetId: input.id},
         });
 
-        return {...release, isOwner, votes, myVote, views};
+        const reviewStats = await prisma.review.aggregate({
+          where: {
+            releaseId: input.id,
+          },
+          _count: {id: true},
+          _avg: {rating: true},
+        });
+
+        return {...release, isOwner, votes, myVote, views, reviewStats};
       }
     }),
   getAll: protectedProcedure
@@ -387,7 +403,15 @@ export const releasesRouter = createTRPCRouter({
             where: {target: "RELEASE", targetId: item.id},
           });
 
-          return {...item, isOwner, votes, views};
+          const reviewStats = await prisma.review.aggregate({
+            where: {
+              releaseId: item.id,
+            },
+            _count: {id: true},
+            _avg: {rating: true},
+          });
+
+          return {...item, isOwner, votes, views, reviewStats};
         })
       );
 

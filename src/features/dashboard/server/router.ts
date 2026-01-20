@@ -1,4 +1,5 @@
 import {TRPCError} from "@trpc/server";
+import z from "zod";
 
 import {createTRPCRouter, protectedProcedure} from "@/trpc/init";
 import prisma from "@/lib/db";
@@ -318,4 +319,233 @@ export const dashboardRouter = createTRPCRouter({
       },
     };
   }),
+  getProjectDashboard: protectedProcedure
+    .input(z.object({projectId: z.string()}))
+    .query(async ({ctx, input}) => {
+      const {projectId} = input;
+
+      const project = await prisma.project.findUnique({
+        where: {id: projectId},
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          status: true,
+          visibility: true,
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          owner: {
+            select: {
+              id: true,
+            },
+          },
+          _count: {
+            select: {
+              releases: true,
+            },
+          },
+        },
+      });
+
+      if (!project) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Project not found.",
+        });
+      }
+
+      if (project.owner.id !== ctx.auth.user.id) {
+        return {unauthorized: true};
+      }
+
+      const projectVotesCount = await prisma.vote.count({
+        where: {
+          target: "PROJECT",
+          targetId: projectId,
+        },
+      });
+
+      const projectViewsCount = await prisma.view.count({
+        where: {
+          target: "PROJECT",
+          targetId: projectId,
+        },
+      });
+
+      const releases = await prisma.release.findMany({
+        where: {
+          projectId,
+        },
+        orderBy: {createdAt: "desc"},
+        select: {
+          id: true,
+        },
+      });
+
+      const releaseIds = releases.map((r) => r.id);
+
+      const [releaseVotesCount, releaseViewsCount] = await Promise.all([
+        prisma.vote.count({
+          where: {
+            target: "RELEASE",
+            targetId: {in: releaseIds},
+          },
+        }),
+        prisma.view.count({
+          where: {
+            target: "RELEASE",
+            targetId: {in: releaseIds},
+          },
+        }),
+      ]);
+
+      const reviewStats = await prisma.review.aggregate({
+        where: {
+          releaseId: {in: releaseIds},
+        },
+        _count: {id: true},
+        _avg: {rating: true},
+      });
+
+      const commentsCount = await prisma.comment.count({
+        where: {
+          releaseId: {in: releaseIds},
+        },
+      });
+
+      return {
+        project,
+
+        counts: {
+          releases: project._count.releases,
+          comments: commentsCount,
+          reviews: reviewStats._count.id,
+        },
+
+        engagement: {
+          project: {
+            votes: projectVotesCount,
+            views: projectViewsCount,
+          },
+          releases: {
+            votes: releaseVotesCount,
+            views: releaseViewsCount,
+          },
+        },
+
+        ratings: {
+          average: reviewStats._avg.rating ?? 0,
+          total: reviewStats._count.id,
+        },
+      };
+    }),
+  getReleaseDashboard: protectedProcedure
+    .input(z.object({releaseId: z.string()}))
+    .query(async ({ctx, input}) => {
+      const {releaseId} = input;
+
+      const release = await prisma.release.findUnique({
+        where: {id: releaseId},
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          status: true,
+          visibility: true,
+          project: {
+            select: {
+              id: true,
+              owner: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!release) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Release not found.",
+        });
+      }
+
+      if (release.project.owner.id !== ctx.auth.user.id) {
+        return {unauthorized: true};
+      }
+
+      const releaseVotesCount = await prisma.vote.count({
+        where: {
+          target: "RELEASE",
+          targetId: releaseId,
+        },
+      });
+
+      const releaseViewsCount = await prisma.view.count({
+        where: {
+          target: "RELEASE",
+          targetId: releaseId,
+        },
+      });
+
+      const reviewStats = await prisma.review.aggregate({
+        where: {releaseId},
+        _count: {id: true},
+        _avg: {rating: true},
+      });
+
+      const ratingDistribution = await prisma.review.groupBy({
+        by: ["rating"],
+        where: {releaseId},
+        _count: {rating: true},
+        orderBy: {rating: "asc"},
+      });
+
+      const commentsCount = await prisma.comment.count({
+        where: {releaseId},
+      });
+
+      const repliesCount = await prisma.comment.count({
+        where: {
+          releaseId,
+          parentId: {not: null},
+        },
+      });
+
+      const voteBreakdown = await prisma.vote.groupBy({
+        by: ["type"],
+        where: {
+          target: "RELEASE",
+          targetId: releaseId,
+        },
+        _count: {type: true},
+      });
+
+      return {
+        release,
+        counts: {
+          comments: commentsCount,
+          replies: repliesCount,
+          reviews: reviewStats._count.id,
+        },
+        engagement: {
+          votes: releaseVotesCount,
+          views: releaseViewsCount,
+        },
+        ratings: {
+          average: reviewStats._avg.rating ?? 0,
+          total: reviewStats._count.id,
+          distribution: ratingDistribution,
+        },
+        votes: {
+          breakdown: voteBreakdown,
+        },
+      };
+    }),
 });
