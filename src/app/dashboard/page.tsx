@@ -1,4 +1,14 @@
+import {Suspense} from "react";
+import {ErrorBoundary} from "@sentry/nextjs";
+
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
+import {
+  prefetchAdminDashboard,
+  prefetchDashboard,
+} from "@/features/dashboard/server/prefetch";
+import {HydrateClient} from "@/trpc/server";
+import ManageDashboard from "@/features/dashboard/components/manage-dashboard";
+import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
 
 export const metadata = {
   title: "Dashboard",
@@ -7,10 +17,27 @@ export const metadata = {
 const Dashboard = async () => {
   await requireAuth();
 
+  prefetchDashboard();
+
+  prefetchAdminDashboard();
+
   return (
-    <div>
-      <h1 className="text-2xl font-bold">Dashboard Page</h1>
-    </div>
+    <HydrateClient>
+      <ErrorBoundary
+        fallback={
+          <ErrorComponent
+            title="Something went wrong"
+            description="Try again later"
+            buttonText="Go Home"
+            redirectUrl="/"
+          />
+        }
+      >
+        <Suspense fallback={<LoadingComponent />}>
+          <ManageDashboard />
+        </Suspense>
+      </ErrorBoundary>
+    </HydrateClient>
   );
 };
 

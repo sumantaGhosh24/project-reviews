@@ -5,7 +5,7 @@ import {useRouter} from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {toast} from "sonner";
-import {ChessKingIcon, MenuIcon, XIcon} from "lucide-react";
+import {BellIcon, ChessKingIcon, MenuIcon, XIcon} from "lucide-react";
 
 import {adminLinks, guestLinks, userLinks} from "@/constants";
 import {authClient} from "@/lib/auth/auth-client";
@@ -162,7 +162,17 @@ const Header = () => {
                       asChild
                       className={navigationMenuTriggerStyle()}
                     >
-                      <Link href={"/profile/edit"}>
+                      <Link href="/notifications">
+                        <BellIcon className="text-black dark:text-white" />
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <NavigationMenuLink
+                      asChild
+                      className={navigationMenuTriggerStyle()}
+                    >
+                      <Link href="/profile/edit">
                         <Avatar>
                           <AvatarImage
                             src={

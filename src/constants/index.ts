@@ -6,7 +6,6 @@ export const guestLinks = [
 export const userLinks = [
   {id: 1, name: "Home", url: "/home"},
   {id: 2, name: "Dashboard", url: "/dashboard"},
-  {id: 3, name: "Notifications", url: "/notifications"},
 ];
 
 export const adminLinks = [
