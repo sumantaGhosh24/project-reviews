@@ -46,7 +46,7 @@ interface ProjectCardProps extends Project {
       id: number;
     };
     _avg: {
-      rating: number;
+      rating: number | null;
     };
   };
 }
