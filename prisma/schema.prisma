@@ -50,11 +50,16 @@ enum NotificationTarget {
   REVIEW
 }
 
+enum ImageTarget {
+  PROJECT
+  RELEASE
+}
+
 model User {
   id               String   @id
   name             String
   email            String
-  image            String?
+  image            String   @default("https://w3bkow2cit.ufs.sh/f/jLzp5qrLYh1KWP2CB5X5THxLaA1rNpE8DRtju7ZhPmKs2MoF")
   emailVerified    Boolean  @default(false)
   twoFactorEnabled Boolean? @default(false)
   favoriteNumber   Int
@@ -251,8 +256,9 @@ model Release {
 }
 
 model Comment {
-  id   String @id @default(uuid())
-  body String
+  id    String  @id @default(uuid())
+  body  String
+  image String?
 
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
@@ -289,6 +295,17 @@ model Review {
   updatedAt DateTime @updatedAt
 
   @@unique([authorId, releaseId])
+}
+
+model Image {
+  id       String      @id @default(uuid())
+  target   ImageTarget
+  targetId String
+  url      String      @default("https://w3bkow2cit.ufs.sh/f/jLzp5qrLYh1KWP2CB5X5THxLaA1rNpE8DRtju7ZhPmKs2MoF")
+
+  createdAt DateTime @default(now())
+
+  @@index([target, targetId])
 }
 
 model Vote {
