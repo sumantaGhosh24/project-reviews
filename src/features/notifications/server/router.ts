@@ -9,6 +9,16 @@ import prisma from "@/lib/db";
 import {PAGINATION} from "@/constants/pagination";
 
 export const notificationsRouter = createTRPCRouter({
+  notificationCount: protectedProcedure.query(async ({ctx}) => {
+    const notificationCount = await prisma.notification.count({
+      where: {
+        recipientId: ctx?.auth?.user?.id,
+        readAt: null,
+      },
+    });
+
+    return notificationCount ?? 0;
+  }),
   getAll: protectedProcedure
     .input(
       z.object({

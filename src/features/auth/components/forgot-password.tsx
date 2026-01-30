@@ -15,10 +15,10 @@ const forgotPasswordSchema = z.object({
   email: z.email().min(1),
 });
 
-type ForgotPasswordForm = z.infer<typeof forgotPasswordSchema>;
+type ForgotPasswordFormType = z.infer<typeof forgotPasswordSchema>;
 
 export function ForgotPassword({openSignInTab}: {openSignInTab: () => void}) {
-  const form = useForm<ForgotPasswordForm>({
+  const form = useForm<ForgotPasswordFormType>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: "",
@@ -27,7 +27,7 @@ export function ForgotPassword({openSignInTab}: {openSignInTab: () => void}) {
 
   const {isSubmitting} = form.formState;
 
-  async function handleForgotPassword(data: ForgotPasswordForm) {
+  async function handleForgotPassword(data: ForgotPasswordFormType) {
     await authClient.requestPasswordReset(
       {
         ...data,

@@ -1,6 +1,6 @@
 "use client";
 
-import {ComponentWrapper} from "@/components/entity-components";
+import ComponentWrapper from "@/features/global/components/component-wrapper";
 
 import MarkAllNotificationsRead from "./mark-all-notifications-read";
 import NotificationsTable from "./notifications-table";

@@ -32,12 +32,12 @@ const ProfileDetails = ({id}: ProfileDetailsProps) => {
 
   return (
     <div className="flex items-center gap-4 flex-wrap">
-      <Avatar className="size-32">
+      <Avatar className="size-24">
         <AvatarImage src={data?.image ?? "https://placehold.co/600x400.png"} />
         <AvatarFallback>{data?.name?.substring(0, 2)}</AvatarFallback>
       </Avatar>
       <div className="min-w-0 flex-1">
-        <h1 className="truncate text-2xl font-semibold tracking-tight">
+        <h1 className="truncate text-2xl font-semibold tracking-tight capitalize">
           {data?.name}
         </h1>
         <p className="mt-1 text-sm leading-relaxed text-zinc-600 dark:text-white">

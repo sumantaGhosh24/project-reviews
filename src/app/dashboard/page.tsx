@@ -1,5 +1,5 @@
 import {Suspense} from "react";
-import {ErrorBoundary} from "@sentry/nextjs";
+import {ErrorBoundary} from "react-error-boundary";
 
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
 import {
@@ -8,7 +8,8 @@ import {
 } from "@/features/dashboard/server/prefetch";
 import {HydrateClient} from "@/trpc/server";
 import ManageDashboard from "@/features/dashboard/components/manage-dashboard";
-import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
+import ErrorComponent from "@/features/global/components/error-component";
+import LoadingComponent from "@/features/global/components/loading-component";
 
 export const metadata = {
   title: "Dashboard",

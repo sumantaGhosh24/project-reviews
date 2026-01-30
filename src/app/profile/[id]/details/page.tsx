@@ -1,11 +1,12 @@
 import {Suspense} from "react";
-import {ErrorBoundary} from "@sentry/nextjs";
+import {ErrorBoundary} from "react-error-boundary";
 
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
 import {prefetchUser} from "@/features/profile/server/prefetch";
 import {HydrateClient} from "@/trpc/server";
 import ProfileDetails from "@/features/profile/components/profile-details";
-import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
+import ErrorComponent from "@/features/global/components/error-component";
+import LoadingComponent from "@/features/global/components/loading-component";
 
 export const metadata = {
   title: "Profile Details",

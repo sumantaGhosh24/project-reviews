@@ -6,13 +6,12 @@ import {
 import {toast} from "sonner";
 
 import {useTRPC} from "@/trpc/client";
-
-import {useCategoriesParams} from "./use-categories-params";
+import {useGlobalParams} from "@/features/global/hooks/use-global-params";
 
 export const useSuspenseCategories = () => {
   const trpc = useTRPC();
 
-  const [params] = useCategoriesParams();
+  const [params] = useGlobalParams();
 
   return useSuspenseQuery(trpc.category.getAllPaginated.queryOptions(params));
 };

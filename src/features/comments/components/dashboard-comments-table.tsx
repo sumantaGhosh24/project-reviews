@@ -4,10 +4,9 @@ import Link from "next/link";
 import {formatDistanceToNowStrict} from "date-fns";
 import {LinkIcon, TrendingDownIcon, TrendingUpIcon} from "lucide-react";
 
-import {
-  EmptyComponent,
-  PaginationComponent,
-} from "@/components/entity-components";
+import {useGlobalParams} from "@/features/global/hooks/use-global-params";
+import PaginationComponent from "@/features/global/components/pagination-component";
+import EmptyComponent from "@/features/global/components/empty-component";
 import {
   Table,
   TableBody,
@@ -21,12 +20,11 @@ import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
 
 import {useSuspenseMyComments} from "../hooks/use-comments";
-import {useCommentsParams} from "../hooks/use-comments-params";
 
 const DashboardCommentsTable = () => {
   const {data: comments, isFetching} = useSuspenseMyComments();
 
-  const [params, setParams] = useCommentsParams();
+  const [params, setParams] = useGlobalParams();
 
   return (
     <>

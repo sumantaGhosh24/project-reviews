@@ -24,7 +24,7 @@ const resetPasswordSchema = z.object({
   password: z.string().min(8),
 });
 
-type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
+type ResetPasswordFormType = z.infer<typeof resetPasswordSchema>;
 
 export default function ResetPasswordForm() {
   const router = useRouter();
@@ -33,7 +33,7 @@ export default function ResetPasswordForm() {
   const token = searchParams.get("token");
   const error = searchParams.get("error");
 
-  const form = useForm<ResetPasswordForm>({
+  const form = useForm<ResetPasswordFormType>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       password: "",
@@ -42,7 +42,7 @@ export default function ResetPasswordForm() {
 
   const {isSubmitting} = form.formState;
 
-  async function handleResetPassword(data: ResetPasswordForm) {
+  async function handleResetPassword(data: ResetPasswordFormType) {
     if (token == null) return;
 
     await authClient.resetPassword(

@@ -1,12 +1,10 @@
 "use client";
 
-import {
-  EmptyComponent,
-  PaginationComponent,
-} from "@/components/entity-components";
+import {useGlobalParams} from "@/features/global/hooks/use-global-params";
+import PaginationComponent from "@/features/global/components/pagination-component";
+import EmptyComponent from "@/features/global/components/empty-component";
 
 import {useSuspenseComments} from "../hooks/use-comments";
-import {useCommentsParams} from "../hooks/use-comments-params";
 import {CommentItem} from "./comment-item";
 
 interface CommentListProps {
@@ -16,7 +14,7 @@ interface CommentListProps {
 export function CommentList({releaseId}: CommentListProps) {
   const {data: comments, isFetching} = useSuspenseComments(releaseId);
 
-  const [params, setParams] = useCommentsParams();
+  const [params, setParams] = useGlobalParams();
 
   return (
     <>

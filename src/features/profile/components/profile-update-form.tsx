@@ -24,7 +24,7 @@ const profileUpdateSchema = z.object({
     }, "Favorite number must be a number"),
 });
 
-type ProfileUpdateForm = z.infer<typeof profileUpdateSchema>;
+type ProfileUpdateFormType = z.infer<typeof profileUpdateSchema>;
 
 export function ProfileUpdateForm({
   user,
@@ -37,7 +37,7 @@ export function ProfileUpdateForm({
 }) {
   const router = useRouter();
 
-  const form = useForm<ProfileUpdateForm>({
+  const form = useForm<ProfileUpdateFormType>({
     resolver: zodResolver(profileUpdateSchema),
     defaultValues: {
       email: user.email,
@@ -48,7 +48,7 @@ export function ProfileUpdateForm({
 
   const {isSubmitting} = form.formState;
 
-  async function handleProfileUpdate(data: ProfileUpdateForm) {
+  async function handleProfileUpdate(data: ProfileUpdateFormType) {
     const promises = [
       authClient.updateUser({
         name: data.name,

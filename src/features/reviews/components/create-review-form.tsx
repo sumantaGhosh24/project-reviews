@@ -23,12 +23,14 @@ const createReviewSchema = z.object({
   feedback: z.string().trim().toLowerCase().min(1).max(500),
 });
 
+type CreateReviewFormType = z.infer<typeof createReviewSchema>;
+
 interface CreateReviewFormProps {
   releaseId: string;
 }
 
 export function CreateReviewForm({releaseId}: CreateReviewFormProps) {
-  const form = useForm<z.infer<typeof createReviewSchema>>({
+  const form = useForm<CreateReviewFormType>({
     resolver: zodResolver(createReviewSchema),
     defaultValues: {
       rating: "1",
@@ -38,7 +40,7 @@ export function CreateReviewForm({releaseId}: CreateReviewFormProps) {
 
   const createReview = useCreateReview();
 
-  const onSubmit = async (values: z.infer<typeof createReviewSchema>) => {
+  const onSubmit = async (values: CreateReviewFormType) => {
     createReview.mutate(
       {
         rating: parseInt(values.rating),

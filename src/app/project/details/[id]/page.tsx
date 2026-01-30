@@ -1,13 +1,13 @@
 import {Suspense} from "react";
-import {ErrorBoundary} from "@sentry/nextjs";
+import {ErrorBoundary} from "react-error-boundary";
 
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
 import {prefetchViewProject} from "@/features/projects/server/prefetch";
 import {prefetchReleases} from "@/features/releases/server/prefetch";
-import {prefetchProjectDashboard} from "@/features/dashboard/server/prefetch";
 import {HydrateClient} from "@/trpc/server";
 import ProjectDetails from "@/features/projects/components/project-details";
-import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
+import ErrorComponent from "@/features/global/components/error-component";
+import LoadingComponent from "@/features/global/components/loading-component";
 
 export const metadata = {
   title: "Project Details",
@@ -23,8 +23,6 @@ const ProjectDetailsPage = async ({
   prefetchViewProject(id);
 
   prefetchReleases({projectId: id});
-
-  prefetchProjectDashboard(id);
 
   return (
     <HydrateClient>

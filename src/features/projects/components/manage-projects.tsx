@@ -1,9 +1,9 @@
 "use client";
 
-import {ComponentWrapper} from "@/components/entity-components";
+import ComponentWrapper from "@/features/global/components/component-wrapper";
+import SearchBarComponent from "@/features/global/components/search-bar-component";
+import FilterComponent from "@/features/global/components/filter-component";
 
-import SearchProject from "./search-project";
-import FilterCategory from "./filter-category";
 import ProjectsTable from "./projects-table";
 
 const ManageProjects = () => {
@@ -11,8 +11,8 @@ const ManageProjects = () => {
     <ComponentWrapper
       title="Manage Projects"
       description="Admin manage all projects."
-      search={<SearchProject />}
-      filter={<FilterCategory />}
+      search={<SearchBarComponent placeholder="Search projects" />}
+      filter={<FilterComponent />}
       table={<ProjectsTable />}
     />
   );

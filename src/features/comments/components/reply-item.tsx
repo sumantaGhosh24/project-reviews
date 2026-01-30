@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {formatDistanceToNow} from "date-fns";
 
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Card, CardContent} from "@/components/ui/card";
+import {AspectRatio} from "@/components/ui/aspect-ratio";
 import {Comment} from "@/generated/prisma/client";
 
 interface ReplyItemProps {
@@ -12,7 +14,7 @@ interface ReplyItemProps {
     author: {
       id: string;
       name: string;
-      image: string | null;
+      image?: string | null;
     };
   };
 }
@@ -41,7 +43,7 @@ export function ReplyItem({reply}: ReplyItemProps) {
             </span>
           </div>
         </div>
-        <div className="flex-1 space-y-1">
+        <div className="flex-1 space-y-3">
           <p
             className={`text-sm ${
               reply.deletedAt ? "italic text-muted-foreground" : ""
@@ -49,6 +51,16 @@ export function ReplyItem({reply}: ReplyItemProps) {
           >
             {reply.body}
           </p>
+          {reply.image && (
+            <AspectRatio ratio={16 / 5}>
+              <Image
+                src={reply.image}
+                alt="Image"
+                className="w-full rounded-lg object-cover"
+                fill
+              />
+            </AspectRatio>
+          )}
         </div>
       </CardContent>
     </Card>

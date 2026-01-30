@@ -3,16 +3,19 @@
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 
+import {type ChangeEvent, useState} from "react";
 import dynamic from "next/dynamic";
-import {useState} from "react";
 import {useRouter} from "next/navigation";
+import Image from "next/image";
 import {useTheme} from "next-themes";
 import {z} from "zod";
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import rehypeSanitize from "rehype-sanitize";
 import {toast} from "sonner";
+import {XIcon} from "lucide-react";
 
+import {useUploadThing} from "@/lib/uploadthing";
 import {useSuspenseAllCategories} from "@/features/categories/hooks/use-categories";
 import {LoadingSwap} from "@/components/loading-swap";
 import {TagsInput} from "@/components/tags-input";
@@ -27,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
+import {Card, CardContent} from "@/components/ui/card";
 
 import {useCreateProject} from "../hooks/use-projects";
 
@@ -41,13 +45,20 @@ const createProjectSchema = z.object({
   category: z.string().min(1),
   githubUrl: z.string().min(1),
   websiteUrl: z.string().min(1),
+  imageUrl: z.array(z.string()),
 });
+
+type CreateProjectFormType = z.infer<typeof createProjectSchema>;
 
 const CreateProjectForm = () => {
   const [content, setContent] = useState<string | undefined>(undefined);
   const [tags, setTags] = useState<string[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
+  const MAX_IMAGE_COUNT = 5;
 
-  const form = useForm<z.infer<typeof createProjectSchema>>({
+  const {startUpload, isUploading} = useUploadThing("imageUploader");
+
+  const form = useForm<CreateProjectFormType>({
     resolver: zodResolver(createProjectSchema),
     defaultValues: {
       title: "",
@@ -55,6 +66,7 @@ const CreateProjectForm = () => {
       category: "",
       githubUrl: "",
       websiteUrl: "",
+      imageUrl: [],
     },
   });
 
@@ -66,11 +78,20 @@ const CreateProjectForm = () => {
 
   const createProject = useCreateProject();
 
-  const onSubmit = async (values: z.infer<typeof createProjectSchema>) => {
+  const onSubmit = async (values: CreateProjectFormType) => {
     if (content === undefined)
       return toast.error("Please add some data in content.");
 
     if (tags.length === 0) return toast.error("Please add minimum one tags.");
+
+    if (!files.length) return toast.error("Please add an image.");
+
+    const imgRes = await startUpload(files);
+    if (!imgRes || !imgRes.length) {
+      toast.error("Image upload failed.");
+      return;
+    }
+    values.imageUrl = imgRes.map((img) => img.ufsUrl);
 
     createProject.mutate(
       {
@@ -81,17 +102,43 @@ const CreateProjectForm = () => {
         tags: tags,
         githubUrl: values.githubUrl,
         websiteUrl: values.websiteUrl,
+        imageUrl: values.imageUrl,
       },
       {
         onSuccess: (data) => {
-          router.push(`/project/details/${data.id}`);
+          router.push(`/project/update/${data.id}`);
 
           form.reset();
           setTags([]);
+          setFiles([]);
           setContent(undefined);
         },
       }
     );
+  };
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const selected = e.target.files ? Array.from(e.target.files) : [];
+    if (!selected.length) return;
+    const imageFiles = selected.filter((f) => f.type.includes("image"));
+    if (!imageFiles.length) {
+      toast.error("Please select image files.");
+      return;
+    }
+    setFiles((prev) => {
+      const remainingSlots = Math.max(0, MAX_IMAGE_COUNT - prev.length);
+      const toAdd = imageFiles.slice(0, remainingSlots);
+      if (imageFiles.length > remainingSlots) {
+        toast.error(`You can upload up to ${MAX_IMAGE_COUNT} images.`);
+      }
+      return [...prev, ...toAdd];
+    });
+    e.target.value = "";
+  };
+
+  const handleRemovedFile = (id: number) => {
+    setFiles((files) => files.filter((_, i) => i !== id));
   };
 
   return (
@@ -100,8 +147,44 @@ const CreateProjectForm = () => {
         className="flex flex-col justify-start gap-10"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <h1 className="text-2xl font-bold">Create Project</h1>
+        <h1 className="mb-5 text-2xl font-bold">Create Project</h1>
+        <div className="mb-5 flex flex-wrap items-start gap-3">
+          {files.map((file, i) => (
+            <Card className="relative mx-auto mb-5 !max-h-fit" key={i}>
+              <CardContent className="p-0">
+                <Image
+                  src={URL.createObjectURL(file)}
+                  alt="file"
+                  width={200}
+                  height={200}
+                  className="h-[100px] w-[100px] rounded object-cover"
+                />
+                <XIcon
+                  className="absolute right-1 top-1 grid h-6 w-6 cursor-pointer place-items-center rounded-full bg-gray-200 p-1 text-red-700 transition-all hover:bg-red-700 hover:text-gray-200"
+                  onClick={() => handleRemovedFile(i)}
+                />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
         <FieldGroup>
+          <Field>
+            <FieldLabel htmlFor="projectImages">
+              Select Project Images
+            </FieldLabel>
+            <div className="flex-1 text-base font-semibold text-gray-200 mt-3">
+              <Input
+                type="file"
+                accept="image/*"
+                placeholder="Add project images"
+                className="cursor-pointer border-none bg-transparent outline-none file:text-blue-500"
+                onChange={handleImageChange}
+                id="projectImages"
+                multiple
+                disabled={isUploading || createProject.isPending}
+              />
+            </div>
+          </Field>
           <div className="flex flex-col gap-5 md:flex-row">
             <Controller
               control={form.control}
@@ -230,10 +313,10 @@ const CreateProjectForm = () => {
           </div>
           <Button
             type="submit"
-            disabled={createProject.isPending}
+            disabled={createProject.isPending || isUploading}
             className="w-full"
           >
-            <LoadingSwap isLoading={createProject.isPending}>
+            <LoadingSwap isLoading={createProject.isPending || isUploading}>
               Create Project
             </LoadingSwap>
           </Button>

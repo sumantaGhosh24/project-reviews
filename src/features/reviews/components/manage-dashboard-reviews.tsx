@@ -1,6 +1,6 @@
 "use client";
 
-import {ComponentWrapper} from "@/components/entity-components";
+import ComponentWrapper from "@/features/global/components/component-wrapper";
 
 import DashboardReviewsTable from "./dashboard-reviews-table";
 

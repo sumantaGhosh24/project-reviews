@@ -1,12 +1,10 @@
 "use client";
 
-import {
-  EmptyComponent,
-  PaginationComponent,
-} from "@/components/entity-components";
+import {useGlobalParams} from "@/features/global/hooks/use-global-params";
+import PaginationComponent from "@/features/global/components/pagination-component";
+import EmptyComponent from "@/features/global/components/empty-component";
 
 import {useSuspenseReviews} from "../hooks/use-reviews";
-import {useReviewsParams} from "../hooks/use-reviews-params";
 import {ReviewItem} from "./review-item";
 
 interface ReviewListProps {
@@ -16,7 +14,7 @@ interface ReviewListProps {
 export function ReviewList({releaseId}: ReviewListProps) {
   const {data: reviews, isFetching} = useSuspenseReviews(releaseId);
 
-  const [params, setParams] = useReviewsParams();
+  const [params, setParams] = useGlobalParams();
 
   return (
     <>

@@ -21,6 +21,7 @@ export const projectsRouter = createTRPCRouter({
         tags: z.array(z.string()),
         githubUrl: z.string(),
         websiteUrl: z.string(),
+        imageUrl: z.array(z.string()),
       })
     )
     .mutation(async ({input, ctx}) => {
@@ -32,6 +33,7 @@ export const projectsRouter = createTRPCRouter({
         tags,
         githubUrl,
         websiteUrl,
+        imageUrl,
       } = input;
 
       const exists = await prisma.category.findUnique({
@@ -46,7 +48,7 @@ export const projectsRouter = createTRPCRouter({
         });
       }
 
-      return prisma.project.create({
+      const project = await prisma.project.create({
         data: {
           title,
           description,
@@ -68,6 +70,20 @@ export const projectsRouter = createTRPCRouter({
           websiteUrl,
         },
       });
+
+      await Promise.all(
+        imageUrl.map(async (url) => {
+          await prisma.image.create({
+            data: {
+              target: "PROJECT",
+              targetId: project.id,
+              url,
+            },
+          });
+        })
+      );
+
+      return project;
     }),
   update: premiumProcedure
     .input(
@@ -195,10 +211,74 @@ export const projectsRouter = createTRPCRouter({
 
       return project;
     }),
+  addImage: premiumProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        imageUrl: z.array(z.string()),
+      })
+    )
+    .mutation(async ({input, ctx}) => {
+      const {id, imageUrl} = input;
+
+      const project = await prisma.project.findUnique({
+        where: {id, ownerId: ctx.auth.user.id},
+        select: {id: true},
+      });
+
+      if (!project) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Project does not exist.",
+        });
+      }
+
+      await Promise.all(
+        imageUrl.map(async (url) => {
+          await prisma.image.create({
+            data: {
+              target: "PROJECT",
+              targetId: project.id,
+              url,
+            },
+          });
+        })
+      );
+
+      return project;
+    }),
+  removeImage: premiumProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        imageId: z.string(),
+      })
+    )
+    .mutation(async ({input, ctx}) => {
+      const {id, imageId} = input;
+
+      const project = await prisma.project.findUnique({
+        where: {id, ownerId: ctx.auth.user.id},
+        select: {id: true},
+      });
+
+      if (!project) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Project does not exist.",
+        });
+      }
+
+      await prisma.image.delete({
+        where: {id: imageId, target: "PROJECT", targetId: project.id},
+      });
+
+      return project;
+    }),
   getOne: premiumProcedure
     .input(z.object({id: z.string()}))
     .query(async ({input, ctx}) => {
-      return prisma.project.findUnique({
+      const project = await prisma.project.findUnique({
         where: {
           id: input.id,
           ownerId: ctx.auth.user.id,
@@ -207,6 +287,19 @@ export const projectsRouter = createTRPCRouter({
           category: true,
         },
       });
+
+      if (!project) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "This project does not exists.",
+        });
+      }
+
+      const images = await prisma.image.findMany({
+        where: {target: "PROJECT", targetId: project.id},
+      });
+
+      return {...project, images};
     }),
   getAll: adminProcedure
     .input(
@@ -307,7 +400,11 @@ export const projectsRouter = createTRPCRouter({
             _avg: {rating: true},
           });
 
-          return {...item, votes, views, reviewStats};
+          const images = await prisma.image.findMany({
+            where: {target: "PROJECT", targetId: item.id},
+          });
+
+          return {...item, votes, views, reviewStats, images};
         })
       );
 
@@ -427,7 +524,11 @@ export const projectsRouter = createTRPCRouter({
             _avg: {rating: true},
           });
 
-          return {...item, votes, views, reviewStats};
+          const images = await prisma.image.findMany({
+            where: {target: "PROJECT", targetId: item.id},
+          });
+
+          return {...item, votes, views, reviewStats, images};
         })
       );
 
@@ -546,7 +647,11 @@ export const projectsRouter = createTRPCRouter({
             _avg: {rating: true},
           });
 
-          return {...item, votes, views, reviewStats};
+          const images = await prisma.image.findMany({
+            where: {target: "PROJECT", targetId: item.id},
+          });
+
+          return {...item, votes, views, reviewStats, images};
         })
       );
 
@@ -667,7 +772,11 @@ export const projectsRouter = createTRPCRouter({
             _avg: {rating: true},
           });
 
-          return {...item, votes, views, reviewStats};
+          const images = await prisma.image.findMany({
+            where: {target: "PROJECT", targetId: item.id},
+          });
+
+          return {...item, votes, views, reviewStats, images};
         })
       );
 
@@ -775,8 +884,12 @@ export const projectsRouter = createTRPCRouter({
         _avg: {rating: true},
       });
 
+      const images = await prisma.image.findMany({
+        where: {target: "PROJECT", targetId: project.id},
+      });
+
       const isOwner = project.ownerId === ctx.auth.user.id;
 
-      return {...project, isOwner, votes, myVote, views, reviewStats};
+      return {...project, isOwner, votes, myVote, views, reviewStats, images};
     }),
 });

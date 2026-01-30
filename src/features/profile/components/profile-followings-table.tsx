@@ -1,13 +1,12 @@
 "use client";
 
-import {
-  EmptyComponent,
-  PaginationComponent,
-} from "@/components/entity-components";
 import {User} from "@/generated/prisma/client";
 
+import {useGlobalParams} from "@/features/global/hooks/use-global-params";
+import PaginationComponent from "@/features/global/components/pagination-component";
+import EmptyComponent from "@/features/global/components/empty-component";
+
 import {useSuspenseFollowings} from "../hooks/use-profile";
-import {useProfileParams} from "../hooks/use-profile-params";
 import UserCard from "./user-card";
 
 interface ProfileFollowingsTableProps {
@@ -22,7 +21,7 @@ interface UserCardProps extends User {
 const ProfileFollowingsTable = ({id}: ProfileFollowingsTableProps) => {
   const {data: followings, isFetching} = useSuspenseFollowings(id);
 
-  const [params, setParams] = useProfileParams();
+  const [params, setParams] = useGlobalParams();
 
   return (
     <>

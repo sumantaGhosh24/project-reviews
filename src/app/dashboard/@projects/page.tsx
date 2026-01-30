@@ -1,20 +1,21 @@
 import {Suspense} from "react";
-import {ErrorBoundary} from "@sentry/nextjs";
+import {ErrorBoundary} from "react-error-boundary";
 
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
 import {prefetchAllCategory} from "@/features/categories/server/prefetch";
 import {prefetchMyProjects} from "@/features/projects/server/prefetch";
-import {projectsParamsLoader} from "@/features/projects/server/params-loader";
+import {globalParamsLoader} from "@/features/global/server/params-loader";
 import {HydrateClient} from "@/trpc/server";
 import ManageDashboardProjects from "@/features/projects/components/manage-dashboard-projects";
-import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
+import ErrorComponent from "@/features/global/components/error-component";
+import LoadingComponent from "@/features/global/components/loading-component";
 
 const DashboardProjectsPage = async ({
   searchParams,
 }: PageProps<"/dashboard">) => {
   await requireAuth();
 
-  const params = await projectsParamsLoader(searchParams);
+  const params = await globalParamsLoader(searchParams);
 
   prefetchMyProjects(params);
 

@@ -2,11 +2,13 @@
 
 import {useState} from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {formatDistanceToNow} from "date-fns";
 
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Card, CardContent} from "@/components/ui/card";
 import {Comment} from "@/generated/prisma/client";
+import {AspectRatio} from "@/components/ui/aspect-ratio";
 
 import {CommentActions} from "./comment-actions";
 import {ReplyForm} from "./reply-form";
@@ -36,6 +38,7 @@ interface CommentItemProps {
       deletedAt: Date | null;
       createdAt: Date;
       updatedAt: Date;
+      image: string | null;
       author: {
         id: string;
         name: string;
@@ -73,7 +76,7 @@ export function CommentItem({comment}: CommentItemProps) {
             </span>
           </div>
         </div>
-        <div className="flex-1 space-y-1">
+        <div className="flex-1 space-y-3">
           <p
             className={`text-sm ${
               comment.deletedAt ? "italic text-muted-foreground" : ""
@@ -81,6 +84,16 @@ export function CommentItem({comment}: CommentItemProps) {
           >
             {comment.body}
           </p>
+          {comment.image && (
+            <AspectRatio ratio={16 / 7}>
+              <Image
+                src={comment.image}
+                alt="Image"
+                className="w-full rounded-lg object-cover"
+                fill
+              />
+            </AspectRatio>
+          )}
           {!comment.deletedAt && (
             <CommentActions
               commentId={comment.id}

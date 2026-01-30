@@ -4,10 +4,9 @@ import {useRouter} from "next/navigation";
 import {formatDistanceToNowStrict} from "date-fns";
 import {PenIcon} from "lucide-react";
 
-import {
-  EmptyComponent,
-  PaginationComponent,
-} from "@/components/entity-components";
+import {useGlobalParams} from "@/features/global/hooks/use-global-params";
+import PaginationComponent from "@/features/global/components/pagination-component";
+import EmptyComponent from "@/features/global/components/empty-component";
 import {
   Table,
   TableBody,
@@ -20,7 +19,6 @@ import {
 import {Button} from "@/components/ui/button";
 
 import {useSuspenseCategories} from "../hooks/use-categories";
-import {useCategoriesParams} from "../hooks/use-categories-params";
 import DeleteCategory from "./delete-category";
 
 const CategoriesTable = () => {
@@ -28,7 +26,7 @@ const CategoriesTable = () => {
 
   const {data: categories, isFetching} = useSuspenseCategories();
 
-  const [params, setParams] = useCategoriesParams();
+  const [params, setParams] = useGlobalParams();
 
   return (
     <>

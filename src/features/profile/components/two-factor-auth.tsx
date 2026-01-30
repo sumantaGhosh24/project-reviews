@@ -18,7 +18,7 @@ const twoFactorAuthSchema = z.object({
   password: z.string().min(1),
 });
 
-type TwoFactorAuthForm = z.infer<typeof twoFactorAuthSchema>;
+type TwoFactorAuthFormType = z.infer<typeof twoFactorAuthSchema>;
 
 type TwoFactorData = {
   totpURI: string;
@@ -32,7 +32,7 @@ export function TwoFactorAuth({isEnabled}: {isEnabled: boolean}) {
 
   const router = useRouter();
 
-  const form = useForm<TwoFactorAuthForm>({
+  const form = useForm<TwoFactorAuthFormType>({
     resolver: zodResolver(twoFactorAuthSchema),
     defaultValues: {
       password: "",
@@ -41,7 +41,7 @@ export function TwoFactorAuth({isEnabled}: {isEnabled: boolean}) {
 
   const {isSubmitting} = form.formState;
 
-  async function handleDisableTwoFactorAuth(data: TwoFactorAuthForm) {
+  async function handleDisableTwoFactorAuth(data: TwoFactorAuthFormType) {
     await authClient.twoFactor.disable(
       {
         password: data.password,
@@ -59,7 +59,7 @@ export function TwoFactorAuth({isEnabled}: {isEnabled: boolean}) {
     );
   }
 
-  async function handleEnableTwoFactorAuth(data: TwoFactorAuthForm) {
+  async function handleEnableTwoFactorAuth(data: TwoFactorAuthFormType) {
     const result = await authClient.twoFactor.enable({
       password: data.password,
     });
@@ -128,7 +128,7 @@ const qrSchema = z.object({
   token: z.string().length(6),
 });
 
-type QrForm = z.infer<typeof qrSchema>;
+type QrFormType = z.infer<typeof qrSchema>;
 
 function QRCodeVerify({
   totpURI,
@@ -139,7 +139,7 @@ function QRCodeVerify({
 
   const router = useRouter();
 
-  const form = useForm<QrForm>({
+  const form = useForm<QrFormType>({
     resolver: zodResolver(qrSchema),
     defaultValues: {
       token: "",
@@ -148,7 +148,7 @@ function QRCodeVerify({
 
   const {isSubmitting} = form.formState;
 
-  async function handleQrCode(data: QrForm) {
+  async function handleQrCode(data: QrFormType) {
     await authClient.twoFactor.verifyTotp(
       {
         code: data.token,

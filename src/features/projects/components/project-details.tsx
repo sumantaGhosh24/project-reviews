@@ -5,10 +5,12 @@ import "@uiw/react-markdown-preview/markdown.css";
 
 import dynamic from "next/dynamic";
 import {useTheme} from "next-themes";
+import Image from "next/image";
 import Link from "next/link";
 import {formatDistanceToNowStrict} from "date-fns";
 import {
   CalendarIcon,
+  ChartBarIcon,
   EyeIcon,
   GithubIcon,
   GlobeIcon,
@@ -28,9 +30,16 @@ import ManageReleases from "@/features/releases/components/manage-release";
 import {Badge} from "@/components/ui/badge";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Button} from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import {AspectRatio} from "@/components/ui/aspect-ratio";
 
 import {useSuspenseViewProject} from "../hooks/use-projects";
-import ProjectAnalytics from "./project-analytics";
 
 interface ProjectDetailsProps {
   id: string;
@@ -63,7 +72,7 @@ const ProjectDetails = ({id}: ProjectDetailsProps) => {
   };
 
   return (
-    <div className="mx-auto my-5 w-[95%] rounded-md shadow-md p-5 bg-background dark:shadow-white/40">
+    <div className="mx-auto my-5 container rounded-md shadow-md p-5 bg-background dark:shadow-white/40">
       <div className="space-y-5">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
@@ -102,7 +111,8 @@ const ProjectDetails = ({id}: ProjectDetailsProps) => {
             </Badge>
             <Badge variant="warning">
               <StarIcon className="w-4 h-4 mr-1" />
-              {project.reviewStats._avg.rating}({project.reviewStats._count.id})
+              {project.reviewStats._avg.rating?.toFixed(1)} (
+              {project.reviewStats._count.id})
             </Badge>
           </div>
         </div>
@@ -183,9 +193,33 @@ const ProjectDetails = ({id}: ProjectDetailsProps) => {
                   <PencilIcon className="h-4 w-4 mr-2" /> Update
                 </Link>
               </Button>
-              <ProjectAnalytics projectId={project.id} />
+              <Button asChild>
+                <Link href={`/project/details/${project.id}/analytics`}>
+                  <ChartBarIcon className="h-4 w-4 mr-2" /> Analytics
+                </Link>
+              </Button>
             </>
           )}
+        </div>
+        <div className="mx-10">
+          <Carousel>
+            <CarouselContent>
+              {project.images.map((img) => (
+                <CarouselItem key={img.id}>
+                  <AspectRatio ratio={16 / 9}>
+                    <Image
+                      src={img.url}
+                      alt="Image"
+                      className="w-full rounded-lg object-cover"
+                      fill
+                    />
+                  </AspectRatio>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
         </div>
         <div>
           <div data-color-mode={theme}>

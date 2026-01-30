@@ -1,11 +1,12 @@
 import {Suspense} from "react";
-import {ErrorBoundary} from "@sentry/nextjs";
+import {ErrorBoundary} from "react-error-boundary";
 
 import {requireSubscription} from "@/features/auth/helpers/auth-utils";
 import {prefetchAllCategory} from "@/features/categories/server/prefetch";
 import {HydrateClient} from "@/trpc/server";
-import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
 import CreateProjectForm from "@/features/projects/components/create-project-form";
+import ErrorComponent from "@/features/global/components/error-component";
+import LoadingComponent from "@/features/global/components/loading-component";
 
 export const metadata = {
   title: "Create Project",

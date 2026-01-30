@@ -3,10 +3,9 @@
 import Link from "next/link";
 
 import {buttonVariants} from "@/components/ui/button";
+import ComponentWrapper from "@/features/global/components/component-wrapper";
+import SearchBarComponent from "@/features/global/components/search-bar-component";
 
-import {ComponentWrapper} from "@/components/entity-components";
-
-import SearchCategory from "./search-category";
 import CategoriesTable from "./categories-table";
 
 const ManageCategories = () => {
@@ -19,7 +18,7 @@ const ManageCategories = () => {
           Create Category
         </Link>
       }
-      search={<SearchCategory />}
+      search={<SearchBarComponent placeholder="Search categories" />}
       table={<CategoriesTable />}
     />
   );

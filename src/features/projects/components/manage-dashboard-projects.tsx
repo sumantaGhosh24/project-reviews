@@ -5,13 +5,13 @@ import {ChessKingIcon, Terminal} from "lucide-react";
 
 import {authClient} from "@/lib/auth/auth-client";
 import {useHasActiveSubscription} from "@/features/subscriptions/hooks/useSubscription";
-import {ComponentWrapper} from "@/components/entity-components";
+import ComponentWrapper from "@/features/global/components/component-wrapper";
+import SearchBarComponent from "@/features/global/components/search-bar-component";
+import FilterComponent from "@/features/global/components/filter-component";
 import {Button, buttonVariants} from "@/components/ui/button";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 
-import SearchProject from "./search-project";
-import FilterCategory from "./filter-category";
 import DashboardProjectsTable from "./dashboard-projects-table";
 
 const ManageDashboardProjects = () => {
@@ -47,8 +47,8 @@ const ManageDashboardProjects = () => {
           </Button>
         )
       }
-      search={<SearchProject />}
-      filter={<FilterCategory />}
+      search={<SearchBarComponent placeholder="Search projects" />}
+      filter={<FilterComponent />}
       table={
         <>
           {!hasActiveSubscription && (

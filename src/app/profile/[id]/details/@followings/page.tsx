@@ -1,12 +1,13 @@
 import {Suspense} from "react";
-import {ErrorBoundary} from "@sentry/nextjs";
+import {ErrorBoundary} from "react-error-boundary";
 
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
 import {prefetchFollowings} from "@/features/profile/server/prefetch";
-import {profileParamsLoader} from "@/features/profile/server/params-loader";
+import {globalParamsLoader} from "@/features/global/server/params-loader";
 import {HydrateClient} from "@/trpc/server";
 import ProfileFollowings from "@/features/profile/components/profile-followings";
-import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
+import ErrorComponent from "@/features/global/components/error-component";
+import LoadingComponent from "@/features/global/components/loading-component";
 
 export default async function ProfileFollowingsPage({
   params,
@@ -16,7 +17,7 @@ export default async function ProfileFollowingsPage({
 
   await requireAuth();
 
-  const profileParams = await profileParamsLoader(searchParams);
+  const profileParams = await globalParamsLoader(searchParams);
 
   prefetchFollowings({id, ...profileParams});
 

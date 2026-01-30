@@ -5,12 +5,13 @@ import {useRouter} from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {toast} from "sonner";
-import {BellIcon, ChessKingIcon, MenuIcon, XIcon} from "lucide-react";
+import {ChessKingIcon, MenuIcon, XIcon} from "lucide-react";
 
 import {adminLinks, guestLinks, userLinks} from "@/constants";
 import {authClient} from "@/lib/auth/auth-client";
 import {useHasActiveSubscription} from "@/features/subscriptions/hooks/useSubscription";
 
+import NotificationMenu from "./notification-menu";
 import {ModeToggle} from "./mode-toggle";
 import {
   NavigationMenu,
@@ -111,14 +112,14 @@ const Header = () => {
                       <NavigationMenuItem>
                         <NavigationMenuTrigger>Manage</NavigationMenuTrigger>
                         <NavigationMenuContent>
-                          <ul className="grid w-[200px] gap-4">
-                            <li>
-                              {adminLinks.map((item) => (
-                                <NavigationMenuLink key={item.id} asChild>
+                          <ul className="grid w-[200px]">
+                            {adminLinks.map((item) => (
+                              <li key={item.id}>
+                                <NavigationMenuLink asChild>
                                   <Link href={item.url}>{item.name}</Link>
                                 </NavigationMenuLink>
-                              ))}
-                            </li>
+                              </li>
+                            ))}
                           </ul>
                         </NavigationMenuContent>
                       </NavigationMenuItem>
@@ -142,7 +143,7 @@ const Header = () => {
                       })}
                       onClick={handleSubscriptionPortal}
                     >
-                      Manage Subscription
+                      Subscriptions
                     </Button>
                   ) : (
                     <Button
@@ -157,16 +158,7 @@ const Header = () => {
                       </span>
                     </Button>
                   )}
-                  <NavigationMenuItem>
-                    <NavigationMenuLink
-                      asChild
-                      className={navigationMenuTriggerStyle()}
-                    >
-                      <Link href="/notifications">
-                        <BellIcon className="text-black dark:text-white" />
-                      </Link>
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
+                  <NotificationMenu />
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       asChild
@@ -174,12 +166,7 @@ const Header = () => {
                     >
                       <Link href="/profile/edit">
                         <Avatar>
-                          <AvatarImage
-                            src={
-                              session.user?.image ??
-                              "https://placehold.co/600x400.png"
-                            }
-                          />
+                          <AvatarImage src={session.user?.image as string} />
                           <AvatarFallback>
                             {session.user?.name?.substring(0, 2)}
                           </AvatarFallback>

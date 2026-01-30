@@ -17,7 +17,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {Badge} from "@/components/ui/badge";
-import {Release} from "@/generated/prisma/client";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarGroupCount,
+  AvatarImage,
+} from "@/components/ui/avatar";
+import {Image as ImageProps, Release} from "@/generated/prisma/client";
 
 interface ReleaseCardProps extends Release {
   _count: {
@@ -37,7 +44,10 @@ interface ReleaseCardProps extends Release {
       rating: number | null;
     };
   };
+  images: ImageProps[];
 }
+
+const MAX_IMAGE = 3;
 
 const ReleaseCard = ({
   id,
@@ -50,6 +60,7 @@ const ReleaseCard = ({
   votes,
   views,
   reviewStats,
+  images,
 }: ReleaseCardProps) => {
   const upVote = votes.find((v) => v.type === "UP")?._count ?? 0;
   const downVote = votes.find((v) => v.type === "DOWN")?._count ?? 0;
@@ -66,9 +77,22 @@ const ReleaseCard = ({
           </CardDescription>
         </Link>
       </CardHeader>
-      <CardContent className="p-0 flex items-center gap-2 flex-wrap w-full">
-        <Badge variant={checkStatus(status)}>{status}</Badge>
-        <Badge variant={checkVisibility(visibility)}>{visibility}</Badge>
+      <CardContent className="p-0 w-full">
+        <div className="flex items-center gap-2 flex-wrap">
+          <Badge variant={checkStatus(status)}>{status}</Badge>
+          <Badge variant={checkVisibility(visibility)}>{visibility}</Badge>
+        </div>
+        <AvatarGroup className="my-4">
+          {images.slice(0, MAX_IMAGE).map((img, ind) => (
+            <Avatar key={ind}>
+              <AvatarImage src={img.url} alt="project_image" />
+              <AvatarFallback>{ind + 1}</AvatarFallback>
+            </Avatar>
+          ))}
+          {images.length > MAX_IMAGE && (
+            <AvatarGroupCount>+ {images.length - MAX_IMAGE}</AvatarGroupCount>
+          )}
+        </AvatarGroup>
       </CardContent>
       <CardFooter className="p-0">
         <div className="flex items-center gap-2">
@@ -87,7 +111,7 @@ const ReleaseCard = ({
           <div className="flex items-center gap-1 text-orange-500">
             <StarIcon className="w-4 h-4" />
             <span className="text-xs font-bold">
-              {reviewStats._avg.rating}({reviewStats._count.id})
+              {reviewStats._avg.rating?.toFixed(1)} ({reviewStats._count.id})
             </span>
           </div>
           <div className="flex items-center gap-1 text-orange-500">

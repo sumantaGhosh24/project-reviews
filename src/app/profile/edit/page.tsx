@@ -1,9 +1,9 @@
 import {type ReactNode, Suspense} from "react";
 import {headers} from "next/headers";
 import {redirect} from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import {
+  ImageIcon,
   KeyIcon,
   LinkIcon,
   Loader2Icon,
@@ -16,6 +16,7 @@ import {auth} from "@/lib/auth/auth";
 import {polarClient} from "@/lib/polar";
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
 import {ProfileUpdateForm} from "@/features/profile/components/profile-update-form";
+import {ProfileUpdateImageForm} from "@/features/profile/components/profile-update-image-form";
 import {AccountDeletion} from "@/features/profile/components/account-deletion";
 import {AccountLinking} from "@/features/profile/components/account-linking";
 import {SessionManagement} from "@/features/profile/components/session-management";
@@ -33,6 +34,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 
 export const metadata = {
   title: "Update Profile",
@@ -56,19 +58,14 @@ export default async function ProfilePage() {
     <div className="container mx-auto my-6 px-4">
       <div className="mb-8">
         <div className="flex items-center space-x-4">
-          <div className="size-16 bg-muted rounded-full flex items-center justify-center overflow-hidden">
-            {session.user.image ? (
-              <Image
-                width={64}
-                height={64}
-                src={session.user.image}
-                alt="User Avatar"
-                className="object-cover"
-              />
-            ) : (
-              <UserIcon className="size-8 text-muted-foreground" />
-            )}
-          </div>
+          {session.user.image && (
+            <Avatar className="size-24">
+              <AvatarImage src={session.user.image} className="object-cover" />
+              <AvatarFallback>
+                {session.user?.name?.substring(0, 2)}
+              </AvatarFallback>
+            </Avatar>
+          )}
           <div className="flex flex-1 items-center justify-between">
             <div className="">
               <h1 className="text-3xl font-bold capitalize">
@@ -91,10 +88,14 @@ export default async function ProfilePage() {
         </div>
       </div>
       <Tabs className="space-y-2" defaultValue="profile">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="profile">
             <UserIcon />
             <span className="max-sm:hidden">Profile</span>
+          </TabsTrigger>
+          <TabsTrigger value="image">
+            <ImageIcon />
+            <span className="max-sm:hidden">Image</span>
           </TabsTrigger>
           <TabsTrigger value="security">
             <ShieldIcon />
@@ -117,6 +118,13 @@ export default async function ProfilePage() {
           <Card>
             <CardContent>
               <ProfileUpdateForm user={session.user} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="image">
+          <Card>
+            <CardContent>
+              <ProfileUpdateImageForm image={session.user?.image} />
             </CardContent>
           </Card>
         </TabsContent>

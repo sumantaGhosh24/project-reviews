@@ -16,12 +16,12 @@ const totpSchema = z.object({
   code: z.string().length(6),
 });
 
-type TotpForm = z.infer<typeof totpSchema>;
+type TotpFormType = z.infer<typeof totpSchema>;
 
 export function TotpForm() {
   const router = useRouter();
 
-  const form = useForm<TotpForm>({
+  const form = useForm<TotpFormType>({
     resolver: zodResolver(totpSchema),
     defaultValues: {
       code: "",
@@ -30,7 +30,7 @@ export function TotpForm() {
 
   const {isSubmitting} = form.formState;
 
-  async function handleTotpVerification(data: TotpForm) {
+  async function handleTotpVerification(data: TotpFormType) {
     await authClient.twoFactor.verifyTotp(data, {
       onError: (error) => {
         toast.error(error.error.message || "Failed to verify code");

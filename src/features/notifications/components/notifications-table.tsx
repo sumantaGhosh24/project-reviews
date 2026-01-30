@@ -4,10 +4,9 @@ import {useRouter} from "next/navigation";
 import {formatDistanceToNowStrict} from "date-fns";
 
 import {cn} from "@/lib/utils";
-import {
-  EmptyComponent,
-  PaginationComponent,
-} from "@/components/entity-components";
+import {useGlobalParams} from "@/features/global/hooks/use-global-params";
+import PaginationComponent from "@/features/global/components/pagination-component";
+import EmptyComponent from "@/features/global/components/empty-component";
 import {Button} from "@/components/ui/button";
 import {
   Card,
@@ -22,14 +21,13 @@ import {
   useReadNotification,
   useSuspenseNotifications,
 } from "../hooks/use-notifications";
-import {useNotificationsParams} from "../hooks/use-notifications-params";
 
 const NotificationsTable = () => {
   const router = useRouter();
 
   const {data: notifications, isFetching} = useSuspenseNotifications();
 
-  const [params, setParams] = useNotificationsParams();
+  const [params, setParams] = useGlobalParams();
 
   const markNotificationRead = useReadNotification();
 

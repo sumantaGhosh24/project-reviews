@@ -11,10 +11,11 @@ export const commentsRouter = createTRPCRouter({
       z.object({
         releaseId: z.string(),
         body: z.string(),
+        imageUrl: z.optional(z.string()),
       })
     )
     .mutation(async ({input, ctx}) => {
-      const {releaseId, body} = input;
+      const {releaseId, body, imageUrl} = input;
 
       const release = await prisma.release.findFirst({
         where: {id: releaseId},
@@ -30,6 +31,7 @@ export const commentsRouter = createTRPCRouter({
       const comment = await prisma.comment.create({
         data: {
           body,
+          image: imageUrl ?? null,
           authorId: ctx.auth.user.id,
           releaseId,
         },
@@ -56,10 +58,11 @@ export const commentsRouter = createTRPCRouter({
         releaseId: z.string(),
         commentId: z.string(),
         body: z.string(),
+        imageUrl: z.optional(z.string()),
       })
     )
     .mutation(async ({input, ctx}) => {
-      const {releaseId, commentId, body} = input;
+      const {releaseId, commentId, body, imageUrl} = input;
 
       const release = await prisma.release.findFirst({
         where: {id: releaseId},
@@ -94,6 +97,7 @@ export const commentsRouter = createTRPCRouter({
       const comment = await prisma.comment.create({
         data: {
           body,
+          image: imageUrl ?? null,
           authorId: ctx.auth.user.id,
           releaseId,
           parentId: commentId,

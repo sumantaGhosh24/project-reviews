@@ -1,12 +1,13 @@
 import {Suspense} from "react";
-import {ErrorBoundary} from "@sentry/nextjs";
+import {ErrorBoundary} from "react-error-boundary";
 
 import {requireSubscription} from "@/features/auth/helpers/auth-utils";
 import {prefetchProject} from "@/features/projects/server/prefetch";
 import {prefetchAllCategory} from "@/features/categories/server/prefetch";
 import {HydrateClient} from "@/trpc/server";
-import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
-import UpdateProjectForm from "@/features/projects/components/update-project-form";
+import UpdateProjectComponent from "@/features/projects/components/update-project-component";
+import ErrorComponent from "@/features/global/components/error-component";
+import LoadingComponent from "@/features/global/components/loading-component";
 
 export const metadata = {
   title: "Update Project",
@@ -34,7 +35,7 @@ const UpdateProject = async ({params}: PageProps<"/project/update/[id]">) => {
         }
       >
         <Suspense fallback={<LoadingComponent />}>
-          <UpdateProjectForm id={id} />
+          <UpdateProjectComponent id={id} />
         </Suspense>
       </ErrorBoundary>
     </HydrateClient>

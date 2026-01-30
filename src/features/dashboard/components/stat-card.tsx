@@ -1,9 +1,11 @@
+import type {ReactNode} from "react";
+
 import {Card, CardContent} from "@/components/ui/card";
 
 interface StatCardProps {
   title: string;
   value: number | string;
-  icon: React.ReactNode;
+  icon: ReactNode;
 }
 
 const StatCard = ({title, value, icon}: StatCardProps) => {

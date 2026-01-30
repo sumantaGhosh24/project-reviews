@@ -6,8 +6,7 @@ import {
 import {toast} from "sonner";
 
 import {useTRPC} from "@/trpc/client";
-
-import {useProfileParams} from "./use-profile-params";
+import {useGlobalParams} from "@/features/global/hooks/use-global-params";
 
 export const useSuspenseUser = (id: string) => {
   const trpc = useTRPC();
@@ -18,7 +17,7 @@ export const useSuspenseUser = (id: string) => {
 export const useSuspenseFollowers = (id: string) => {
   const trpc = useTRPC();
 
-  const [params] = useProfileParams();
+  const [params] = useGlobalParams();
 
   return useSuspenseQuery(
     trpc.profile.getFollowers.queryOptions({id, ...params})
@@ -28,7 +27,7 @@ export const useSuspenseFollowers = (id: string) => {
 export const useSuspenseFollowings = (id: string) => {
   const trpc = useTRPC();
 
-  const [params] = useProfileParams();
+  const [params] = useGlobalParams();
 
   return useSuspenseQuery(
     trpc.profile.getFollowings.queryOptions({id, ...params})

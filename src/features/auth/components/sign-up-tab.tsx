@@ -24,14 +24,14 @@ const signUpSchema = z.object({
     }, "Favorite number must be a number"),
 });
 
-type SignUpForm = z.infer<typeof signUpSchema>;
+type SignUpFormType = z.infer<typeof signUpSchema>;
 
 export function SignUpTab({
   openEmailVerificationTab,
 }: {
   openEmailVerificationTab: (email: string) => void;
 }) {
-  const form = useForm<SignUpForm>({
+  const form = useForm<SignUpFormType>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
       name: "",
@@ -43,7 +43,7 @@ export function SignUpTab({
 
   const {isSubmitting} = form.formState;
 
-  async function handleSignUp(data: SignUpForm) {
+  async function handleSignUp(data: SignUpFormType) {
     const res = await authClient.signUp.email(
       {
         ...data,

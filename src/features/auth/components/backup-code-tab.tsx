@@ -16,11 +16,11 @@ const backupCodeSchema = z.object({
   code: z.string().min(1),
 });
 
-type BackupCodeForm = z.infer<typeof backupCodeSchema>;
+type BackupCodeFormType = z.infer<typeof backupCodeSchema>;
 
 export function BackupCodeTab() {
   const router = useRouter();
-  const form = useForm<BackupCodeForm>({
+  const form = useForm<BackupCodeFormType>({
     resolver: zodResolver(backupCodeSchema),
     defaultValues: {
       code: "",
@@ -29,7 +29,7 @@ export function BackupCodeTab() {
 
   const {isSubmitting} = form.formState;
 
-  async function handleBackupCodeVerification(data: BackupCodeForm) {
+  async function handleBackupCodeVerification(data: BackupCodeFormType) {
     await authClient.twoFactor.verifyBackupCode(data, {
       onError: (error) => {
         toast.error(error.error.message || "Failed to verify code");

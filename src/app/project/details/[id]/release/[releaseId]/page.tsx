@@ -1,12 +1,15 @@
 import {Suspense} from "react";
-import {ErrorBoundary} from "@sentry/nextjs";
+import {ErrorBoundary} from "react-error-boundary";
 
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
 import {prefetchRelease} from "@/features/releases/server/prefetch";
-import {prefetchReleaseDashboard} from "@/features/dashboard/server/prefetch";
+import {prefetchReviews} from "@/features/reviews/server/prefetch";
+import {prefetchComments} from "@/features/comments/server/prefetch";
+import {globalParamsLoader} from "@/features/global/server/params-loader";
 import {HydrateClient} from "@/trpc/server";
 import ReleaseDetails from "@/features/releases/components/release-details";
-import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
+import ErrorComponent from "@/features/global/components/error-component";
+import LoadingComponent from "@/features/global/components/loading-component";
 
 export const metadata = {
   title: "Release Details",
@@ -14,14 +17,19 @@ export const metadata = {
 
 const ReleaseDetailsPage = async ({
   params,
+  searchParams,
 }: PageProps<"/project/details/[id]/release/[releaseId]">) => {
   await requireAuth();
+
+  const globalParams = await globalParamsLoader(searchParams);
 
   const {releaseId} = await params;
 
   prefetchRelease(releaseId);
 
-  prefetchReleaseDashboard(releaseId);
+  prefetchReviews({...globalParams, releaseId});
+
+  prefetchComments({...globalParams, releaseId});
 
   return (
     <HydrateClient>

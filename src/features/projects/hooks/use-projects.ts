@@ -6,8 +6,7 @@ import {
 import {toast} from "sonner";
 
 import {useTRPC} from "@/trpc/client";
-
-import {useProjectsParams} from "./use-projects-params";
+import {useGlobalParams} from "@/features/global/hooks/use-global-params";
 
 export const useSuspenseProject = (id: string) => {
   const trpc = useTRPC();
@@ -18,7 +17,7 @@ export const useSuspenseProject = (id: string) => {
 export const useSuspenseAllProjects = () => {
   const trpc = useTRPC();
 
-  const [params] = useProjectsParams();
+  const [params] = useGlobalParams();
 
   return useSuspenseQuery(trpc.project.getAll.queryOptions(params));
 };
@@ -26,7 +25,7 @@ export const useSuspenseAllProjects = () => {
 export const useSuspensePublicProjects = () => {
   const trpc = useTRPC();
 
-  const [params] = useProjectsParams();
+  const [params] = useGlobalParams();
 
   return useSuspenseQuery(trpc.project.getPublic.queryOptions(params));
 };
@@ -34,7 +33,7 @@ export const useSuspensePublicProjects = () => {
 export const useSuspenseMyProjects = () => {
   const trpc = useTRPC();
 
-  const [params] = useProjectsParams();
+  const [params] = useGlobalParams();
 
   return useSuspenseQuery(trpc.project.getMyAll.queryOptions(params));
 };
@@ -42,7 +41,7 @@ export const useSuspenseMyProjects = () => {
 export const useSuspenseUserProjects = (userId: string) => {
   const trpc = useTRPC();
 
-  const [params] = useProjectsParams();
+  const [params] = useGlobalParams();
 
   return useSuspenseQuery(
     trpc.project.getUserAll.queryOptions({userId, ...params})
@@ -110,6 +109,60 @@ export const useRemoveProject = () => {
         queryClient.invalidateQueries(trpc.project.getAll.queryOptions({}));
         queryClient.invalidateQueries(trpc.project.getMyAll.queryOptions({}));
         queryClient.invalidateQueries(trpc.project.getPublic.queryOptions({}));
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    })
+  );
+};
+
+export const useAddProjectImage = () => {
+  const queryClient = useQueryClient();
+
+  const trpc = useTRPC();
+
+  return useMutation(
+    trpc.project.addImage.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Project image added successfully");
+
+        queryClient.invalidateQueries(trpc.project.getAll.queryOptions({}));
+        queryClient.invalidateQueries(trpc.project.getMyAll.queryOptions({}));
+        queryClient.invalidateQueries(trpc.project.getPublic.queryOptions({}));
+        queryClient.invalidateQueries(
+          trpc.project.view.queryOptions({id: data.id})
+        );
+        queryClient.invalidateQueries(
+          trpc.project.getOne.queryOptions({id: data.id})
+        );
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    })
+  );
+};
+
+export const useRemoveProjectImage = () => {
+  const queryClient = useQueryClient();
+
+  const trpc = useTRPC();
+
+  return useMutation(
+    trpc.project.removeImage.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Project image removed successfully");
+
+        queryClient.invalidateQueries(trpc.project.getAll.queryOptions({}));
+        queryClient.invalidateQueries(trpc.project.getMyAll.queryOptions({}));
+        queryClient.invalidateQueries(trpc.project.getPublic.queryOptions({}));
+        queryClient.invalidateQueries(
+          trpc.project.view.queryOptions({id: data.id})
+        );
+        queryClient.invalidateQueries(
+          trpc.project.getOne.queryOptions({id: data.id})
+        );
       },
       onError: (error) => {
         toast.error(error.message);

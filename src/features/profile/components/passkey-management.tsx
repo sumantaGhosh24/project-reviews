@@ -34,14 +34,14 @@ const passkeySchema = z.object({
   name: z.string().min(1),
 });
 
-type PasskeyForm = z.infer<typeof passkeySchema>;
+type PasskeyFormType = z.infer<typeof passkeySchema>;
 
 export function PasskeyManagement({passkeys}: {passkeys: Passkey[]}) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const router = useRouter();
 
-  const form = useForm<PasskeyForm>({
+  const form = useForm<PasskeyFormType>({
     resolver: zodResolver(passkeySchema),
     defaultValues: {
       name: "",
@@ -50,7 +50,7 @@ export function PasskeyManagement({passkeys}: {passkeys: Passkey[]}) {
 
   const {isSubmitting} = form.formState;
 
-  async function handleAddPasskey(data: PasskeyForm) {
+  async function handleAddPasskey(data: PasskeyFormType) {
     await authClient.passkey.addPasskey(data, {
       onError: (error) => {
         toast.error(error.error.message || "Failed to add passkey");

@@ -6,13 +6,12 @@ import {
 import {toast} from "sonner";
 
 import {useTRPC} from "@/trpc/client";
-
-import {useCommentsParams} from "./use-comments-params";
+import {useGlobalParams} from "@/features/global/hooks/use-global-params";
 
 export const useSuspenseComments = (releaseId: string) => {
   const trpc = useTRPC();
 
-  const [params] = useCommentsParams();
+  const [params] = useGlobalParams();
 
   return useSuspenseQuery(
     trpc.comment.getAll.queryOptions({...params, releaseId})
@@ -22,7 +21,7 @@ export const useSuspenseComments = (releaseId: string) => {
 export const useSuspenseMyComments = () => {
   const trpc = useTRPC();
 
-  const [params] = useCommentsParams();
+  const [params] = useGlobalParams();
 
   return useSuspenseQuery(trpc.comment.getMyAll.queryOptions(params));
 };

@@ -1,13 +1,14 @@
 import {Suspense} from "react";
-import {ErrorBoundary} from "@sentry/nextjs";
+import {ErrorBoundary} from "react-error-boundary";
 
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
 import {prefetchAllCategory} from "@/features/categories/server/prefetch";
 import {prefetchUserProjects} from "@/features/projects/server/prefetch";
-import {projectsParamsLoader} from "@/features/projects/server/params-loader";
+import {globalParamsLoader} from "@/features/global/server/params-loader";
 import {HydrateClient} from "@/trpc/server";
 import ProfileProjects from "@/features/projects/components/profile-projects";
-import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
+import ErrorComponent from "@/features/global/components/error-component";
+import LoadingComponent from "@/features/global/components/loading-component";
 
 export default async function ProfileProjectsPage({
   params,
@@ -17,7 +18,7 @@ export default async function ProfileProjectsPage({
 
   await requireAuth();
 
-  const projectParams = await projectsParamsLoader(searchParams);
+  const projectParams = await globalParamsLoader(searchParams);
 
   prefetchUserProjects({userId: id, ...projectParams});
 

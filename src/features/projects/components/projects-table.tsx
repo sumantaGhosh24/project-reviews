@@ -14,10 +14,9 @@ import {
 } from "lucide-react";
 
 import {checkStatus, checkVisibility} from "@/lib/utils";
-import {
-  EmptyComponent,
-  PaginationComponent,
-} from "@/components/entity-components";
+import {useGlobalParams} from "@/features/global/hooks/use-global-params";
+import PaginationComponent from "@/features/global/components/pagination-component";
+import EmptyComponent from "@/features/global/components/empty-component";
 import {
   Table,
   TableBody,
@@ -31,14 +30,13 @@ import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
 
 import {useSuspenseAllProjects} from "../hooks/use-projects";
-import {useProjectsParams} from "../hooks/use-projects-params";
 
 const ProjectsTable = () => {
   const router = useRouter();
 
   const {data: projects, isFetching} = useSuspenseAllProjects();
 
-  const [params, setParams] = useProjectsParams();
+  const [params, setParams] = useGlobalParams();
 
   return (
     <>
@@ -109,7 +107,7 @@ const ProjectsTable = () => {
                     <TableCell>
                       <div className="flex items-center gap-2 text-orange-500">
                         <StarIcon size={24} />
-                        {project.reviewStats._avg.rating}(
+                        {project.reviewStats._avg.rating?.toFixed(1)} (
                         {project.reviewStats._count.id})
                       </div>
                     </TableCell>

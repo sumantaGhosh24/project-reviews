@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "w3bkow2cit.utfs.io",
+        hostname: "w3bkow2cit.ufs.sh",
       },
       {
         protocol: "https",

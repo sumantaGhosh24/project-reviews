@@ -19,12 +19,12 @@ const updateCategorySchema = z.object({
   name: z.string().min(1),
 });
 
-type UpdateCategoryForm = z.infer<typeof updateCategorySchema>;
+type UpdateCategoryFormType = z.infer<typeof updateCategorySchema>;
 
 const UpdateCategoryForm = ({id}: UpdateCategoryFormProps) => {
   const {data: category} = useSuspenseCategory(id);
 
-  const form = useForm<UpdateCategoryForm>({
+  const form = useForm<UpdateCategoryFormType>({
     resolver: zodResolver(updateCategorySchema),
     defaultValues: {
       name: category?.name,
@@ -33,7 +33,7 @@ const UpdateCategoryForm = ({id}: UpdateCategoryFormProps) => {
 
   const updateCategory = useUpdateCategory();
 
-  const onSubmit = async (values: UpdateCategoryForm) => {
+  const onSubmit = async (values: UpdateCategoryFormType) => {
     updateCategory.mutate({id: category?.id as string, name: values.name});
   };
 
@@ -43,7 +43,7 @@ const UpdateCategoryForm = ({id}: UpdateCategoryFormProps) => {
         className="flex flex-col justify-start gap-10"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <h1 className="mb-5 text-2xl font-bold">Update Category</h1>
+        <h1 className="text-2xl font-bold">Update Category</h1>
         <FieldGroup>
           <Controller
             control={form.control}

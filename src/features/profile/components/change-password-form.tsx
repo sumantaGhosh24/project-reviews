@@ -18,10 +18,10 @@ const changePasswordSchema = z.object({
   revokeOtherSessions: z.boolean(),
 });
 
-type ChangePasswordForm = z.infer<typeof changePasswordSchema>;
+type ChangePasswordFormType = z.infer<typeof changePasswordSchema>;
 
 export function ChangePasswordForm() {
-  const form = useForm<ChangePasswordForm>({
+  const form = useForm<ChangePasswordFormType>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues: {
       currentPassword: "",
@@ -32,7 +32,7 @@ export function ChangePasswordForm() {
 
   const {isSubmitting} = form.formState;
 
-  async function handlePasswordChange(data: ChangePasswordForm) {
+  async function handlePasswordChange(data: ChangePasswordFormType) {
     await authClient.changePassword(data, {
       onError: (error) => {
         toast.error(error.error.message || "Failed to change password");

@@ -1,18 +1,24 @@
 import {
   useMutation,
+  useQuery,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import {toast} from "sonner";
 
 import {useTRPC} from "@/trpc/client";
+import {useGlobalParams} from "@/features/global/hooks/use-global-params";
 
-import {useNotificationsParams} from "./use-notifications-params";
+export const useNotificationCount = () => {
+  const trpc = useTRPC();
+
+  return useQuery(trpc.notification.notificationCount.queryOptions());
+};
 
 export const useSuspenseNotifications = () => {
   const trpc = useTRPC();
 
-  const [params] = useNotificationsParams();
+  const [params] = useGlobalParams();
 
   return useSuspenseQuery(trpc.notification.getAll.queryOptions(params));
 };
@@ -29,6 +35,9 @@ export const useReadAllNotification = () => {
 
         queryClient.invalidateQueries(
           trpc.notification.getAll.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.notification.notificationCount.queryOptions()
         );
       },
       onError: (error) => {
@@ -50,6 +59,9 @@ export const useReadNotification = () => {
 
         queryClient.invalidateQueries(
           trpc.notification.getAll.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.notification.notificationCount.queryOptions()
         );
       },
       onError: (error) => {

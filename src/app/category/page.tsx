@@ -1,12 +1,13 @@
 import {Suspense} from "react";
-import {ErrorBoundary} from "@sentry/nextjs";
+import {ErrorBoundary} from "react-error-boundary";
 
 import {requireAdmin} from "@/features/auth/helpers/auth-utils";
-import {categoriesParamsLoader} from "@/features/categories/server/params-loader";
+import {globalParamsLoader} from "@/features/global/server/params-loader";
 import {prefetchCategories} from "@/features/categories/server/prefetch";
 import {HydrateClient} from "@/trpc/server";
 import ManageCategories from "@/features/categories/components/manage-categories";
-import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
+import ErrorComponent from "@/features/global/components/error-component";
+import LoadingComponent from "@/features/global/components/loading-component";
 
 export const metadata = {
   title: "Manage Category",
@@ -15,7 +16,7 @@ export const metadata = {
 const CategoriesPage = async ({searchParams}: PageProps<"/category">) => {
   await requireAdmin();
 
-  const params = await categoriesParamsLoader(searchParams);
+  const params = await globalParamsLoader(searchParams);
 
   prefetchCategories(params);
 

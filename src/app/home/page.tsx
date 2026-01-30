@@ -1,13 +1,14 @@
 import {Suspense} from "react";
-import {ErrorBoundary} from "@sentry/nextjs";
+import {ErrorBoundary} from "react-error-boundary";
 
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
 import {prefetchAllCategory} from "@/features/categories/server/prefetch";
 import {prefetchPublicProjects} from "@/features/projects/server/prefetch";
-import {projectsParamsLoader} from "@/features/projects/server/params-loader";
+import {globalParamsLoader} from "@/features/global/server/params-loader";
 import {HydrateClient} from "@/trpc/server";
 import ManageHomeProjects from "@/features/projects/components/manage-home-projects";
-import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
+import ErrorComponent from "@/features/global/components/error-component";
+import LoadingComponent from "@/features/global/components/loading-component";
 
 export const metadata = {
   title: "Home",
@@ -16,7 +17,7 @@ export const metadata = {
 const Home = async ({searchParams}: PageProps<"/home">) => {
   await requireAuth();
 
-  const params = await projectsParamsLoader(searchParams);
+  const params = await globalParamsLoader(searchParams);
 
   prefetchPublicProjects(params);
 

@@ -1,11 +1,12 @@
 import {Suspense} from "react";
-import {ErrorBoundary} from "@sentry/nextjs";
+import {ErrorBoundary} from "react-error-boundary";
 
 import {requireAdmin} from "@/features/auth/helpers/auth-utils";
 import {prefetchCategory} from "@/features/categories/server/prefetch";
 import {HydrateClient} from "@/trpc/server";
 import UpdateCategoryForm from "@/features/categories/components/update-category-form";
-import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
+import ErrorComponent from "@/features/global/components/error-component";
+import LoadingComponent from "@/features/global/components/loading-component";
 
 export const metadata = {
   title: "Update Category",

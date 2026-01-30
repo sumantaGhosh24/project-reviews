@@ -1,12 +1,10 @@
 "use client";
 
-import {
-  EmptyComponent,
-  PaginationComponent,
-} from "@/components/entity-components";
+import {useGlobalParams} from "@/features/global/hooks/use-global-params";
+import PaginationComponent from "@/features/global/components/pagination-component";
+import EmptyComponent from "@/features/global/components/empty-component";
 
 import {useSuspenseReleases} from "../hooks/use-releases";
-import {useReleasesParams} from "../hooks/use-releases-params";
 import ReleaseCard from "./release-card";
 
 interface ReleasesTableProps {
@@ -16,7 +14,7 @@ interface ReleasesTableProps {
 const ReleasesTable = ({projectId}: ReleasesTableProps) => {
   const {data: releases, isFetching} = useSuspenseReleases(projectId);
 
-  const [params, setParams] = useReleasesParams();
+  const [params, setParams] = useGlobalParams();
 
   return (
     <>

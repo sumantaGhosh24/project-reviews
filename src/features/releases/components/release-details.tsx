@@ -5,11 +5,13 @@ import "@uiw/react-markdown-preview/markdown.css";
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import Image from "next/image";
 import {useTheme} from "next-themes";
 import {formatDistanceToNowStrict} from "date-fns";
 import {
   ArrowLeftIcon,
   CalendarIcon,
+  ChartBarIcon,
   EyeIcon,
   LockIcon,
   MessageSquareIcon,
@@ -21,13 +23,22 @@ import {
 
 import {checkStatus, checkVisibility} from "@/lib/utils";
 import {useVote} from "@/features/votes/hooks/use-votes";
+import ManageReviews from "@/features/reviews/components/manage-reviews";
+import ManageComments from "@/features/comments/components/manage-comments";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import {AspectRatio} from "@/components/ui/aspect-ratio";
 
 import {useSuspenseRelease} from "../hooks/use-releases";
-import UpdateReleaseForm from "./update-release-form";
 import DeleteRelease from "./delete-release";
-import ReleaseAnalytics from "./release-analytics";
 
 const EditerMarkdown = dynamic(
   () =>
@@ -60,7 +71,7 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
   };
 
   return (
-    <>
+    <div className="container mx-auto my-5 rounded-md shadow-md p-5 bg-background dark:shadow-white/40 space-y-5">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h2 className="text-3xl font-bold capitalize">{release.title}</h2>
@@ -92,7 +103,8 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
           </Badge>
           <Badge variant="warning">
             <StarIcon className="w-4 h-4 mr-1" />
-            {release.reviewStats._avg.rating}({release.reviewStats._count.id})
+            {release.reviewStats._avg.rating?.toFixed(1)} (
+            {release.reviewStats._count.id})
           </Badge>
           <Badge variant="warning">
             <MessageSquareIcon className="w-4 h-4 mr-1" />
@@ -139,11 +151,43 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
         </Button>
         {release.isOwner && (
           <>
-            <UpdateReleaseForm id={release.id} />
+            <Button variant="success" asChild>
+              <Link
+                href={`/project/details/${release.projectId}/release/${release.id}/update`}
+              >
+                Update Release
+              </Link>
+            </Button>
             <DeleteRelease id={release.id} />
-            <ReleaseAnalytics releaseId={release.id} />
+            <Button asChild>
+              <Link
+                href={`/project/details/${release?.projectId}/release/${release.id}/analytics`}
+              >
+                <ChartBarIcon className="h-4 w-4 mr-2" /> Analytics
+              </Link>
+            </Button>
           </>
         )}
+      </div>
+      <div className="mx-10">
+        <Carousel>
+          <CarouselContent>
+            {release.images.map((img) => (
+              <CarouselItem key={img.id}>
+                <AspectRatio ratio={16 / 9}>
+                  <Image
+                    src={img.url}
+                    alt="Image"
+                    className="w-full rounded-lg object-cover"
+                    fill
+                  />
+                </AspectRatio>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
       </div>
       <div>
         <div data-color-mode={theme}>
@@ -154,7 +198,21 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
           />
         </div>
       </div>
-    </>
+      <div>
+        <Tabs defaultValue="comments" className="w-full">
+          <TabsList>
+            <TabsTrigger value="comments">Comments</TabsTrigger>
+            <TabsTrigger value="reviews">Reviews</TabsTrigger>
+          </TabsList>
+          <TabsContent value="comments">
+            <ManageComments releaseId={release.id} />
+          </TabsContent>
+          <TabsContent value="reviews">
+            <ManageReviews releaseId={release.id} />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
   );
 };
 

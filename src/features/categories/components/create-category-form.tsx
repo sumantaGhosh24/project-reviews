@@ -15,10 +15,10 @@ const createCategorySchema = z.object({
   name: z.string().min(1),
 });
 
-type CreateCategoryForm = z.infer<typeof createCategorySchema>;
+type CreateCategoryFormType = z.infer<typeof createCategorySchema>;
 
 const CreateCategoryForm = () => {
-  const form = useForm<CreateCategoryForm>({
+  const form = useForm<CreateCategoryFormType>({
     resolver: zodResolver(createCategorySchema),
     defaultValues: {
       name: "",
@@ -27,7 +27,7 @@ const CreateCategoryForm = () => {
 
   const createCategory = useCreateCategory();
 
-  const onSubmit = async (values: CreateCategoryForm) => {
+  const onSubmit = async (values: CreateCategoryFormType) => {
     createCategory.mutate(
       {name: values.name},
       {
@@ -43,7 +43,7 @@ const CreateCategoryForm = () => {
       className="flex flex-col justify-start gap-10"
       onSubmit={form.handleSubmit(onSubmit)}
     >
-      <h1 className="mb-5 text-2xl font-bold">Create Category</h1>
+      <h1 className="text-2xl font-bold">Create Category</h1>
       <FieldGroup>
         <Controller
           control={form.control}

@@ -114,14 +114,25 @@ export function UserRow({user, selfId}: {user: UserWithRole; selfId: string}) {
           <div className="font-medium">{user.name || "No name"}</div>
           <div className="text-sm text-muted-foreground">{user.email}</div>
           <div className="flex items-center gap-2 not-empty:mt-2">
-            {user.banned && <Badge variant="destructive">Banned</Badge>}
-            {!user.emailVerified && <Badge variant="outline">Unverified</Badge>}
-            {isSelf && <Badge>You</Badge>}
+            {user.banned && (
+              <Badge variant="destructive" className="uppercase">
+                Banned
+              </Badge>
+            )}
+            {!user.emailVerified && (
+              <Badge variant="outline" className="uppercase">
+                Unverified
+              </Badge>
+            )}
+            {isSelf && <Badge className="uppercase">You</Badge>}
           </div>
         </div>
       </TableCell>
       <TableCell>
-        <Badge variant={user.role === "admin" ? "default" : "secondary"}>
+        <Badge
+          variant={user.role === "admin" ? "default" : "secondary"}
+          className="uppercase"
+        >
           {user.role}
         </Badge>
       </TableCell>
@@ -138,24 +149,37 @@ export function UserRow({user, selfId}: {user: UserWithRole; selfId: string}) {
               <DropdownMenuContent>
                 <DropdownMenuItem
                   onClick={() => handleImpersonateUser(user.id)}
+                  className="cursor-pointer"
                 >
                   Impersonate
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleRevokeSessions(user.id)}>
+                <DropdownMenuItem
+                  onClick={() => handleRevokeSessions(user.id)}
+                  className="cursor-pointer"
+                >
                   Revoke Sessions
                 </DropdownMenuItem>
                 {user.banned ? (
-                  <DropdownMenuItem onClick={() => handleUnbanUser(user.id)}>
+                  <DropdownMenuItem
+                    onClick={() => handleUnbanUser(user.id)}
+                    className="cursor-pointer"
+                  >
                     Unban User
                   </DropdownMenuItem>
                 ) : (
-                  <DropdownMenuItem onClick={() => handleBanUser(user.id)}>
+                  <DropdownMenuItem
+                    onClick={() => handleBanUser(user.id)}
+                    className="cursor-pointer"
+                  >
                     Ban User
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
                 <AlertDialogTrigger asChild>
-                  <DropdownMenuItem variant="destructive">
+                  <DropdownMenuItem
+                    variant="destructive"
+                    className="cursor-pointer"
+                  >
                     Delete User
                   </DropdownMenuItem>
                 </AlertDialogTrigger>

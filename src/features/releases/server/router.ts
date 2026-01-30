@@ -17,10 +17,11 @@ export const releasesRouter = createTRPCRouter({
         title: z.string(),
         description: z.string(),
         content: z.string(),
+        imageUrl: z.array(z.string()),
       })
     )
     .mutation(async ({input, ctx}) => {
-      const {projectId, title, description, content} = input;
+      const {projectId, title, description, content, imageUrl} = input;
 
       const project = await prisma.project.findFirst({
         where: {
@@ -51,6 +52,18 @@ export const releasesRouter = createTRPCRouter({
           publishedAt: null,
         },
       });
+
+      await Promise.all(
+        imageUrl.map(async (url) => {
+          await prisma.image.create({
+            data: {
+              target: "RELEASE",
+              targetId: release.id,
+              url,
+            },
+          });
+        })
+      );
 
       return release;
     }),
@@ -134,6 +147,80 @@ export const releasesRouter = createTRPCRouter({
 
         return release;
       });
+    }),
+  addImage: premiumProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        imageUrl: z.array(z.string()),
+      })
+    )
+    .mutation(async ({input, ctx}) => {
+      const {id, imageUrl} = input;
+
+      const release = await prisma.release.findUnique({
+        where: {
+          id,
+          project: {
+            ownerId: ctx.auth.user.id,
+          },
+        },
+        select: {id: true},
+      });
+
+      if (!release) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Release does not exist.",
+        });
+      }
+
+      await Promise.all(
+        imageUrl.map(async (url) => {
+          await prisma.image.create({
+            data: {
+              target: "RELEASE",
+              targetId: release.id,
+              url,
+            },
+          });
+        })
+      );
+
+      return release;
+    }),
+  removeImage: premiumProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        imageId: z.string(),
+      })
+    )
+    .mutation(async ({input, ctx}) => {
+      const {id, imageId} = input;
+
+      const release = await prisma.release.findUnique({
+        where: {
+          id,
+          project: {
+            ownerId: ctx.auth.user.id,
+          },
+        },
+        select: {id: true},
+      });
+
+      if (!release) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Release does not exist.",
+        });
+      }
+
+      await prisma.image.delete({
+        where: {id: imageId, target: "RELEASE", targetId: release.id},
+      });
+
+      return release;
     }),
   remove: premiumProcedure
     .input(z.object({id: z.string()}))
@@ -242,7 +329,11 @@ export const releasesRouter = createTRPCRouter({
           _avg: {rating: true},
         });
 
-        return {...release, isOwner, votes, myVote, views, reviewStats};
+        const images = await prisma.image.findMany({
+          where: {target: "RELEASE", targetId: release.id},
+        });
+
+        return {...release, isOwner, votes, myVote, views, reviewStats, images};
       } else {
         const release = await prisma.release.findFirst({
           where: {id: input.id},
@@ -313,7 +404,11 @@ export const releasesRouter = createTRPCRouter({
           _avg: {rating: true},
         });
 
-        return {...release, isOwner, votes, myVote, views, reviewStats};
+        const images = await prisma.image.findMany({
+          where: {target: "RELEASE", targetId: release.id},
+        });
+
+        return {...release, isOwner, votes, myVote, views, reviewStats, images};
       }
     }),
   getAll: protectedProcedure
@@ -411,7 +506,11 @@ export const releasesRouter = createTRPCRouter({
             _avg: {rating: true},
           });
 
-          return {...item, isOwner, votes, views, reviewStats};
+          const images = await prisma.image.findMany({
+            where: {target: "RELEASE", targetId: item.id},
+          });
+
+          return {...item, isOwner, votes, views, reviewStats, images};
         })
       );
 

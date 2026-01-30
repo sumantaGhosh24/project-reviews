@@ -19,7 +19,7 @@ const signInSchema = z.object({
   password: z.string().min(8),
 });
 
-type SignInForm = z.infer<typeof signInSchema>;
+type SignInFormType = z.infer<typeof signInSchema>;
 
 export function SignInTab({
   openEmailVerificationTab,
@@ -30,7 +30,7 @@ export function SignInTab({
 }) {
   const router = useRouter();
 
-  const form = useForm<SignInForm>({
+  const form = useForm<SignInFormType>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
       email: "",
@@ -40,7 +40,7 @@ export function SignInTab({
 
   const {isSubmitting} = form.formState;
 
-  async function handleSignIn(data: SignInForm) {
+  async function handleSignIn(data: SignInFormType) {
     await authClient.signIn.email(
       {...data, callbackURL: "/home"},
       {

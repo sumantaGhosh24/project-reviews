@@ -24,17 +24,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import {Release} from "@/generated/prisma/client";
 
-import {useSuspenseRelease, useUpdateRelease} from "../hooks/use-releases";
+import {useUpdateRelease} from "../hooks/use-releases";
 
 const MDEditor = dynamic(
   () => import("@uiw/react-md-editor").then((mod) => mod.default),
@@ -48,16 +40,16 @@ const updateReleaseSchema = z.object({
   visibility: z.enum(["PRIVATE", "PUBLIC", "UNLISTED"]),
 });
 
+type UpdateReleaseFormType = z.infer<typeof updateReleaseSchema>;
+
 interface UpdateReleaseForm {
-  id: string;
+  release: Release;
 }
 
-const UpdateReleaseForm = ({id}: UpdateReleaseForm) => {
-  const {data: release} = useSuspenseRelease(id);
-
+const UpdateReleaseForm = ({release}: UpdateReleaseForm) => {
   const [content, setContent] = useState<string | undefined>(release?.content);
 
-  const form = useForm<z.infer<typeof updateReleaseSchema>>({
+  const form = useForm<UpdateReleaseFormType>({
     resolver: zodResolver(updateReleaseSchema),
     defaultValues: {
       title: release?.title,
@@ -71,7 +63,7 @@ const UpdateReleaseForm = ({id}: UpdateReleaseForm) => {
 
   const updateRelease = useUpdateRelease();
 
-  const onSubmit = async (values: z.infer<typeof updateReleaseSchema>) => {
+  const onSubmit = async (values: UpdateReleaseFormType) => {
     if (content === undefined)
       return toast.error("Please add some data in content.");
 
@@ -87,149 +79,124 @@ const UpdateReleaseForm = ({id}: UpdateReleaseForm) => {
   };
 
   return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Button variant="success">Update Release</Button>
-      </SheetTrigger>
-      <SheetContent className="w-full sm:w-1/2">
-        <SheetHeader>
-          <SheetTitle>Update Release</SheetTitle>
-        </SheetHeader>
-        <form
-          className="flex flex-col justify-start gap-10"
-          onSubmit={form.handleSubmit(onSubmit)}
+    <form
+      className="flex flex-col justify-start gap-10"
+      onSubmit={form.handleSubmit(onSubmit)}
+    >
+      <h1 className="text-2xl font-bold">Update Release</h1>
+      <FieldGroup className="p-3">
+        <Controller
+          control={form.control}
+          name="title"
+          render={({field, fieldState}) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Release Title</FieldLabel>
+              <Input
+                type="title"
+                placeholder="Enter release title"
+                id={field.name}
+                aria-invalid={fieldState.invalid}
+                {...field}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <Controller
+          control={form.control}
+          name="description"
+          render={({field, fieldState}) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Release Description</FieldLabel>
+              <Textarea
+                placeholder="Enter your release description"
+                id={field.name}
+                aria-invalid={fieldState.invalid}
+                {...field}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <div className="flex flex-col gap-5 md:flex-row">
+          <Controller
+            control={form.control}
+            name="status"
+            render={({field, fieldState}) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Release Status</FieldLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  aria-invalid={fieldState.invalid}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select release status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {["DRAFT", "DEVELOPMENT", "PRODUCTION", "DEPRECATED"].map(
+                      (s, ind) => (
+                        <SelectItem key={`${s}-${ind}`} value={s}>
+                          {s}
+                        </SelectItem>
+                      )
+                    )}
+                  </SelectContent>
+                </Select>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+          <Controller
+            control={form.control}
+            name="visibility"
+            render={({field, fieldState}) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Release Visibility</FieldLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  aria-invalid={fieldState.invalid}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select release visibility" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {["PRIVATE", "PUBLIC"].map((s, ind) => (
+                      <SelectItem key={`${s}-${ind}`} value={s}>
+                        {s}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </div>
+        <div data-color-mode={theme}>
+          <MDEditor
+            value={content}
+            onChange={setContent}
+            previewOptions={{rehypePlugins: [[rehypeSanitize]]}}
+            height={500}
+          />
+        </div>
+        <Button
+          type="submit"
+          disabled={updateRelease.isPending}
+          className="w-full"
         >
-          <FieldGroup className="p-3">
-            <Controller
-              control={form.control}
-              name="title"
-              render={({field, fieldState}) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Release Title</FieldLabel>
-                  <Input
-                    type="title"
-                    placeholder="Enter release title"
-                    id={field.name}
-                    aria-invalid={fieldState.invalid}
-                    {...field}
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              control={form.control}
-              name="description"
-              render={({field, fieldState}) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>
-                    Release Description
-                  </FieldLabel>
-                  <Textarea
-                    placeholder="Enter your release description"
-                    id={field.name}
-                    aria-invalid={fieldState.invalid}
-                    {...field}
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <div className="flex flex-col gap-5 md:flex-row">
-              <Controller
-                control={form.control}
-                name="status"
-                render={({field, fieldState}) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Release Status</FieldLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      aria-invalid={fieldState.invalid}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select release status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[
-                          "DRAFT",
-                          "DEVELOPMENT",
-                          "PRODUCTION",
-                          "DEPRECATED",
-                        ].map((s, ind) => (
-                          <SelectItem key={`${s}-${ind}`} value={s}>
-                            {s}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-              <Controller
-                control={form.control}
-                name="visibility"
-                render={({field, fieldState}) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>
-                      Release Visibility
-                    </FieldLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      aria-invalid={fieldState.invalid}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select release visibility" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {["PRIVATE", "PUBLIC"].map((s, ind) => (
-                          <SelectItem key={`${s}-${ind}`} value={s}>
-                            {s}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </div>
-            <div data-color-mode={theme}>
-              <MDEditor
-                value={content}
-                onChange={setContent}
-                previewOptions={{rehypePlugins: [[rehypeSanitize]]}}
-                height={500}
-              />
-            </div>
-            <SheetFooter>
-              <Button
-                type="submit"
-                disabled={updateRelease.isPending}
-                className="w-full"
-              >
-                <LoadingSwap isLoading={updateRelease.isPending}>
-                  Update Release
-                </LoadingSwap>
-              </Button>
-              <SheetClose asChild>
-                <Button variant="destructive">Close</Button>
-              </SheetClose>
-            </SheetFooter>
-          </FieldGroup>
-        </form>
-      </SheetContent>
-    </Sheet>
+          <LoadingSwap isLoading={updateRelease.isPending}>
+            Update Release
+          </LoadingSwap>
+        </Button>
+      </FieldGroup>
+    </form>
   );
 };
 

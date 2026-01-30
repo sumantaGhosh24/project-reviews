@@ -1,19 +1,20 @@
 import {Suspense} from "react";
-import {ErrorBoundary} from "@sentry/nextjs";
+import {ErrorBoundary} from "react-error-boundary";
 
 import {requireAuth} from "@/features/auth/helpers/auth-utils";
 import {prefetchMyReviews} from "@/features/reviews/server/prefetch";
-import {reviewsParamsLoader} from "@/features/reviews/server/params-loader";
+import {globalParamsLoader} from "@/features/global/server/params-loader";
 import {HydrateClient} from "@/trpc/server";
 import ManageDashboardReviews from "@/features/reviews/components/manage-dashboard-reviews";
-import {ErrorComponent, LoadingComponent} from "@/components/entity-components";
+import ErrorComponent from "@/features/global/components/error-component";
+import LoadingComponent from "@/features/global/components/loading-component";
 
 const DashboardReviewsPage = async ({
   searchParams,
 }: PageProps<"/dashboard">) => {
   await requireAuth();
 
-  const params = await reviewsParamsLoader(searchParams);
+  const params = await globalParamsLoader(searchParams);
 
   prefetchMyReviews(params);
 

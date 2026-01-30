@@ -9,10 +9,9 @@ import {
   TrendingUpIcon,
 } from "lucide-react";
 
-import {
-  EmptyComponent,
-  PaginationComponent,
-} from "@/components/entity-components";
+import {useGlobalParams} from "@/features/global/hooks/use-global-params";
+import PaginationComponent from "@/features/global/components/pagination-component";
+import EmptyComponent from "@/features/global/components/empty-component";
 import {
   Table,
   TableBody,
@@ -25,12 +24,11 @@ import {
 import {Button} from "@/components/ui/button";
 
 import {useSuspenseMyReviews} from "../hooks/use-reviews";
-import {useReviewsParams} from "../hooks/use-reviews-params";
 
 const DashboardReviewsTable = () => {
   const {data: reviews, isFetching} = useSuspenseMyReviews();
 
-  const [params, setParams] = useReviewsParams();
+  const [params, setParams] = useGlobalParams();
 
   return (
     <>

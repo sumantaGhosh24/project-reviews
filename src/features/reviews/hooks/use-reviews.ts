@@ -6,13 +6,12 @@ import {
 import {toast} from "sonner";
 
 import {useTRPC} from "@/trpc/client";
-
-import {useReviewsParams} from "./use-reviews-params";
+import {useGlobalParams} from "@/features/global/hooks/use-global-params";
 
 export const useSuspenseReviews = (releaseId: string) => {
   const trpc = useTRPC();
 
-  const [params] = useReviewsParams();
+  const [params] = useGlobalParams();
 
   return useSuspenseQuery(
     trpc.review.getAll.queryOptions({...params, releaseId})
@@ -22,7 +21,7 @@ export const useSuspenseReviews = (releaseId: string) => {
 export const useSuspenseMyReviews = () => {
   const trpc = useTRPC();
 
-  const [params] = useReviewsParams();
+  const [params] = useGlobalParams();
 
   return useSuspenseQuery(trpc.review.getMyAll.queryOptions(params));
 };
