@@ -11,6 +11,7 @@ import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import rehypeSanitize from "rehype-sanitize";
 import {toast} from "sonner";
+import {BrainIcon} from "lucide-react";
 
 import {LoadingSwap} from "@/components/loading-swap";
 import {Input} from "@/components/ui/input";
@@ -48,6 +49,7 @@ interface UpdateReleaseForm {
 
 const UpdateReleaseForm = ({release}: UpdateReleaseForm) => {
   const [content, setContent] = useState<string | undefined>(release?.content);
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<UpdateReleaseFormType>({
     resolver: zodResolver(updateReleaseSchema),
@@ -60,6 +62,31 @@ const UpdateReleaseForm = ({release}: UpdateReleaseForm) => {
   });
 
   const {theme} = useTheme();
+
+  const generateContent = async () => {
+    setLoading(true);
+
+    try {
+      const title = form.getValues("title");
+      const description = form.getValues("description");
+
+      const res = await fetch("/api/generate-release-markdown", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          title,
+          description,
+        }),
+      });
+
+      const data = await res.json();
+      setContent(data.markdown);
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : String(error));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const updateRelease = useUpdateRelease();
 
@@ -178,6 +205,13 @@ const UpdateReleaseForm = ({release}: UpdateReleaseForm) => {
             )}
           />
         </div>
+        <Button
+          onClick={generateContent}
+          disabled={loading || updateRelease.isPending}
+        >
+          <BrainIcon className="h-4 w-4" />
+          {loading ? "Generating..." : "Update Content Using AI"}
+        </Button>
         <div data-color-mode={theme}>
           <MDEditor
             value={content}
@@ -188,7 +222,7 @@ const UpdateReleaseForm = ({release}: UpdateReleaseForm) => {
         </div>
         <Button
           type="submit"
-          disabled={updateRelease.isPending}
+          disabled={updateRelease.isPending || loading}
           className="w-full"
         >
           <LoadingSwap isLoading={updateRelease.isPending}>

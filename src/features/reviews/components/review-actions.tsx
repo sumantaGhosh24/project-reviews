@@ -54,14 +54,14 @@ export function ReviewActions({
         variant={myVote?.type === "UP" ? "success" : "ghost"}
         size="sm"
       >
-        <TrendingUpIcon className="h-4 w-4 mr-2" /> Up Vote (+{upVote})
+        <TrendingUpIcon className="h-4 w-4" /> Up Vote (+{upVote})
       </Button>
       <Button
         onClick={() => handleVote("DOWN")}
         variant={myVote?.type === "DOWN" ? "destructive" : "ghost"}
         size="sm"
       >
-        <TrendingDownIcon className="h-4 w-4 mr-2" /> Down Vote (-{downVote})
+        <TrendingDownIcon className="h-4 w-4" /> Down Vote (-{downVote})
       </Button>
       {isOwner && (
         <Button
@@ -73,7 +73,7 @@ export function ReviewActions({
         >
           <LoadingSwap isLoading={deleteReview.isPending}>
             <span className="flex items-center gap-2">
-              <Trash2Icon className="mr-1 h-4 w-4" />
+              <Trash2Icon className="h-4 w-4" />
               Delete
             </span>
           </LoadingSwap>

@@ -11,6 +11,7 @@ import {formatDistanceToNowStrict} from "date-fns";
 import {
   CalendarIcon,
   ChartBarIcon,
+  ChessKingIcon,
   EyeIcon,
   GithubIcon,
   GlobeIcon,
@@ -25,6 +26,8 @@ import {
 } from "lucide-react";
 
 import {checkStatus, checkVisibility} from "@/lib/utils";
+import {authClient} from "@/lib/auth/auth-client";
+import {useHasActiveSubscription} from "@/features/subscriptions/hooks/useSubscription";
 import {useVote} from "@/features/votes/hooks/use-votes";
 import ManageReleases from "@/features/releases/components/manage-release";
 import {Badge} from "@/components/ui/badge";
@@ -38,8 +41,10 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import {AspectRatio} from "@/components/ui/aspect-ratio";
+import {Skeleton} from "@/components/ui/skeleton";
 
 import {useSuspenseViewProject} from "../hooks/use-projects";
+import ProjectChat from "./project-chat";
 
 interface ProjectDetailsProps {
   id: string;
@@ -71,6 +76,21 @@ const ProjectDetails = ({id}: ProjectDetailsProps) => {
     });
   };
 
+  const {isLoading, hasActiveSubscription} = useHasActiveSubscription();
+
+  const handleSubscribe = async () => {
+    if (hasActiveSubscription) return;
+
+    await authClient.checkout({
+      products: ["e651f46d-ac20-4f26-b769-ad088b123df2"],
+      slug: "pro",
+    });
+  };
+
+  if (isLoading) {
+    return <Skeleton className="w-full h-20" />;
+  }
+
   return (
     <div className="mx-auto my-5 container rounded-md shadow-md p-5 bg-background dark:shadow-white/40">
       <div className="space-y-5">
@@ -87,30 +107,30 @@ const ProjectDetails = ({id}: ProjectDetailsProps) => {
             </Badge>
             <Badge variant={checkVisibility(project.visibility)}>
               {project.visibility === "PUBLIC" ? (
-                <EyeIcon className="h-4 w-4 mr-1" />
+                <EyeIcon className="h-4 w-4" />
               ) : (
-                <LockIcon className="h-4 w-4 mr-1" />
+                <LockIcon className="h-4 w-4" />
               )}
               {project.visibility}
             </Badge>
             <Badge variant="success">
-              <TrendingUpIcon className="w-4 h-4 mr-1" />
+              <TrendingUpIcon className="w-4 h-4" />
               {upVote}
             </Badge>
             <Badge variant="destructive">
-              <TrendingDownIcon className="w-4 h-4 mr-1" />
+              <TrendingDownIcon className="w-4 h-4" />
               {downVote}
             </Badge>
             <Badge variant="default">
-              <ViewIcon className="w-4 h-4 mr-1" />
+              <ViewIcon className="w-4 h-4" />
               {project.views}
             </Badge>
             <Badge variant="warning">
-              <TimerResetIcon className="w-4 h-4 mr-1" />
+              <TimerResetIcon className="w-4 h-4" />
               {project._count?.releases}
             </Badge>
             <Badge variant="warning">
-              <StarIcon className="w-4 h-4 mr-1" />
+              <StarIcon className="w-4 h-4" />
               {project.reviewStats._avg.rating?.toFixed(1)} (
               {project.reviewStats._count.id})
             </Badge>
@@ -156,7 +176,7 @@ const ProjectDetails = ({id}: ProjectDetailsProps) => {
           <div className="flex items-center justify-between gap-2 flex-wrap">
             {project.tags.map((tag) => (
               <Badge key={tag} className="uppercase">
-                <TagIcon className="mr-1" /> {tag}
+                <TagIcon /> {tag}
               </Badge>
             ))}
           </div>
@@ -166,7 +186,7 @@ const ProjectDetails = ({id}: ProjectDetailsProps) => {
             onClick={() => handleVote("UP")}
             variant={project.myVote?.type === "UP" ? "success" : "secondary"}
           >
-            <TrendingUpIcon className="h-4 w-4 mr-2" /> Up Vote
+            <TrendingUpIcon className="h-4 w-4" /> Up Vote
           </Button>
           <Button
             onClick={() => handleVote("DOWN")}
@@ -174,31 +194,40 @@ const ProjectDetails = ({id}: ProjectDetailsProps) => {
               project.myVote?.type === "DOWN" ? "destructive" : "secondary"
             }
           >
-            <TrendingDownIcon className="h-4 w-4 mr-2" /> Down Vote
+            <TrendingDownIcon className="h-4 w-4" /> Down Vote
           </Button>
           <Button asChild>
             <Link href={project.websiteUrl} target="_blank">
-              <GlobeIcon className="h-4 w-4 mr-2" /> Visit Website
+              <GlobeIcon className="h-4 w-4" /> Visit Website
             </Link>
           </Button>
           <Button variant="outline" asChild>
             <Link href={project.githubUrl} target="_blank">
-              <GithubIcon className="h-4 w-4 mr-2" /> Visit GitHub
+              <GithubIcon className="h-4 w-4" /> Visit GitHub
             </Link>
           </Button>
           {project.isOwner && (
             <>
               <Button variant="success" asChild>
                 <Link href={`/project/update/${project.id}`}>
-                  <PencilIcon className="h-4 w-4 mr-2" /> Update
+                  <PencilIcon className="h-4 w-4" /> Update
                 </Link>
               </Button>
               <Button asChild>
                 <Link href={`/project/details/${project.id}/analytics`}>
-                  <ChartBarIcon className="h-4 w-4 mr-2" /> Analytics
+                  <ChartBarIcon className="h-4 w-4" /> Analytics
                 </Link>
               </Button>
             </>
+          )}
+          {hasActiveSubscription ? (
+            <ProjectChat content={project.content} />
+          ) : (
+            <Button type="button" onClick={handleSubscribe}>
+              <span className="flex items-center gap-1.5">
+                <ChessKingIcon className="h-4 w-4" /> Subscribe
+              </span>
+            </Button>
           )}
         </div>
         <div className="mx-10">

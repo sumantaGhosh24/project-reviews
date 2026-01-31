@@ -23,7 +23,7 @@ const UpdateReleaseComponent = ({id, releaseId}: UpdateReleaseComponent) => {
     <div className="container mx-auto space-y-4 rounded-md shadow-md p-5 bg-background dark:shadow-white/40 my-20">
       <Button asChild>
         <Link href={`/project/details/${id}/release/${releaseId}`}>
-          <ArrowLeftIcon className="h-4 w-4 mr-2" /> Back to Release
+          <ArrowLeftIcon className="h-4 w-4" /> Back to Release
         </Link>
       </Button>
       <Tabs defaultValue="update-release" className="w-full">

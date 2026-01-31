@@ -67,17 +67,17 @@ export function CommentActions({
         variant={myVote?.type === "UP" ? "success" : "ghost"}
         size="sm"
       >
-        <TrendingUpIcon className="h-4 w-4 mr-2" /> Up Vote (+{upVote})
+        <TrendingUpIcon className="h-4 w-4" /> Up Vote (+{upVote})
       </Button>
       <Button
         onClick={() => handleVote("DOWN")}
         variant={myVote?.type === "DOWN" ? "destructive" : "ghost"}
         size="sm"
       >
-        <TrendingDownIcon className="h-4 w-4 mr-2" /> Down Vote (-{downVote})
+        <TrendingDownIcon className="h-4 w-4" /> Down Vote (-{downVote})
       </Button>
       <Button variant="ghost" size="sm" onClick={handleReply}>
-        <MessageCircleIcon className="mr-1 h-4 w-4" />
+        <MessageCircleIcon className="h-4 w-4" />
         Reply ({replyCount})
       </Button>
       {isOwner && (
@@ -90,7 +90,7 @@ export function CommentActions({
         >
           <LoadingSwap isLoading={deleteComment.isPending}>
             <span className="flex items-center gap-2">
-              <Trash2Icon className="mr-1 h-4 w-4" />
+              <Trash2Icon className="h-4 w-4" />
               Delete
             </span>
           </LoadingSwap>

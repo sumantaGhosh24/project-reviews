@@ -12,6 +12,7 @@ import {
   ArrowLeftIcon,
   CalendarIcon,
   ChartBarIcon,
+  ChessKingIcon,
   EyeIcon,
   LockIcon,
   MessageSquareIcon,
@@ -22,7 +23,9 @@ import {
 } from "lucide-react";
 
 import {checkStatus, checkVisibility} from "@/lib/utils";
+import {authClient} from "@/lib/auth/auth-client";
 import {useVote} from "@/features/votes/hooks/use-votes";
+import {useHasActiveSubscription} from "@/features/subscriptions/hooks/useSubscription";
 import ManageReviews from "@/features/reviews/components/manage-reviews";
 import ManageComments from "@/features/comments/components/manage-comments";
 import {Badge} from "@/components/ui/badge";
@@ -36,9 +39,11 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import {AspectRatio} from "@/components/ui/aspect-ratio";
+import {Skeleton} from "@/components/ui/skeleton";
 
 import {useSuspenseRelease} from "../hooks/use-releases";
 import DeleteRelease from "./delete-release";
+import ReleaseChat from "./release-chat";
 
 const EditerMarkdown = dynamic(
   () =>
@@ -70,6 +75,21 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
     });
   };
 
+  const {isLoading, hasActiveSubscription} = useHasActiveSubscription();
+
+  const handleSubscribe = async () => {
+    if (hasActiveSubscription) return;
+
+    await authClient.checkout({
+      products: ["e651f46d-ac20-4f26-b769-ad088b123df2"],
+      slug: "pro",
+    });
+  };
+
+  if (isLoading) {
+    return <Skeleton className="w-full h-20" />;
+  }
+
   return (
     <div className="container mx-auto my-5 rounded-md shadow-md p-5 bg-background dark:shadow-white/40 space-y-5">
       <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -83,31 +103,31 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
           <Badge variant={checkStatus(release.status)}>{release.status}</Badge>
           <Badge variant={checkVisibility(release.visibility)}>
             {release.visibility === "PUBLIC" ? (
-              <EyeIcon className="h-4 w-4 mr-1" />
+              <EyeIcon className="h-4 w-4" />
             ) : (
-              <LockIcon className="h-4 w-4 mr-1" />
+              <LockIcon className="h-4 w-4" />
             )}
             {release.visibility}
           </Badge>
           <Badge variant="success">
-            <TrendingUpIcon className="w-4 h-4 mr-1" />
+            <TrendingUpIcon className="w-4 h-4" />
             {upVote}
           </Badge>
           <Badge variant="destructive">
-            <TrendingDownIcon className="w-4 h-4 mr-1" />
+            <TrendingDownIcon className="w-4 h-4" />
             {downVote}
           </Badge>
           <Badge variant="default">
-            <ViewIcon className="w-4 h-4 mr-1" />
+            <ViewIcon className="w-4 h-4" />
             {release.views}
           </Badge>
           <Badge variant="warning">
-            <StarIcon className="w-4 h-4 mr-1" />
+            <StarIcon className="w-4 h-4" />
             {release.reviewStats._avg.rating?.toFixed(1)} (
             {release.reviewStats._count.id})
           </Badge>
           <Badge variant="warning">
-            <MessageSquareIcon className="w-4 h-4 mr-1" />
+            <MessageSquareIcon className="w-4 h-4" />
             {release._count.comments}
           </Badge>
         </div>
@@ -115,7 +135,7 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
       <div className="flex flex-wrap items-center gap-4 text-sm">
         <Button asChild>
           <Link href={`/project/details/${release.projectId}`}>
-            <ArrowLeftIcon className="h-4 w-4 mr-2" /> Back to Project
+            <ArrowLeftIcon className="h-4 w-4" /> Back to Project
           </Link>
         </Button>
         <div className="flex items-center gap-1">
@@ -139,7 +159,7 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
           onClick={() => handleVote("UP")}
           variant={release.myVote?.type === "UP" ? "success" : "secondary"}
         >
-          <TrendingUpIcon className="h-4 w-4 mr-2" /> Up Vote
+          <TrendingUpIcon className="h-4 w-4" /> Up Vote
         </Button>
         <Button
           onClick={() => handleVote("DOWN")}
@@ -147,7 +167,7 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
             release.myVote?.type === "DOWN" ? "destructive" : "secondary"
           }
         >
-          <TrendingDownIcon className="h-4 w-4 mr-2" /> Down Vote
+          <TrendingDownIcon className="h-4 w-4" /> Down Vote
         </Button>
         {release.isOwner && (
           <>
@@ -163,10 +183,19 @@ const ReleaseDetails = ({id}: ReleaseDetailsProps) => {
               <Link
                 href={`/project/details/${release?.projectId}/release/${release.id}/analytics`}
               >
-                <ChartBarIcon className="h-4 w-4 mr-2" /> Analytics
+                <ChartBarIcon className="h-4 w-4" /> Analytics
               </Link>
             </Button>
           </>
+        )}
+        {hasActiveSubscription ? (
+          <ReleaseChat content={release.content} />
+        ) : (
+          <Button type="button" onClick={handleSubscribe}>
+            <span className="flex items-center gap-1.5">
+              <ChessKingIcon className="h-4 w-4" /> Subscribe
+            </span>
+          </Button>
         )}
       </div>
       <div className="mx-10">

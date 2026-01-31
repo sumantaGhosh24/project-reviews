@@ -13,7 +13,7 @@ import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import rehypeSanitize from "rehype-sanitize";
 import {toast} from "sonner";
-import {XIcon} from "lucide-react";
+import {BrainIcon, XIcon} from "lucide-react";
 
 import {useUploadThing} from "@/lib/uploadthing";
 import {useSuspenseAllCategories} from "@/features/categories/hooks/use-categories";
@@ -54,6 +54,7 @@ const CreateProjectForm = () => {
   const [content, setContent] = useState<string | undefined>(undefined);
   const [tags, setTags] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
+  const [loading, setLoading] = useState(false);
   const MAX_IMAGE_COUNT = 5;
 
   const {startUpload, isUploading} = useUploadThing("imageUploader");
@@ -75,6 +76,37 @@ const CreateProjectForm = () => {
   const router = useRouter();
 
   const {data: categories} = useSuspenseAllCategories();
+
+  const generateContent = async () => {
+    if (!form.formState.isValid) return;
+
+    setLoading(true);
+
+    try {
+      const title = form.getValues("title");
+      const description = form.getValues("description");
+      const category = form.getValues("category");
+      const categoryName = categories.find((c) => c.id === category)?.name;
+
+      const res = await fetch("/api/generate-project-markdown", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          title,
+          description,
+          category: categoryName,
+          tags,
+        }),
+      });
+
+      const data = await res.json();
+      setContent(data.markdown);
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : String(error));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const createProject = useCreateProject();
 
@@ -303,6 +335,13 @@ const CreateProjectForm = () => {
             onChange={setTags}
             placeholder="Add project tags"
           />
+          <Button
+            onClick={generateContent}
+            disabled={loading || createProject.isPending || isUploading}
+          >
+            <BrainIcon className="h-4 w-4" />
+            {loading ? "Generating..." : "Generate Content Using AI"}
+          </Button>
           <div data-color-mode={theme}>
             <MDEditor
               value={content}
@@ -313,7 +352,7 @@ const CreateProjectForm = () => {
           </div>
           <Button
             type="submit"
-            disabled={createProject.isPending || isUploading}
+            disabled={createProject.isPending || isUploading || loading}
             className="w-full"
           >
             <LoadingSwap isLoading={createProject.isPending || isUploading}>

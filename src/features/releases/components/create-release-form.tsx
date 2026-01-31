@@ -14,7 +14,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
 import rehypeSanitize from "rehype-sanitize";
 import {toast} from "sonner";
-import {ArrowLeftIcon, XIcon} from "lucide-react";
+import {ArrowLeftIcon, BrainIcon, XIcon} from "lucide-react";
 
 import {useUploadThing} from "@/lib/uploadthing";
 import {LoadingSwap} from "@/components/loading-swap";
@@ -46,6 +46,7 @@ interface CreateReleaseFormProps {
 const CreateReleaseForm = ({projectId}: CreateReleaseFormProps) => {
   const [content, setContent] = useState<string | undefined>(undefined);
   const [files, setFiles] = useState<File[]>([]);
+  const [loading, setLoading] = useState(false);
   const MAX_IMAGE_COUNT = 5;
 
   const {startUpload, isUploading} = useUploadThing("imageUploader");
@@ -62,6 +63,33 @@ const CreateReleaseForm = ({projectId}: CreateReleaseFormProps) => {
   const {theme} = useTheme();
 
   const router = useRouter();
+
+  const generateContent = async () => {
+    setLoading(true);
+
+    try {
+      const title = form.getValues("title");
+      const description = form.getValues("description");
+
+      if (title.length === 0 || description.length === 0) return;
+
+      const res = await fetch("/api/generate-release-markdown", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          title,
+          description,
+        }),
+      });
+
+      const data = await res.json();
+      setContent(data.markdown);
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : String(error));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const createRelease = useCreateRelease();
 
@@ -130,7 +158,7 @@ const CreateReleaseForm = ({projectId}: CreateReleaseFormProps) => {
         <h1 className="mb-5 text-2xl font-bold">Create Release</h1>
         <Button asChild>
           <Link href={`/project/details/${projectId}`}>
-            <ArrowLeftIcon className="h-4 w-4 mr-2" /> Back to Project
+            <ArrowLeftIcon className="h-4 w-4" /> Back to Project
           </Link>
         </Button>
       </div>
@@ -202,6 +230,13 @@ const CreateReleaseForm = ({projectId}: CreateReleaseFormProps) => {
             </Field>
           )}
         />
+        <Button
+          onClick={generateContent}
+          disabled={loading || createRelease.isPending || isUploading}
+        >
+          <BrainIcon className="h-4 w-4" />
+          {loading ? "Generating..." : "Generate Content Using AI"}
+        </Button>
         <div data-color-mode={theme}>
           <MDEditor
             value={content}
@@ -212,7 +247,7 @@ const CreateReleaseForm = ({projectId}: CreateReleaseFormProps) => {
         </div>
         <Button
           type="submit"
-          disabled={createRelease.isPending || isUploading}
+          disabled={createRelease.isPending || isUploading || loading}
           className="w-full"
         >
           <LoadingSwap isLoading={createRelease.isPending || isUploading}>
