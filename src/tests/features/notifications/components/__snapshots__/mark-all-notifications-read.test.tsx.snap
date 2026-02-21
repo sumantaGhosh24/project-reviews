@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`MarkAllNotificationsRead matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="alert-dialog"
+  >
+    <div
+      class=""
+      data-testid="alert-dialog-trigger"
+    >
+      Mark All Notification Read
+    </div>
+    <div
+      data-testid="alert-dialog-content"
+    >
+      <div>
+        <div>
+          Are you absolutely sure you want to make all your notifications read?
+        </div>
+        <div>
+          This action cannot be undone. This will permanently make all of your notifications read.
+        </div>
+      </div>
+      <div>
+        <button>
+          Cancel
+        </button>
+        <button
+          class="bg-destructive"
+          data-testid="alert-dialog-action"
+        >
+          <div
+            class="grid grid-cols-1 items-center justify-items-center"
+          >
+            <div
+              class="col-start-1 col-end-2 row-start-1 row-end-2 w-full visible"
+            >
+              Mark All Notification Read
+            </div>
+            <div
+              class="col-start-1 col-end-2 row-start-1 row-end-2 invisible"
+            >
+              <div
+                data-testid="spinner"
+              >
+                <span
+                  data-testid="icon-Loader2Icon"
+                />
+              </div>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -9,6 +9,7 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Card, CardContent} from "@/components/ui/card";
 import {Comment} from "@/generated/prisma/client";
 import {AspectRatio} from "@/components/ui/aspect-ratio";
+import {cn} from "@/lib/utils";
 
 import {CommentActions} from "./comment-actions";
 import {ReplyForm} from "./reply-form";
@@ -52,7 +53,9 @@ export function CommentItem({comment}: CommentItemProps) {
   const [showReply, setShowReply] = useState(false);
 
   return (
-    <Card className={`mb-3 py-2 ${comment.isOwner ? "border-primary" : ""}`}>
+    <Card
+      className={cn("mb-3 py-2", comment.isOwner && "border-primary")}
+    >
       <CardContent>
         <div className="flex items-center gap-2 mb-2">
           <Avatar>

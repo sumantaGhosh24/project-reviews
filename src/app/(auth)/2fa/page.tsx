@@ -1,7 +1,3 @@
-import {redirect} from "next/navigation";
-import {headers} from "next/headers";
-
-import {auth} from "@/lib/auth/auth";
 import {requireUnauth} from "@/features/auth/helpers/auth-utils";
 import {TotpForm} from "@/features/auth/components/totp-form";
 import {BackupCodeTab} from "@/features/auth/components/backup-code-tab";
@@ -14,9 +10,6 @@ export const metadata = {
 
 export default async function TwoFactorPage() {
   await requireUnauth();
-
-  const session = await auth.api.getSession({headers: await headers()});
-  if (session != null) return redirect("/home");
 
   return (
     <div className="my-6 px-4">

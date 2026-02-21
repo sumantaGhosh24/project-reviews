@@ -1,0 +1,209 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ProjectCard matches snapshot 1`] = `
+<DocumentFragment>
+  <div>
+    <div
+      class="flex items-center justify-between"
+    >
+      <span
+        class="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded truncate"
+      >
+        Technology
+      </span>
+      <div
+        class="flex gap-2"
+      >
+        <button
+          class=""
+        >
+          <a
+            href="https://github.com/test"
+          >
+            <span
+              data-testid="icon-GithubIcon"
+              size="24"
+            />
+          </a>
+        </button>
+        <button
+          class=""
+        >
+          <a
+            href="https://test.com"
+          >
+            <span
+              data-testid="icon-ExternalLinkIcon"
+              size="24"
+            />
+          </a>
+        </button>
+      </div>
+    </div>
+    <div>
+      <a
+        href="/project/details/proj1"
+      >
+        <div>
+          Test Project
+        </div>
+        <div>
+          This is a test project description
+        </div>
+      </a>
+    </div>
+    <div>
+      <div
+        data-testid="avatar-group"
+      >
+        <div
+          data-slot="avatar"
+          data-testid="avatar"
+        >
+          <img
+            alt="avatar"
+            src="https://example.com/img1.png"
+          />
+          <div>
+            1
+          </div>
+        </div>
+        <div
+          data-slot="avatar"
+          data-testid="avatar"
+        >
+          <img
+            alt="avatar"
+            src="https://example.com/img2.png"
+          />
+          <div>
+            2
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex items-center gap-2 flex-wrap"
+      >
+        <span
+          class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90 uppercase"
+          data-slot="badge"
+        >
+          react
+        </span>
+        <span
+          class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90 uppercase"
+          data-slot="badge"
+        >
+          jest
+        </span>
+        <span
+          class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-success text-white [a&]:hover:bg-success/90"
+          data-slot="badge"
+        >
+          PRODUCTION
+        </span>
+        <span
+          class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-success text-white [a&]:hover:bg-success/90"
+          data-slot="badge"
+        >
+          PUBLIC
+        </span>
+      </div>
+      <div
+        class="flex items-center justify-between flex-wrap gap-2 mt-4"
+      >
+        <div
+          class="flex items-center gap-1 text-green-500"
+        >
+          <span
+            class="w-4 h-4"
+            data-testid="icon-TrendingUpIcon"
+          />
+          <span
+            class="text-xs font-medium"
+          >
+            10
+          </span>
+        </div>
+        <div
+          class="flex items-center gap-1 text-red-500"
+        >
+          <span
+            class="w-4 h-4"
+            data-testid="icon-TrendingDownIcon"
+          />
+          <span
+            class="text-xs font-medium"
+          >
+            2
+          </span>
+        </div>
+        <div
+          class="flex items-center gap-1 text-primary"
+        >
+          <span
+            class="w-4 h-4"
+            data-testid="icon-ViewIcon"
+          />
+          <span
+            class="text-xs font-medium"
+          >
+            100
+          </span>
+        </div>
+        <div
+          class="flex items-center gap-1 text-orange-500"
+        >
+          <span
+            class="w-4 h-4"
+            data-testid="icon-TimerResetIcon"
+          />
+          <span
+            class="text-xs font-medium"
+          >
+            5
+          </span>
+        </div>
+        <div
+          class="flex items-center gap-1 text-orange-500"
+        >
+          <span
+            class="w-4 h-4"
+            data-testid="icon-StarIcon"
+          />
+          <span
+            class="text-xs font-medium"
+          >
+            4.5 (10)
+          </span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div>
+        <a
+          href="/profile/user1/details"
+        >
+          <div
+            data-slot="avatar"
+            data-testid="avatar"
+          >
+            <div>
+              Jo
+            </div>
+            <img
+              alt="avatar"
+              src="https://placehold.co/600x400.png"
+            />
+          </div>
+          <span
+            class="text-md font-bold text-foreground/60 capitalize"
+          >
+            John Doe
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

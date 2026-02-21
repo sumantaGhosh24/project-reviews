@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ActionButton matches snapshot 1`] = `
+<DocumentFragment>
+  <button
+    class=""
+  >
+    <div
+      class="grid grid-cols-1 items-center justify-items-center"
+    >
+      <div
+        class="col-start-1 col-end-2 row-start-1 row-end-2 w-full visible inline-flex items-center gap-2"
+      >
+        Click Me
+      </div>
+      <div
+        class="col-start-1 col-end-2 row-start-1 row-end-2 invisible inline-flex items-center gap-2"
+      >
+        <div
+          data-testid="spinner"
+        >
+          <span
+            data-testid="icon-Loader2Icon"
+          />
+        </div>
+      </div>
+    </div>
+  </button>
+</DocumentFragment>
+`;

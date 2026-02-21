@@ -1,0 +1,215 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ProjectAnalytics matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="mx-auto my-5 container rounded-md shadow-md p-5 bg-background dark:shadow-white/40 space-y-5"
+  >
+    <div
+      class="flex items-center justify-between"
+    >
+      <h3
+        class="capitalize text-2xl"
+      >
+        Test Project - Analytics
+      </h3>
+      <button
+        class=""
+      >
+        Back to Project
+      </button>
+    </div>
+    <p>
+      Test Description
+    </p>
+    <div
+      class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 my-4"
+    >
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Releases
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              5
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-FileIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Comments
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              10
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-MessageCircleIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Reviews
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              3
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-MessageSquareIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Project Votes
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              20
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-VoteIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Project Views
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              200
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-ViewIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Releases Votes
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              15
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-VoteIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Releases Views
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              150
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-ViewIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Rating
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              4.2 (10)
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-StarIcon"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

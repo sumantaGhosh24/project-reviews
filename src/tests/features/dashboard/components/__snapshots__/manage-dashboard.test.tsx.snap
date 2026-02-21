@@ -1,0 +1,1090 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ManageDashboard matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="p-6 space-y-6"
+  >
+    <div
+      class="flex items-center justify-between"
+    >
+      <div
+        class="flex items-center gap-4"
+      >
+        <div
+          data-slot="avatar"
+          data-testid="avatar"
+        >
+          <img
+            alt="avatar"
+            src="https://example.com/avatar.png"
+          />
+          <div>
+            Jo
+          </div>
+        </div>
+        <div>
+          <h2
+            class="text-2xl font-bold capitalize"
+          >
+            Welcome back, John Doe 👋
+          </h2>
+          <p
+            class="text-muted-foreground"
+          >
+            Here’s what’s happening today
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+    >
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Projects
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              5
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-FolderClosedIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Comments
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              10
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-MessageCircleIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Reviews
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              3
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-MessageSquareIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Followers
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              20
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-UserCheckIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Followings
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              15
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-UserRoundCheckIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Votes Given
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              50
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-VoteIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Views Given
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              100
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-ViewIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Votes Received
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              200
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-VoteIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Views Received
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              1000
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-ViewIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Unread Notifications
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              2
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-BellDotIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Notifications
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              10
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-BellIcon"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <h2
+      class="text-xl font-bold"
+    >
+      Admin Dashboard
+    </h2>
+    <div
+      class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+    >
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Users
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              100
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-UsersIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Admins
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              5
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-UserLockIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Normal Users
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              95
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-UserIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Categories
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              10
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-TagsIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Projects
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              50
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-FolderIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Draft Projects
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              5
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-FolderCogIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Development Projects
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              10
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-FolderClockIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Production Projects
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              30
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-FolderCheckIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Deprecated Projects
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              2
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-FolderXIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Private Projects
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              3
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-FolderLockIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Public Projects
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              47
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-FolderUpIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Releases
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              200
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-FileIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Draft Releases
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              10
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-FileCogIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Development Releases
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              20
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-FileClockIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Production Releases
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              160
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-FileCheckIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Deprecated Releases
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              5
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-FileXIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Private Releases
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              5
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-FileLockIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Public Releases
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              195
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-FileUpIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Comments
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              1000
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-MessageCircleIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Reply Comments
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              200
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-MessageCircleDashedIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Reviews
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              300
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-MessageSquareIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Votes
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              5000
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-VoteIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Up Votes
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              4500
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-VoteIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Down Votes
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              500
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-VoteIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Project Votes
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              1000
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-VoteIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Release Votes
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              2000
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-VoteIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Comment Votes
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              1500
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-VoteIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Review Votes
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              500
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-VoteIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Views
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              50000
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-ViewIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Project Views
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              10000
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-ViewIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Release Views
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              40000
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-ViewIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Notifications
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              10000
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-BellIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Unread Notifications
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              1000
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-BellDotIcon"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div>
+            <p
+              class="text-sm text-muted-foreground"
+            >
+              Total Read Notifications
+            </p>
+            <p
+              class="text-2xl font-bold"
+            >
+              9000
+            </p>
+          </div>
+          <div
+            class="text-muted-foreground"
+          >
+            <span
+              data-testid="icon-BellMinusIcon"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

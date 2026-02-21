@@ -1,0 +1,253 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`UpdateProjectForm matches snapshot 1`] = `
+<DocumentFragment>
+  <form
+    class="flex flex-col justify-start gap-10"
+  >
+    <div
+      class="flex items-center justify-between"
+    >
+      <h1
+        class="text-2xl font-bold"
+      >
+        Update Project
+      </h1>
+      <button
+        class=""
+      >
+        <a
+          href="/project/details/proj1"
+        >
+          <span
+            class="h-4 w-4"
+            data-testid="icon-ArrowLeftIcon"
+          />
+           Back to Project
+        </a>
+      </button>
+    </div>
+    <div>
+      <div
+        class="flex flex-col gap-5 md:flex-row"
+      >
+        <div>
+          <label
+            for="title"
+          >
+            Project Title
+          </label>
+          <input
+            aria-invalid="false"
+            id="title"
+            name="title"
+            placeholder="Enter project title"
+            type="title"
+            value="old title"
+          />
+        </div>
+        <div>
+          <label
+            for="category"
+          >
+            Project Category
+          </label>
+          <select
+            aria-label="Review Rating"
+            data-testid="select-rating"
+          >
+            <option
+              disabled=""
+            >
+              Select project category
+            </option>
+            <option
+              selected=""
+              value="cat1"
+            >
+              Category 1
+            </option>
+            <option
+              value="cat2"
+            >
+              Category 2
+            </option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label
+          for="description"
+        >
+          Project Description
+        </label>
+        <textarea
+          aria-invalid="false"
+          id="description"
+          name="description"
+          placeholder="Enter your project description"
+        >
+          old description
+        </textarea>
+      </div>
+      <div
+        class="flex flex-col gap-5 md:flex-row"
+      >
+        <div>
+          <label
+            for="githubUrl"
+          >
+            Project Github URL
+          </label>
+          <input
+            aria-invalid="false"
+            id="githubUrl"
+            name="githubUrl"
+            placeholder="Enter project github url"
+            type="url"
+            value="https://github.com/old"
+          />
+        </div>
+        <div>
+          <label
+            for="websiteUrl"
+          >
+            Project Website URL
+          </label>
+          <input
+            aria-invalid="false"
+            id="websiteUrl"
+            name="websiteUrl"
+            placeholder="Enter project website url"
+            type="url"
+            value="https://old.com"
+          />
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-5 md:flex-row"
+      >
+        <div>
+          <label
+            for="status"
+          >
+            Project Status
+          </label>
+          <select
+            aria-label="Review Rating"
+            data-testid="select-rating"
+          >
+            <option
+              disabled=""
+            >
+              Select project status
+            </option>
+            <option
+              selected=""
+              value="DRAFT"
+            >
+              DRAFT
+            </option>
+            <option
+              value="DEVELOPMENT"
+            >
+              DEVELOPMENT
+            </option>
+            <option
+              value="PRODUCTION"
+            >
+              PRODUCTION
+            </option>
+            <option
+              value="DEPRECATED"
+            >
+              DEPRECATED
+            </option>
+          </select>
+        </div>
+        <div>
+          <label
+            for="visibility"
+          >
+            Project Visibility
+          </label>
+          <select
+            aria-label="Review Rating"
+            data-testid="select-rating"
+          >
+            <option
+              disabled=""
+            >
+              Select project visibility
+            </option>
+            <option
+              selected=""
+              value="PRIVATE"
+            >
+              PRIVATE
+            </option>
+            <option
+              value="PUBLIC"
+            >
+              PUBLIC
+            </option>
+          </select>
+        </div>
+      </div>
+      <div
+        data-testid="tags-input"
+      >
+        <span>
+          old-tag
+        </span>
+        <button>
+          Add Tag
+        </button>
+      </div>
+      <button
+        class=""
+      >
+        <span
+          class="h-4 w-4"
+          data-testid="icon-BrainIcon"
+        />
+        Update Content Using AI
+      </button>
+      <div
+        data-color-mode="light"
+      >
+        <textarea
+          data-testid="md-editor"
+        >
+          old content
+        </textarea>
+      </div>
+      <button
+        class="w-full"
+        type="submit"
+      >
+        <div
+          class="grid grid-cols-1 items-center justify-items-center"
+        >
+          <div
+            class="col-start-1 col-end-2 row-start-1 row-end-2 w-full visible"
+          >
+            Update Project
+          </div>
+          <div
+            class="col-start-1 col-end-2 row-start-1 row-end-2 invisible"
+          >
+            <div
+              data-testid="spinner"
+            >
+              <span
+                data-testid="icon-Loader2Icon"
+              />
+            </div>
+          </div>
+        </div>
+      </button>
+    </div>
+  </form>
+</DocumentFragment>
+`;

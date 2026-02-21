@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ManageReleases matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="mb-5"
+  >
+    <div
+      class="flex items-center justify-between mb-4"
+    >
+      <h2
+        class="text-xl font-bold"
+      >
+        All Releases
+      </h2>
+    </div>
+    <div
+      class="mb-8"
+    >
+      <div
+        data-testid="search-bar"
+      >
+        Search releases
+      </div>
+    </div>
+    <div
+      data-testid="releases-table"
+    >
+      Releases Table proj1
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -142,7 +142,7 @@ export function UserRow({user, selfId}: {user: UserWithRole; selfId: string}) {
           <AlertDialog>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" aria-label="Open menu">
                   <MoreHorizontalIcon />
                 </Button>
               </DropdownMenuTrigger>

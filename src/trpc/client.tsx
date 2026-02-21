@@ -13,7 +13,7 @@ import type {AppRouter} from "./routers/_app";
 export const {TRPCProvider, useTRPC} = createTRPCContext<AppRouter>();
 let browserQueryClient: QueryClient;
 
-function getQueryClient() {
+export function getQueryClient() {
   if (typeof window === "undefined") {
     return makeQueryClient();
   }
@@ -23,7 +23,7 @@ function getQueryClient() {
   return browserQueryClient;
 }
 
-function getUrl() {
+export function getUrl() {
   const base = (() => {
     if (typeof window !== "undefined") return "";
     if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;

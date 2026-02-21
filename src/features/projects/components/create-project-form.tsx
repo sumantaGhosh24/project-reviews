@@ -336,6 +336,7 @@ const CreateProjectForm = () => {
             placeholder="Add project tags"
           />
           <Button
+            type="button"
             onClick={generateContent}
             disabled={loading || createProject.isPending || isUploading}
           >

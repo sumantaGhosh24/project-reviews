@@ -1,0 +1,287 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ProjectDetails matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="mx-auto my-5 container rounded-md shadow-md p-5 bg-background dark:shadow-white/40"
+  >
+    <div
+      class="space-y-5"
+    >
+      <div
+        class="flex items-center justify-between gap-4 flex-wrap"
+      >
+        <div>
+          <h2
+            class="text-3xl font-bold capitalize"
+          >
+            Test Project
+          </h2>
+          <p
+            class="text-muted-foreground mt-2 capitalize"
+          >
+            Test Description
+          </p>
+        </div>
+        <div
+          class="flex gap-2 flex-wrap"
+        >
+          <span
+            class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90"
+            data-slot="badge"
+          >
+            APPROVED
+          </span>
+          <span
+            class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-success text-white [a&]:hover:bg-success/90"
+            data-slot="badge"
+          >
+            <span
+              class="h-4 w-4"
+              data-testid="icon-EyeIcon"
+            />
+            PUBLIC
+          </span>
+          <span
+            class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-success text-white [a&]:hover:bg-success/90"
+            data-slot="badge"
+          >
+            <span
+              class="w-4 h-4"
+              data-testid="icon-TrendingUpIcon"
+            />
+            10
+          </span>
+          <span
+            class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60"
+            data-slot="badge"
+          >
+            <span
+              class="w-4 h-4"
+              data-testid="icon-TrendingDownIcon"
+            />
+            2
+          </span>
+          <span
+            class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90"
+            data-slot="badge"
+          >
+            <span
+              class="w-4 h-4"
+              data-testid="icon-ViewIcon"
+            />
+            100
+          </span>
+          <span
+            class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-orange-500 text-white [a&]:hover:bg-orange-500/90"
+            data-slot="badge"
+          >
+            <span
+              class="w-4 h-4"
+              data-testid="icon-TimerResetIcon"
+            />
+            5
+          </span>
+          <span
+            class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-orange-500 text-white [a&]:hover:bg-orange-500/90"
+            data-slot="badge"
+          >
+            <span
+              class="w-4 h-4"
+              data-testid="icon-StarIcon"
+            />
+            4.5 (10)
+          </span>
+        </div>
+      </div>
+      <div
+        class="flex flex-wrap items-center gap-4 text-sm"
+      >
+        <div>
+          <a
+            href="/profile/user1/details"
+          >
+            <div
+              data-slot="avatar"
+              data-testid="avatar"
+            >
+              <img
+                alt="avatar"
+                src="https://placehold.co/600x400.png"
+              />
+              <div>
+                Us
+              </div>
+            </div>
+            <span
+              class="font-medium capitalize"
+            >
+              User 1
+            </span>
+          </a>
+        </div>
+        <div
+          class="flex items-center gap-1"
+        >
+          <span
+            class="h-4 w-4"
+            data-testid="icon-CalendarIcon"
+          />
+          <span>
+            Published 
+            <span
+              class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 uppercase"
+              data-slot="badge"
+            >
+              not published
+            </span>
+          </span>
+        </div>
+        <span
+          class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90 uppercase"
+          data-slot="badge"
+        >
+          Category 1
+        </span>
+        <div
+          class="flex items-center justify-between gap-2 flex-wrap"
+        >
+          <span
+            class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90 uppercase"
+            data-slot="badge"
+          >
+            <span
+              data-testid="icon-TagIcon"
+            />
+             tag1
+          </span>
+          <span
+            class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90 uppercase"
+            data-slot="badge"
+          >
+            <span
+              data-testid="icon-TagIcon"
+            />
+             tag2
+          </span>
+        </div>
+      </div>
+      <div
+        class="flex items-center flex-wrap gap-4"
+      >
+        <button
+          class=""
+        >
+          <span
+            class="h-4 w-4"
+            data-testid="icon-TrendingUpIcon"
+          />
+           Up Vote
+        </button>
+        <button
+          class=""
+        >
+          <span
+            class="h-4 w-4"
+            data-testid="icon-TrendingDownIcon"
+          />
+           Down Vote
+        </button>
+        <button
+          class=""
+        >
+          <a
+            href="https://test.com"
+          >
+            <span
+              class="h-4 w-4"
+              data-testid="icon-GlobeIcon"
+            />
+             Visit Website
+          </a>
+        </button>
+        <button
+          class=""
+        >
+          <a
+            href="https://github.com/test"
+          >
+            <span
+              class="h-4 w-4"
+              data-testid="icon-GithubIcon"
+            />
+             Visit GitHub
+          </a>
+        </button>
+        <button
+          class=""
+          type="button"
+        >
+          <span
+            class="flex items-center gap-1.5"
+          >
+            <span
+              class="h-4 w-4"
+              data-testid="icon-ChessKingIcon"
+            />
+             Subscribe
+          </span>
+        </button>
+      </div>
+      <div
+        class="mx-10"
+      >
+        <div
+          aria-roledescription="carousel"
+          class="relative"
+          data-slot="carousel"
+          role="region"
+        >
+          <div
+            class="overflow-hidden"
+            data-slot="carousel-content"
+          >
+            <div
+              class="flex -ml-4"
+            />
+          </div>
+          <button
+            class="absolute size-8 rounded-full top-1/2 -left-12 -translate-y-1/2"
+            data-slot="carousel-previous"
+          >
+            <span
+              data-testid="icon-ArrowLeft"
+            />
+            <span
+              class="sr-only"
+            >
+              Previous slide
+            </span>
+          </button>
+          <button
+            class="absolute size-8 rounded-full top-1/2 -right-12 -translate-y-1/2"
+            data-slot="carousel-next"
+          >
+            <span
+              data-testid="icon-ArrowRight"
+            />
+            <span
+              class="sr-only"
+            >
+              Next slide
+            </span>
+          </button>
+        </div>
+      </div>
+      <div>
+        <div
+          data-color-mode="light"
+        />
+      </div>
+      <div>
+        Manage Releases
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

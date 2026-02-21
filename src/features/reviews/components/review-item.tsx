@@ -7,6 +7,7 @@ import {StarIcon} from "lucide-react";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Card, CardContent} from "@/components/ui/card";
 import {Review} from "@/generated/prisma/client";
+import {cn} from "@/lib/utils";
 
 import {ReviewActions} from "./review-actions";
 
@@ -30,7 +31,10 @@ interface ReviewItemProps {
 
 export function ReviewItem({review}: ReviewItemProps) {
   return (
-    <Card className={`mb-3 py-2 ${review.isOwner ? "border-primary" : ""}`}>
+    <Card
+      data-owner={review.isOwner ? "true" : "false"}
+      className={cn("mb-3 py-2", review.isOwner && "border-primary")}
+    >
       <CardContent>
         <div className="flex items-center gap-2 mb-2">
           <Avatar>

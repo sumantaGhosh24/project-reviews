@@ -110,7 +110,7 @@ const ReleaseCard = ({
           </div>
           <div className="flex items-center gap-1 text-orange-500">
             <StarIcon className="w-4 h-4" />
-            <span className="text-xs font-bold">
+            <span className="text-xs font-bold truncate">
               {reviewStats._avg.rating?.toFixed(1)} ({reviewStats._count.id})
             </span>
           </div>

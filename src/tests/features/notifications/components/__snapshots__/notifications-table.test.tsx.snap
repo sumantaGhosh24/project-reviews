@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`NotificationsTable matches snapshot 1`] = `
+<DocumentFragment>
+  <div>
+    <div>
+      <div>
+        <div>
+          Test Notification
+        </div>
+        <div>
+          0 seconds ago
+        </div>
+        <div>
+          Test Body
+        </div>
+      </div>
+      <div>
+        <button
+          class=""
+        >
+          Visit
+        </button>
+        <button
+          class="ml-2"
+        >
+          Mark Read
+        </button>
+      </div>
+    </div>
+    <div>
+      <div>
+        <div>
+          Read Notification
+        </div>
+        <div>
+          0 seconds ago
+        </div>
+        <div>
+          Read Body
+        </div>
+      </div>
+      <div>
+        <button
+          class=""
+        >
+          Visit
+        </button>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

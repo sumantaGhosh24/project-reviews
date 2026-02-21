@@ -1,0 +1,88 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ManageHomeProjects matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="next-themes-provider"
+  >
+    <div
+      class="mx-auto w-[95%] rounded-md shadow-md p-5 bg-background dark:shadow-white/40 my-5"
+    >
+      <div
+        class="flex items-center justify-between mb-8"
+      >
+        <div
+          class="text-left"
+        >
+          <h2
+            class="mb-4 text-3xl font-bold"
+          >
+            Public Projects
+          </h2>
+          <p
+            class="text-gray-600"
+          >
+            Projects publically available for everyone to view and use
+          </p>
+        </div>
+        <button
+          class=""
+        >
+          <span
+            class="flex items-center gap-1.5"
+          >
+            <span
+              data-testid="icon-ChessKingIcon"
+            />
+             Subscribe
+          </span>
+        </button>
+      </div>
+      <div
+        class="mb-8"
+      >
+        <div
+          data-testid="search-bar"
+        >
+          Search Bar
+        </div>
+      </div>
+      <div
+        class="mb-8"
+      >
+        <div
+          data-testid="filter"
+        >
+          Filter
+        </div>
+      </div>
+      <div
+        class="relative w-full rounded-lg border px-4 py-3 text-sm grid has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current bg-card text-card-foreground mb-5"
+        data-slot="alert"
+        role="alert"
+      >
+        <span
+          data-testid="icon-Terminal"
+        />
+        <div
+          class="col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight"
+          data-slot="alert-title"
+        >
+          Heads up!
+        </div>
+        <div
+          class="text-muted-foreground col-start-2 grid justify-items-start gap-1 text-sm [&_p]:leading-relaxed"
+          data-slot="alert-description"
+        >
+          You have to subscribe to create your own projects.
+        </div>
+      </div>
+      <div
+        data-testid="home-projects"
+      >
+        Home Projects
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -161,7 +161,7 @@ export default async function ProfilePage() {
   );
 }
 
-async function LinkedAccountsTab() {
+export async function LinkedAccountsTab() {
   const accounts = await auth.api.listUserAccounts({headers: await headers()});
   const nonCredentialAccounts = accounts.filter(
     (a) => a.providerId !== "credential"
@@ -176,7 +176,7 @@ async function LinkedAccountsTab() {
   );
 }
 
-async function SessionsTab({
+export async function SessionsTab({
   currentSessionToken,
 }: {
   currentSessionToken: string;
@@ -195,7 +195,7 @@ async function SessionsTab({
   );
 }
 
-async function SecurityTab({
+export async function SecurityTab({
   email,
   isTwoFactorEnabled,
 }: {
@@ -263,7 +263,7 @@ async function SecurityTab({
   );
 }
 
-function LoadingSuspense({children}: {children: ReactNode}) {
+export function LoadingSuspense({children}: {children: ReactNode}) {
   return (
     <Suspense fallback={<Loader2Icon className="size-20 animate-spin" />}>
       {children}

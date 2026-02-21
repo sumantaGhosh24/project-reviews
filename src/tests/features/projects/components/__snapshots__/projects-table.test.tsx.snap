@@ -1,0 +1,347 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ProjectsTable matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="flex flex-col items-center gap-10"
+  >
+    <div
+      class="relative w-full overflow-x-auto"
+      data-slot="table-container"
+    >
+      <table
+        class="w-full caption-bottom text-sm"
+        data-slot="table"
+      >
+        <caption
+          class="text-muted-foreground mt-4 text-sm"
+          data-slot="table-caption"
+        >
+          A list of your projects.
+        </caption>
+        <thead
+          class="[&_tr]:border-b"
+          data-slot="table-header"
+        >
+          <tr
+            class="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors"
+            data-slot="table-row"
+          >
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] w-[100px]"
+              data-slot="table-head"
+            >
+              Id
+            </th>
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-head"
+            >
+              Title
+            </th>
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-head"
+            >
+              Up Votes
+            </th>
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-head"
+            >
+              Down Votes
+            </th>
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-head"
+            >
+              Unique Views
+            </th>
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-head"
+            >
+              Releases
+            </th>
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-head"
+            >
+              Rating
+            </th>
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-head"
+            >
+              Category
+            </th>
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-head"
+            >
+              Tags
+            </th>
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-head"
+            >
+              Github URL
+            </th>
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-head"
+            >
+              Website URL
+            </th>
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-head"
+            >
+              Status
+            </th>
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-head"
+            >
+              Visibility
+            </th>
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-head"
+            >
+              Published At
+            </th>
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-head"
+            >
+              Created At
+            </th>
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-head"
+            >
+              Updated At
+            </th>
+            <th
+              class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-head"
+            >
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody
+          class="[&_tr:last-child]:border-0"
+          data-slot="table-body"
+        >
+          <tr
+            class="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors"
+            data-slot="table-row"
+          >
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] font-medium"
+              data-slot="table-cell"
+            >
+              1
+            </td>
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-cell"
+            >
+              Test Project
+            </td>
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-cell"
+            >
+              <div
+                class="flex items-center gap-2 text-green-500"
+              >
+                <span
+                  data-testid="icon-TrendingUpIcon"
+                  size="24"
+                />
+                10
+              </div>
+            </td>
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-cell"
+            >
+              <div
+                class="flex items-center gap-2 text-red-500"
+              >
+                <span
+                  data-testid="icon-TrendingDownIcon"
+                  size="24"
+                />
+                2
+              </div>
+            </td>
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-cell"
+            >
+              <div
+                class="flex items-center gap-2 text-primary"
+              >
+                <span
+                  data-testid="icon-ViewIcon"
+                  size="24"
+                />
+                100
+              </div>
+            </td>
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-cell"
+            >
+              <div
+                class="flex items-center gap-2 text-orange-500"
+              >
+                <span
+                  data-testid="icon-TimerResetIcon"
+                  size="24"
+                />
+                5
+              </div>
+            </td>
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-cell"
+            >
+              <div
+                class="flex items-center gap-2 text-orange-500"
+              >
+                <span
+                  data-testid="icon-StarIcon"
+                  size="24"
+                />
+                4.5 (10)
+              </div>
+            </td>
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-cell"
+            >
+              <span
+                class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90 uppercase"
+                data-slot="badge"
+              >
+                Category 1
+              </span>
+            </td>
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] flex items-center gap-2 flex-wrap"
+              data-slot="table-cell"
+            >
+              <span
+                class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90 uppercase"
+                data-slot="badge"
+              >
+                tag1
+              </span>
+            </td>
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-cell"
+            >
+              <button
+                class=""
+              >
+                <a
+                  href="https://github.com/test"
+                >
+                  <span
+                    data-testid="icon-ExternalLinkIcon"
+                    size="24"
+                  />
+                   Visit
+                </a>
+              </button>
+            </td>
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-cell"
+            >
+              <button
+                class=""
+              >
+                <a
+                  href="https://test.com"
+                >
+                  <span
+                    data-testid="icon-ExternalLinkIcon"
+                    size="24"
+                  />
+                   Visit
+                </a>
+              </button>
+            </td>
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-cell"
+            >
+              <span
+                class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90"
+                data-slot="badge"
+              >
+                APPROVED
+              </span>
+            </td>
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-cell"
+            >
+              <span
+                class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-success text-white [a&]:hover:bg-success/90"
+                data-slot="badge"
+              >
+                PUBLIC
+              </span>
+            </td>
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-cell"
+            >
+              <span
+                class="inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 uppercase"
+                data-slot="badge"
+              >
+                Not Published
+              </span>
+            </td>
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-cell"
+            >
+              0 seconds ago
+            </td>
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-cell"
+            >
+              0 seconds ago
+            </td>
+            <td
+              class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+              data-slot="table-cell"
+            >
+              <button
+                class=""
+              >
+                <span
+                  data-testid="icon-EyeIcon"
+                  size="24"
+                />
+                View
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</DocumentFragment>
+`;
